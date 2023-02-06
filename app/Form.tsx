@@ -96,7 +96,7 @@ export default function FormProject(){
             {timeSelectors.map((i)=>{
                return <div className='w-full py-6 flex flex-row justify-between' key={i}><h4>Day {i}</h4>
                <div><label className={labelStyles}>Call Time:</label><select></select></div>
-               <div><label className={labelStyles}>Wrap:</label><select></select></div>  
+               <div><label className={labelStyles}>Wraps Times:</label><select></select></div>  
                 </div>
             })}
             </div>
