@@ -1,7 +1,7 @@
 "use client"
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function FormProject(){
     const [projectName, setProjectName] = useState("")
@@ -15,10 +15,25 @@ export default function FormProject(){
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
     const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const diffTime = Math.abs(end - start);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const [timeSelectors, setTimeSelectors] = useState<number[]>([]);
+
+    useEffect(()=>{
+        const days = calculateDays(startDate, endDate)
+        let newTimeSelectors = []
+        for (let i=1; i < days+1; i++){
+            newTimeSelectors.push(i)
+        }
+       setTimeSelectors(newTimeSelectors)
+
+    },[startDate, endDate])
+
+    function calculateDays(firstDay: string, lastDay: string){
+        const start = new Date(firstDay);
+        const end = new Date(lastDay);
+        const diffTime = Math.abs(end.valueOf() - start.valueOf());
+        const diffDays: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays
+    }
 
     async function submitProject(e: React.FormEvent) {
         e.preventDefault();
@@ -76,6 +91,14 @@ export default function FormProject(){
                     <input type="date" onChange={(e)=> setEndDate(e.target.value)}
                     value={endDate} className={borderStyles}></input>
                 </div>
+            </div>
+            <div style={{display: timeSelectors.length>0 ? 'block' : 'none'}}>
+            {timeSelectors.map((i)=>{
+               return <div className='w-full py-6 flex flex-row justify-between' key={i}><h4>Day {i}</h4>
+               <div><label className={labelStyles}>Call Time:</label><select></select></div>
+               <div><label className={labelStyles}>Wrap:</label><select></select></div>  
+                </div>
+            })}
             </div>
             <div className='w-full py-6'>
             <button type="submit" className={successButtonStyles}>Submit</button>
