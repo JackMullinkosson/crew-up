@@ -4,12 +4,15 @@ import prisma from '../../prisma/client'
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    console.log('this happens')
     try {
       if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
       }
 
-      const { projectName, ownerId } = req.body;
+      const { projectName, ownerId, startDate, endDate, logLine, dayDetails } = req.body;
+      console.log('req body', req.body)
+      console.log('proj name', projectName)
 
       if (!projectName || projectName.length === 0) {
         return res.status(400).json({ message: 'Project name is required' });
@@ -32,9 +35,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             connect: {
               id: ownerId
             }
+          },
+          startDate: startDate || null,
+          endDate: endDate || null,
+          logLine: logLine || "",
+          dayDetails: {
+            create: dayDetails.map((day: { startTime?: Date, endTime?: Date, location?: String }) => ({
+              startTime: day.startTime || null,
+              endTime: day.endTime || null,
+              location: day.location || ""
+            })) || null
           }
         }
       });
+      
   
       return res.status(200).json({ project });
     } catch (error) {

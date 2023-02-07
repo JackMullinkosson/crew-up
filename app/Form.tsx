@@ -10,7 +10,7 @@ import { wrap } from 'module';
 
 export default function FormProject(){
     const [projectName, setProjectName] = useState("")
-    const [description, setDescription] = useState("")
+    const [logLine, setLogLine] = useState("")
     const [startDate, setStartDate] = useState("")
     const [endDate, setEndDate] = useState("")
     const [timeSelectors, setTimeSelectors] = useState<number[]>([]);
@@ -41,8 +41,9 @@ export default function FormProject(){
         let newDayLengths = callTimes.map((call, index)=>{
             let ms = (wrapTimes[index] - call)
             let minutes = ms / (1000 * 60);
-            let tempTime = `${Math.floor(minutes / 60)}.${Math.round((minutes % 60))}`
-            return tempTime
+            let hours = `${Math.floor(minutes / 60)}`
+            let quarters = `${(Math.round((minutes % 60))/60 *100)}`
+            return `${hours}.${quarters}`
         })
         console.log(newDayLengths)
         setDayLengths(newDayLengths)
@@ -67,13 +68,17 @@ export default function FormProject(){
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              projectName,
-              ownerId
+                projectName: projectName,
+                ownerId: ownerId,
+                logLine: logLine || '',
+                startDate: null,
+                endDate:  null,
+                dayDetails: null
             }),
           });
           if (res.status !== 200) {
             const error = await res.json();
-            console.error(error.message);
+            console.error('hi', error.message);
           } else {
             console.log(await res.json());
             router.push("/")
@@ -100,8 +105,8 @@ export default function FormProject(){
             </div>
             <div className='w-full py-4'>
                 <label className={labelStyles}>Log Line</label>
-                <textarea onChange={(e)=> setDescription(e.target.value)}
-                value={description} className={inputStyles}></textarea>
+                <textarea onChange={(e)=> setLogLine(e.target.value)}
+                value={logLine} className={inputStyles}></textarea>
             </div>
             <div className="w-full flex">
                 <div>
