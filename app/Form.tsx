@@ -6,6 +6,7 @@ import TimePicker from 'rc-time-picker';
 import 'rc-time-picker/assets/index.css';
 import moment from "moment";
 import { time } from 'console';
+import { wrap } from 'module';
 
 export default function FormProject(){
     const [projectName, setProjectName] = useState("")
@@ -15,7 +16,7 @@ export default function FormProject(){
     const [timeSelectors, setTimeSelectors] = useState<number[]>([]);
     const [callTimes, setCallTimes] = useState(Array(timeSelectors.length).fill(moment()));
     const [wrapTimes, setWrapTimes] = useState(Array(timeSelectors.length).fill(moment()));
-    const [dayLengths, setDayLengths] = useState<number[]>([]);
+    const [dayLengths, setDayLengths] = useState<string[]>([]);
     const ownerId = 1;
     const router = useRouter()
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -28,7 +29,7 @@ export default function FormProject(){
     useEffect(()=>{
         const days = calculateDays(startDate, endDate)
         let newTimeSelectors = []
-        for (let i=1; i < days+1; i++){
+        for (let i=0; i < days; i++){
             newTimeSelectors.push(i)
         }
        setTimeSelectors(newTimeSelectors)
@@ -36,7 +37,15 @@ export default function FormProject(){
     },[startDate, endDate])
 
     useEffect(()=>{
-
+        if(!callTimes.length) return
+        let newDayLengths = callTimes.map((call, index)=>{
+            let ms = (wrapTimes[index] - call)
+            let minutes = ms / (1000 * 60);
+            let tempTime = `${Math.floor(minutes / 60)}.${Math.round((minutes % 60))}`
+            return tempTime
+        })
+        console.log(newDayLengths)
+        setDayLengths(newDayLengths)
     },[callTimes, wrapTimes])
 
 
@@ -48,10 +57,6 @@ export default function FormProject(){
         return diffDays
     }
 
-    function calculateDayLength(callTime: string, wrapTime: string){
-
-        console.log(callTime, wrapTime)
-    }
 
     async function submitProject(e: React.FormEvent) {
         e.preventDefault();
@@ -113,7 +118,7 @@ export default function FormProject(){
             <div style={{display: timeSelectors.length>0 ? 'block' : 'none'}}>
             {timeSelectors.map((i)=>{
                return <div className='w-full my-6 px-2 py-2 flex flex-row justify-between bg-gray-200 rounded items-center' key={i}>
-                <h4 className='text-xl tracking-tight font-bold text-center text-gray-700 dark:text-white'>Day {i}</h4>
+                <h4 className='text-xl tracking-tight font-bold text-center text-gray-700 dark:text-white'>Day {i+1}</h4>
                <div><label className={labelStyles}>Call Time:</label>
                <TimePicker showSecond={false} allowEmpty minuteStep={15} use12Hours value={callTimes[i]} defaultOpenValue={moment('07:00:00', 'HH:mm:ss')} 
                onChange={(time)=>{
@@ -126,9 +131,9 @@ export default function FormProject(){
                 let newWrapTimes = [...wrapTimes]
                 newWrapTimes[i] = moment(time)
                 setWrapTimes(newWrapTimes)}}/></div>  
+                <div><label className={labelStyles}>Day length</label>{dayLengths[i] !== 'NaN.NaN' && dayLengths[i] ? <h4 className='text-m tracking-tight font-bold text-center text-gray-700 dark:text-white'>{dayLengths[i]} Hours</h4>: null}</div>
                 </div>
             })}
-                <div><label className={labelStyles}>Day length</label><h4 className='text-xl tracking-tight font-bold text-center text-gray-700 dark:text-white'> Hours</h4></div>
             </div>
             <div className='w-full py-6'>
             <button type="submit" className={successButtonStyles}>Submit</button>
