@@ -1,13 +1,21 @@
 "use client"
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
+// import TimePicker from 'react-bootstrap-time-picker';
+import TimePicker from 'rc-time-picker';
+import 'rc-time-picker/assets/index.css';
+import moment from "moment";
+import { time } from 'console';
 
 export default function FormProject(){
     const [projectName, setProjectName] = useState("")
     const [description, setDescription] = useState("")
     const [startDate, setStartDate] = useState("")
     const [endDate, setEndDate] = useState("")
+    const [timeSelectors, setTimeSelectors] = useState<number[]>([]);
+    const [callTimes, setCallTimes] = useState(Array(timeSelectors.length).fill(moment()));
+    const [wrapTimes, setWrapTimes] = useState(Array(timeSelectors.length).fill(moment()));
+    const [dayLengths, setDayLengths] = useState<number[]>([]);
     const ownerId = 1;
     const router = useRouter()
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -15,7 +23,7 @@ export default function FormProject(){
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
     const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
-    const [timeSelectors, setTimeSelectors] = useState<number[]>([]);
+    const availableTimes = 
 
     useEffect(()=>{
         const days = calculateDays(startDate, endDate)
@@ -27,12 +35,22 @@ export default function FormProject(){
 
     },[startDate, endDate])
 
+    useEffect(()=>{
+
+    },[callTimes, wrapTimes])
+
+
     function calculateDays(firstDay: string, lastDay: string){
         const start = new Date(firstDay);
         const end = new Date(lastDay);
         const diffTime = Math.abs(end.valueOf() - start.valueOf());
         const diffDays: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return diffDays
+    }
+
+    function calculateDayLength(callTime: string, wrapTime: string){
+
+        console.log(callTime, wrapTime)
     }
 
     async function submitProject(e: React.FormEvent) {
@@ -94,11 +112,23 @@ export default function FormProject(){
             </div>
             <div style={{display: timeSelectors.length>0 ? 'block' : 'none'}}>
             {timeSelectors.map((i)=>{
-               return <div className='w-full py-6 flex flex-row justify-between' key={i}><h4>Day {i}</h4>
-               <div><label className={labelStyles}>Call Time:</label><select></select></div>
-               <div><label className={labelStyles}>Wraps Times:</label><select></select></div>  
+               return <div className='w-full my-6 px-2 py-2 flex flex-row justify-between bg-gray-200 rounded items-center' key={i}>
+                <h4 className='text-xl tracking-tight font-bold text-center text-gray-700 dark:text-white'>Day {i}</h4>
+               <div><label className={labelStyles}>Call Time:</label>
+               <TimePicker showSecond={false} allowEmpty minuteStep={15} use12Hours value={callTimes[i]} defaultOpenValue={moment('07:00:00', 'HH:mm:ss')} 
+               onChange={(time)=>{
+                let newCallTimes = [...callTimes]
+                newCallTimes[i] = moment(time)
+                setCallTimes(newCallTimes)}}/></div>
+               <div><label className={labelStyles}>Wrap Time:</label>
+               <TimePicker showSecond={false} allowEmpty minuteStep={15} use12Hours value={wrapTimes[i]} defaultOpenValue={moment('19:00:00', 'HH:mm:ss')} 
+                onChange={(time)=>{
+                let newWrapTimes = [...wrapTimes]
+                newWrapTimes[i] = moment(time)
+                setWrapTimes(newWrapTimes)}}/></div>  
                 </div>
             })}
+                <div><label className={labelStyles}>Day length</label><h4 className='text-xl tracking-tight font-bold text-center text-gray-700 dark:text-white'> Hours</h4></div>
             </div>
             <div className='w-full py-6'>
             <button type="submit" className={successButtonStyles}>Submit</button>
