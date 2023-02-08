@@ -169,7 +169,7 @@ export default function FormProject(){
             })}
             </div>
             <div className='w-full py-6'>
-            <button type="submit" className={successButtonStyles}>Submit</button>
+            <button type="submit" className={successButtonStyles}>Create Project</button>
             </div>
         </form>
     )
