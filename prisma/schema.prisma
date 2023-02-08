@@ -19,10 +19,10 @@ model Project {
   name       String
   ownerId    Int
   id         Int      @id @default(autoincrement())
-  endDate    DateTime @default(null)
+  endDate    DateTime 
   logLine    String
-  startDate  DateTime @default(null)
-  dayDetails Day[] @default(null)
+  startDate  DateTime 
+  dayDetails Day[] 
   owner      User     @relation(fields: [ownerId], references: [id])
   roles      Role[]
 }

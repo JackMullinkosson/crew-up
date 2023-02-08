@@ -58,7 +58,6 @@ export default function FormProject(){
         return diffDays
     }
 
-
     async function submitProject(e: React.FormEvent) {
         e.preventDefault();
         try {
@@ -71,14 +70,12 @@ export default function FormProject(){
                 projectName: projectName,
                 ownerId: ownerId,
                 logLine: logLine || '',
-                startDate: null,
-                endDate:  null,
-                dayDetails: null
+                startDate: new Date(startDate),
+                endDate:  new Date(endDate),
             }),
           });
           if (res.status !== 200) {
             const error = await res.json();
-            console.error('hi', error.message);
           } else {
             console.log(await res.json());
             router.push("/")

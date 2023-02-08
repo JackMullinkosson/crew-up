@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).json({ error: 'Method Not Allowed' });
       }
 
-      const { projectName, ownerId, startDate, endDate, logLine, dayDetails } = req.body;
+      const { projectName, ownerId, startDate, endDate, logLine } = req.body;
       console.log('req body', req.body)
       console.log('proj name', projectName)
 
@@ -36,16 +36,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               id: ownerId
             }
           },
-          startDate: startDate || null,
-          endDate: endDate || null,
-          logLine: logLine || "",
-          dayDetails: {
-            create: dayDetails.map((day: { startTime?: Date, endTime?: Date, location?: String }) => ({
-              startTime: day.startTime || null,
-              endTime: day.endTime || null,
-              location: day.location || ""
-            })) || null
-          }
+          startDate: startDate,
+          endDate: endDate,
+          logLine: logLine,
         }
       });
       
