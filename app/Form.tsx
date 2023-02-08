@@ -52,7 +52,7 @@ export default function FormProject(){
             }
             let ms : number = Math.abs((wrapTimes[index] - call))
             let minutes = ms / (1000 * 60);
-            let hours = `${Math.floor(minutes / 60)}`
+            let hours = `${Math.floor(minutes / 60)%24}`
             let quarters = `${(Math.round((minutes % 60))/60 *100)}`
             if(quarters==='0') return hours
             return `${hours}.${quarters.replace(/0$/, '')}`
