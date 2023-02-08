@@ -17,6 +17,7 @@ export default function FormProject(){
     const [callTimes, setCallTimes] = useState(Array(timeSelectors.length).fill(moment()));
     const [wrapTimes, setWrapTimes] = useState(Array(timeSelectors.length).fill(moment()));
     const [dayLengths, setDayLengths] = useState<string[]>([]);
+    const [locations, setLocations] = useState<string[]>([]);
     const ownerId = 1;
     const router = useRouter()
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -39,13 +40,14 @@ export default function FormProject(){
     useEffect(()=>{
         if(!callTimes.length) return
         let newDayLengths = callTimes.map((call, index)=>{
-            let ms = (wrapTimes[index] - call)
+            let ms : number = Math.abs((wrapTimes[index] - call))
+            console.log(ms)
             let minutes = ms / (1000 * 60);
             let hours = `${Math.floor(minutes / 60)}`
             let quarters = `${(Math.round((minutes % 60))/60 *100)}`
-            return `${hours}.${quarters}`
+            if(quarters==='0') return hours
+            return `${hours}.${quarters.replace(/0$/, '')}`
         })
-        console.log(newDayLengths)
         setDayLengths(newDayLengths)
     },[callTimes, wrapTimes])
 
@@ -70,8 +72,8 @@ export default function FormProject(){
                 projectName: projectName,
                 ownerId: ownerId,
                 logLine: logLine || '',
-                startDate: new Date(startDate),
-                endDate:  new Date(endDate),
+                startDate: startDate ? new Date(startDate) : undefined,
+                endDate:  endDate ? new Date(endDate) : undefined,
             }),
           });
           if (res.status !== 200) {
@@ -122,18 +124,23 @@ export default function FormProject(){
                return <div className='w-full my-6 px-2 py-2 flex flex-row justify-between bg-gray-200 rounded items-center' key={i}>
                 <h4 className='text-xl tracking-tight font-bold text-center text-gray-700 dark:text-white'>Day {i+1}</h4>
                <div><label className={labelStyles}>Call Time:</label>
-               <TimePicker showSecond={false} allowEmpty minuteStep={15} use12Hours value={callTimes[i]} defaultOpenValue={moment('07:00:00', 'HH:mm:ss')} 
+               <TimePicker allowEmpty={false} showSecond={false} minuteStep={15} use12Hours value={callTimes[i]} defaultOpenValue={moment('07:00:00', 'HH:mm:ss')} 
                onChange={(time)=>{
                 let newCallTimes = [...callTimes]
                 newCallTimes[i] = moment(time)
                 setCallTimes(newCallTimes)}}/></div>
                <div><label className={labelStyles}>Wrap Time:</label>
-               <TimePicker showSecond={false} allowEmpty minuteStep={15} use12Hours value={wrapTimes[i]} defaultOpenValue={moment('19:00:00', 'HH:mm:ss')} 
+               <TimePicker allowEmpty={false} showSecond={false} minuteStep={15} use12Hours value={wrapTimes[i]} defaultOpenValue={moment('19:00:00', 'HH:mm:ss')} 
                 onChange={(time)=>{
                 let newWrapTimes = [...wrapTimes]
                 newWrapTimes[i] = moment(time)
                 setWrapTimes(newWrapTimes)}}/></div>  
-                <div><label className={labelStyles}>Day length</label>{dayLengths[i] !== 'NaN.NaN' && dayLengths[i] ? <h4 className='text-m tracking-tight font-bold text-center text-gray-700 dark:text-white'>{dayLengths[i]} Hours</h4>: null}</div>
+                <div><label className={labelStyles}>Location:</label><input value={locations[i]} type="text" className="rc-time-picker-input focus:outline-none" 
+                    onChange={(loc)=> {
+                    let newLocations = [...locations]
+                    newLocations[i] = loc.target.value
+                    setLocations(newLocations)}}/></div>
+                <div><label className={labelStyles}>Day length:</label><h4 style={{display: dayLengths[i] !== 'NaN.NaN' && dayLengths[i] ? 'block' : 'none'}}className='text-m tracking-tight font-bold text-center text-gray-500 dark:text-white'>{dayLengths[i]} Hours</h4></div>
                 </div>
             })}
             </div>

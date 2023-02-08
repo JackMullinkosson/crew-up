@@ -19,10 +19,10 @@ model Project {
   name       String
   ownerId    Int
   id         Int      @id @default(autoincrement())
-  endDate    DateTime 
+  endDate    DateTime @default(dbgenerated("'0001-01-01 00:00:00'::timestamp without time zone"))
   logLine    String
-  startDate  DateTime 
-  dayDetails Day[] 
+  startDate  DateTime @default(dbgenerated("'0001-01-01 00:00:00'::timestamp without time zone"))
+  dayDetails Day[]
   owner      User     @relation(fields: [ownerId], references: [id])
   roles      Role[]
 }
