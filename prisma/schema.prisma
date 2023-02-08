@@ -16,12 +16,24 @@ model User {
 }
 
 model Project {
-  name        String
-  ownerId     Int
-  defaultList Boolean @default(false)
-  id          Int     @id @default(autoincrement())
-  owner       User    @relation(fields: [ownerId], references: [id])
-  roles       Role[]
+  name       String
+  ownerId    Int
+  id         Int      @id @default(autoincrement())
+  endDate    DateTime 
+  logLine    String
+  startDate  DateTime 
+  dayDetails Day[] 
+  owner      User     @relation(fields: [ownerId], references: [id])
+  roles      Role[]
+}
+
+model Day {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  startTime DateTime
+  endTime   DateTime
+  Location  String
+  project   Project  @relation(fields: [projectId], references: [id])
 }
 
 model Role {
