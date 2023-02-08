@@ -13,6 +13,7 @@ export default function FormProject(){
     const [logLine, setLogLine] = useState("")
     const [startDate, setStartDate] = useState("")
     const [endDate, setEndDate] = useState("")
+    const [dayDetails, setDayDetails] = useState<Array<{ startTime: Date, endTime: Date, location: string }>>([]);
     const [timeSelectors, setTimeSelectors] = useState<number[]>([]);
     const [callTimes, setCallTimes] = useState(Array(timeSelectors.length).fill(moment()));
     const [wrapTimes, setWrapTimes] = useState(Array(timeSelectors.length).fill(moment()));
@@ -40,8 +41,16 @@ export default function FormProject(){
     useEffect(()=>{
         if(!callTimes.length) return
         let newDayLengths = callTimes.map((call, index)=>{
+            if(call>wrapTimes[index]){
+                let nextDayWrap = wrapTimes[index].add(1, 'days')
+                let ms : number = Math.abs((nextDayWrap - call))
+                let minutes = ms / (1000 * 60);
+                let hours = `${Math.floor(minutes / 60)}`
+                let quarters = `${(Math.round((minutes % 60))/60 *100)}`
+                if(quarters==='0') return hours
+                return `${hours}.${quarters.replace(/0$/, '')}`
+            }
             let ms : number = Math.abs((wrapTimes[index] - call))
-            console.log(ms)
             let minutes = ms / (1000 * 60);
             let hours = `${Math.floor(minutes / 60)}`
             let quarters = `${(Math.round((minutes % 60))/60 *100)}`
@@ -51,9 +60,23 @@ export default function FormProject(){
         setDayLengths(newDayLengths)
     },[callTimes, wrapTimes])
 
+    useEffect(() => {
+        let newDayDetails = callTimes.map((call, index) => {
+          return {
+            startTime: call ? call.toDate() : undefined,
+            endTime: wrapTimes[index] ? wrapTimes[index].toDate() : undefined,
+            location: locations[index] ? locations[index] : ''
+          };
+        });
+        setDayDetails(newDayDetails);
+        console.log(dayDetails)
+      }, [callTimes, wrapTimes, locations]);
+      
+
 
     function calculateDays(firstDay: string, lastDay: string){
         const start = new Date(firstDay);
+        console.log(start)
         const end = new Date(lastDay);
         const diffTime = Math.abs(end.valueOf() - start.valueOf());
         const diffDays: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -74,6 +97,7 @@ export default function FormProject(){
                 logLine: logLine || '',
                 startDate: startDate ? new Date(startDate) : undefined,
                 endDate:  endDate ? new Date(endDate) : undefined,
+                dayDetails: dayDetails
             }),
           });
           if (res.status !== 200) {
