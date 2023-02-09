@@ -1,24 +1,46 @@
-import Link from "next/link"
+"use client";
 
-async function getProjects(){
-  const res = await fetch(`${process.env.BASE_URL}/api/getProjects`)
-  if(!res.ok){
-    console.log(res)
-  }
-  return res.json()
+import React, { useState, useEffect } from 'react';
+import { useGlobalContext } from './Context/store';
+
+export default function Home() {
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
+  const { projects, setProjects } = useGlobalContext();
+
+  console.log('this', projects)
+  async function getProjects(){
+    try {
+        const res = await fetch(`/api/getProjects`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        });
+        // setProjectList(await res.json());
+        setProjects(await res.json())
+    } catch (error) {
+        console.error(error);
+    } finally {
+        setProjectsLoading(false);
+    }
 }
 
+useEffect(()=>{
+  setProjectsLoading(true);
+  getProjects();
+},[])
 
-export default async function Home() {
-  const data: {name: string, id: number}[] = await getProjects()
+  
+ 
   return (
     <main>
       <h1 className="py-4">Home</h1>
       <h2 className="py-2">Active Projects:</h2>
-      {data.map((project)=>(
-        <h3 className="py-2">{project.name}</h3>
-      ))}
-      <Link href="/NewProject">Create New Project</Link>
+      {projectsLoading ? <div>Loading...</div> : projects.map((project)=>{
+       return <h3 key={project.id} className="py-2">{project.name}</h3>
+})}
+      <button className={successButtonStyles}>Create New Project</button>
     </main>
   )
 }
