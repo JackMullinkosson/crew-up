@@ -11,9 +11,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       const { projectName, ownerId, startDate, endDate, logLine, dayDetails } = req.body;
-      console.log('req body', req.body)
-      console.log('proj name', projectName)
-
       if (!projectName || projectName.length === 0) {
         return res.status(400).json({ message: 'Project name is required' });
       }
