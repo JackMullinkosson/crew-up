@@ -7,7 +7,7 @@ import moment from "moment";
 import { time } from 'console';
 import { wrap } from 'module';
 
-export default function FormProject(){
+const NewProjectForm = () => {
     const [projectName, setProjectName] = useState("")
     const [logLine, setLogLine] = useState("")
     const [startDate, setStartDate] = useState("")
@@ -173,3 +173,5 @@ export default function FormProject(){
         </form>
     )
 }
+
+export default NewProjectForm;
