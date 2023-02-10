@@ -43,7 +43,7 @@ useEffect(()=>{
       {projectsLoading ? <div>Loading...</div> : projects.map((project)=>{
        return <button className={projButtonStyles} key={project.id} onClick={()=>router.push(`/project/${project.id}`)}>{project.name}</button>
 })}
-      <button className={successButtonStyles}>Create New Project</button>
+      <button className={successButtonStyles} onClick={()=>router.push('/NewProject')}>Create New Project</button>
       </div>
     </main>
   )

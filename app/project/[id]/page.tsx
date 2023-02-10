@@ -3,12 +3,27 @@
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../../Context/store';
 
+interface Project {
+    name: string;
+    id: number;
+    owner: {
+      id: number;
+    };
+    startDate: Date;
+    endDate: Date;
+    logLine: string;
+    dayDetails: {
+      startTime: Date;
+      endTime: Date;
+      location: string;
+    }[];
+  }
 
 export default function project ({ params }: any) { 
     const [id, setId] = useState(parseInt(params.id))
     const {projects, setProjects } = useGlobalContext();
     const [projectLoading, setProjectLoading] = useState(true)
-    const [thisProject, setThisProject] = useState({})
+    const [thisProject, setThisProject] = useState<Project | null>(null);
       
       
 
