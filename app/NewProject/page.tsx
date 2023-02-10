@@ -1,6 +1,6 @@
 import { Inter } from '@next/font/google'
 import Link from 'next/link'
-import FormProject from '../Form'
+import NewProjectForm from '../Components/NewProjectForm'
 
 
 export default function NewProject() {
@@ -10,7 +10,7 @@ export default function NewProject() {
   return (
    <main className='py-4 px-4'>
     <Link href="/" className={infoButtonStyles}>Back</Link>
-    <FormProject/>
+    <NewProjectForm/>
    </main>
   )
 }
