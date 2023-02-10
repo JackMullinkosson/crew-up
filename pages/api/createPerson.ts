@@ -14,7 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 name: name,
                 email: email,
                 phoneNumber: phoneNumber,
-                roleName: roleName
+                role: {
+                    connect:{
+                        name: roleName
+                    }
+                }
             }
         })
         console.log(person)
