@@ -1,4 +1,4 @@
-generator client {
+generator cprsent {
   provider = "prisma-client-js"
 }
 
@@ -8,23 +8,22 @@ datasource db {
 }
 
 model User {
-  name         String
-  email        String        @unique
-  id           Int           @id @default(autoincrement())
-  defaultLists DefaultList[]
-  projects     Project[]
+  name     String
+  email    String    @unique
+  id       Int       @id @default(autoincrement())
+  projects Project[]
 }
 
 model Project {
-  name       String
-  ownerId    Int
-  id         Int      @id @default(autoincrement())
-  endDate    DateTime @default(dbgenerated("'0001-01-01 00:00:00'::timestamp without time zone"))
-  logLine    String
-  startDate  DateTime @default(dbgenerated("'0001-01-01 00:00:00'::timestamp without time zone"))
-  dayDetails Day[]
-  owner      User     @relation(fields: [ownerId], references: [id])
-  roles      Role[]
+  name         String
+  ownerId      Int
+  id           Int           @id @default(autoincrement())
+  endDate      DateTime      @default(dbgenerated("'0001-01-01 00:00:00'::timestamp without time zone"))
+  logLine      String
+  startDate    DateTime      @default(dbgenerated("'0001-01-01 00:00:00'::timestamp without time zone"))
+  dayDetails   Day[]
+  owner        User          @relation(fields: [ownerId], references: [id])
+  projectRoles ProjectRole[]
 }
 
 model Day {
@@ -36,31 +35,33 @@ model Day {
   project   Project  @relation(fields: [projectId], references: [id])
 }
 
-model Role {
-  name         String
-  id           Int           @id @default(autoincrement())
-  projectId    Int
-  defaultLists DefaultList[]
-  people       Person[]
-  project      Project       @relation(fields: [projectId], references: [id])
-}
-
 model Person {
-  name         String
-  order        Int
-  id           Int           @id @default(autoincrement())
-  roleId       Int
-  defaultLists DefaultList[]
-  role         Role          @relation(fields: [roleId], references: [id])
+  name        String
+  order       Int    @default(autoincrement())
+  id          Int    @id @default(autoincrement())
+  email       String @unique
+  phoneNumber String
+  roleName    String
+  role        Role   @relation(fields: [roleName], references: [name])
 }
 
-model DefaultList {
-  userId   Int
-  order    Int
-  id       Int    @id @default(autoincrement())
-  roleId   Int
-  personId Int
-  person   Person @relation(fields: [personId], references: [id])
-  role     Role   @relation(fields: [roleId], references: [id])
-  user     User   @relation(fields: [userId], references: [id])
+model GoTos {
+  id    Int    @id @default(autoincrement())
+  roles Role[]
+}
+
+model Role {
+  name         String        @unique
+  id           Int           @id @default(autoincrement())
+  people       Person[]
+  projectRoles ProjectRole[]
+  goTos        GoTos[]
+}
+
+model ProjectRole {
+  id        Int     @id @default(autoincrement())
+  roleName  String
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
+  role      Role    @relation(fields: [roleName], references: [name])
 }
