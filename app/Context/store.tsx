@@ -17,21 +17,39 @@ interface Project {
   }[];
 }
 
+interface Role {
+  name: String;
+  id: Number;
+  people: {
+    name: String;
+    order: Number;
+    id: Number;
+    email: String;
+    phoneNumber: String;
+  }[]  
+}
+
+
 interface ContextProps {
     projects: Project[];
     setProjects: Dispatch<SetStateAction<Project[]>>;
+    roles: Role[];
+    setRoles: Dispatch<SetStateAction<Role[]>>;
   }
   
 const GlobalContext = createContext<ContextProps>({
     projects: [],
-    setProjects: () => {}
+    setProjects: () => {},
+    roles: [],
+    setRoles: () => {}
 });
   
 export const GlobalContextProvider = ({ children }) => {
     const [projects, setProjects] = useState<Project[]>([]);
+    const [roles, setRoles] = useState<Role[]>([]);
       
     return (
-        <GlobalContext.Provider value={{ projects, setProjects }}>
+        <GlobalContext.Provider value={{ projects, setProjects, roles, setRoles }}>
             {children}
         </GlobalContext.Provider>
     );
