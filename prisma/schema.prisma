@@ -37,7 +37,7 @@ model Day {
 
 model Person {
   name        String
-  order       Int    @default(autoincrement())
+  order       Int   
   id          Int    @id @default(autoincrement())
   email       String @unique
   phoneNumber String

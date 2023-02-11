@@ -7,13 +7,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if(req.method !== "POST") {
         return res.status(405).json({ error: 'Method Not Allowed' });
         }
-        const {name, email, phoneNumber, roleName} = req.body;
+        const {name, email, phoneNumber, roleName, order} = req.body;
         
         const person = await prisma.person.create({
             data: {
                 name: name,
                 email: email,
                 phoneNumber: phoneNumber,
+                order: order,
                 role: {
                     connect:{
                         name: roleName
