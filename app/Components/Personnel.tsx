@@ -21,19 +21,31 @@ const Personnel: React.FC<Props> = ({ role, people }) => {
     const { roles, setRoles } = useGlobalContext();
     const [roleName, setRoleName] = useState(role)
     const [isCreatingUser, setIsCreatingUser] = useState(false)
-    const [isEditingUser, setIsEditingUser] = useState(false)
     const [isViewingRole, setIsViewingRole] = useState(false)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
+    const [order, setOrder] = useState<Number>()
+    const [editeeId, setEditeeId] = useState<Number>()
     const successButtonStyles = "mx-4 mt-4 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded my-2"
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
     
+
     function handleRoleClick (){
         if(isViewingRole)
         setIsViewingRole(false)
         else setIsViewingRole(true)
+    }
+
+    function handleEditUser(id){
+        const personIndex = people.findIndex(i => i.id === id)
+        const currentEditee = people[personIndex]
+        setEditeeId(Number(currentEditee.id))
+        setName(String(currentEditee.name))
+        setEmail(String(currentEditee.email))
+        setPhoneNumber(String(currentEditee.phoneNumber))
+        setOrder(Number(currentEditee.order))
     }
 
     async function createPerson (){
@@ -96,6 +108,43 @@ const Personnel: React.FC<Props> = ({ role, people }) => {
         }
     }
 
+    async function editPerson(id){
+        const editedPerson = {
+            name: name,
+            email: email,
+            order: order,
+            id: id,
+            phoneNumber: phoneNumber,
+            roleName: roleName
+        }
+        const roleIndex = roles.findIndex(i => i.name === role);
+        const personIndex = people.findIndex(i => i.id === id)
+        const newRoles = [...roles]
+        newRoles[roleIndex].people = [...newRoles[roleIndex].people.slice(0, personIndex), editedPerson, ...newRoles[roleIndex].people.slice(personIndex + 1)];
+        setRoles(newRoles);
+        setEditeeId(null)
+        try{
+            await fetch(`api/editPerson`,{
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: id,
+                    name: name,
+                    email: email,
+                    phoneNumber: phoneNumber,
+                    roleName: roleName,
+                    order: order
+                })
+
+            })
+        }
+        catch(e){
+            console.error(e)
+        }
+    }
+
 
 
 return (
@@ -134,7 +183,7 @@ return (
                 </td>
             </tr> : null}
             {people.map((person)=>{
-                return <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                return <>{editeeId !== person.id ? <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                     <label>{String(person.order)}</label>
                     <div className="pl-3">
@@ -144,11 +193,23 @@ return (
                 <td className="px-6 py-4">{person.email}</td>
                 <td className="px-6 py-4">{person.phoneNumber}</td>
                 <td className="px-6 py-4 flex items-center">
-                    <button onClick={()=>setIsEditingUser(true)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
+                    <button onClick={()=>handleEditUser(person.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
                     <TrashIcon onClick={()=>deletePerson(person.id)} className='h-4 w-4 mx-3 hover:cursor-pointer text-red-500'/>
                 </td>
             </tr>
-            })}
+            : <tr className="bg-white border-b border-t dark:bg-gray-800 dark:border-gray-700">
+            <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+            <label>{String(person.order)}</label>
+                <div className="pl-3">
+                    <input className={inputStyles} value={name} onChange={(e)=>setName(e.target.value)} placeholder="Name"/>
+                </div>  
+            </th>
+            <td className="px-6 py-4"><input className={inputStyles} value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email"/></td>
+            <td className="px-6 py-4"><input className={inputStyles} value={phoneNumber} onChange={(e)=>setPhoneNumber(e.target.value)} placeholder="Phone Number"/></td>
+            <td className="px-6 py-4">
+                <button type="button" onClick={()=>editPerson(person.id)} className={infoButtonStyles}>Save</button>
+            </td>
+        </tr> }</>})}
             </tbody>
             </table>
             </div>
