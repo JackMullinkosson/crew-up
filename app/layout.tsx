@@ -1,6 +1,7 @@
 import './globals.css'
 import React from "react";
 import { GlobalContextProvider } from './Context/store';
+import Navbar from './navbar';
 
 export default function RootLayout({
   children,
@@ -15,6 +16,7 @@ export default function RootLayout({
       */}
       <head />
       <body>
+        <Navbar/>
         <GlobalContextProvider>
           {children}
         </GlobalContextProvider>
