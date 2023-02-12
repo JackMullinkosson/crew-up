@@ -7,6 +7,7 @@ import moment from 'moment';
 
 export default function Home() {
   const [projectsLoading, setProjectsLoading] = useState(true);
+  const [goTosLoading, setGoTosLoading] = useState(true)
   const [isNaming, setIsNaming] = useState(false)
   const [name, setName] = useState('')
   const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
@@ -17,7 +18,7 @@ export default function Home() {
   const rowStyles = "space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0 mb-6 lg:mb-12"
   const newBoxStyles = "flex flex-row justify-center items-center center-text border-dashed border-black-500 border-4 py-8 pl-4 rounded hover:cursor-pointer hover:bg-gray-100"
   const infoButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1/2 px-2 rounded"
-  const { projects, setProjects } = useGlobalContext();
+  const { projects, setProjects, goTos, setGoTos } = useGlobalContext();
   const router = useRouter()
 
   async function getProjects(){
@@ -38,6 +39,8 @@ export default function Home() {
 
   useEffect(()=>{
     setProjectsLoading(true);
+    setGoTosLoading(true)
+    getGoTos()
     getProjects();
   },[])
 
@@ -63,6 +66,23 @@ export default function Home() {
       console.error(e)
     }
   }
+
+  async function getGoTos(){
+    try {
+      const res = await fetch(`/api/getGoTos`, {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      });
+      setGoTos(await res.json())
+  } catch (error) {
+      console.error(error);
+  } finally {
+      setGoTosLoading(false);
+  }
+}
+
  
   return (
     <main>
@@ -90,10 +110,12 @@ export default function Home() {
           <h2 className="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Go-To Lists</h2>
       </div>
       <div className={rowStyles}>
-        <div onClick={()=>router.push(`/GoTos`)} className={newBoxStyles}>
-                <h3 className="text-xl font-bold dark:text-white mr-4">Cine Team</h3>
-                <LightBulbIcon className='h-6 w-6'/>
-          </div>
+      {goTosLoading ? <div>Loading...</div> : goTos.map((list)=>{
+        return <div key={Number(list.id)} onClick={()=>router.push(`/GoTos/${list.id}`)} className={newBoxStyles}>
+        <h3 className="text-xl font-bold dark:text-white mr-4">{list.name}</h3>
+        <LightBulbIcon className='h-6 w-6'/>
+  </div>
+      })}
         <div className={newBoxStyles} onClick={()=>setIsNaming(true)}>
           {isNaming ? <input className='w-1/2 text-xl font-bold dark:text-white mr-4 leading-tight focus:outline-none focus:bg-white' value={name} onChange={(e)=>setName(e.target.value)} placeholder="List Name"></input>
           : <h3 className="text-xl font-bold dark:text-white mr-4">New Go-To List</h3>}
