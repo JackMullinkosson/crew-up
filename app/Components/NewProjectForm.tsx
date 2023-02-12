@@ -25,7 +25,7 @@ const NewProjectForm = () => {
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
     const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
-    const availableTimes = 
+
 
     useEffect(()=>{
         const days = calculateDays(startDate, endDate)
