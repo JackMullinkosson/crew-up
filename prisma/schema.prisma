@@ -48,15 +48,16 @@ model Person {
 model GoTos {
   id    Int    @id @default(autoincrement())
   name  String
-  roles Role[] @relation("GoTosToRole")
+  roles Role[]
 }
 
 model Role {
   name         String        @unique
   id           Int           @id @default(autoincrement())
+  goToId       Int
   people       Person[]
   projectRoles ProjectRole[]
-  goTos        GoTos[]       @relation("GoTosToRole")
+  goTos        GoTos         @relation(fields: [goToId], references: [id])
 }
 
 model ProjectRole {
