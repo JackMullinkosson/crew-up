@@ -44,28 +44,6 @@ export default function Home() {
     getProjects();
   },[])
 
-  async function postGoTo(){
-    setIsNaming(false)
-    try{
-      const res = await fetch(`/api/postGoTo`,{
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: name
-      })
-      })
-      if (res.status !== 200) {
-        console.log('error making new go to list')
-      } else {
-        console.log(await res.json());
-      }
-    }
-    catch(e){
-      console.error(e)
-    }
-  }
 
   async function getGoTos(){
     try {
@@ -116,10 +94,9 @@ export default function Home() {
         <LightBulbIcon className='h-6 w-6'/>
   </div>
       })}
-        <div className={newBoxStyles} onClick={()=>setIsNaming(true)}>
-          {isNaming ? <input className='w-1/2 text-xl font-bold dark:text-white mr-4 leading-tight focus:outline-none focus:bg-white' value={name} onChange={(e)=>setName(e.target.value)} placeholder="List Name"></input>
-          : <h3 className="text-xl font-bold dark:text-white mr-4">New Go-To List</h3>}
-          {isNaming ? <button className={infoButtonStyles} onClick={()=>postGoTo()}>Create</button> : <PlusIcon className='h-6 w-6'/>}
+        <div className={newBoxStyles} onClick={()=>router.push('/NewGoTo')}>
+          <h3 className="text-xl font-bold dark:text-white mr-4">New Go-To List</h3>
+          <PlusIcon className='h-6 w-6'/>
         </div>
       </div>
   </div>

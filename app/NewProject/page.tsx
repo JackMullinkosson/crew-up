@@ -9,7 +9,6 @@ export default function NewProject() {
 
   return (
    <main className='py-4 px-4'>
-    <Link href="/" className={infoButtonStyles}>Back</Link>
     <NewProjectForm/>
    </main>
   )

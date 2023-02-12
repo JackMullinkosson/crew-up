@@ -6,7 +6,6 @@ import Personnel from '../../Components/Personnel';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid'
 
 export default function goTo ({ params }: any) {
-    // const defaultRoles = ['Gaffer', 'BBE', 'Electric', 'Key Grip', 'BBG', 'Grip', 'Camera Operator', 'First AC', 'Second AC', 'Camera Utility' ]
     const [id, setId] = useState(parseInt(params.id))
     const { roles, setRoles } = useGlobalContext();
     const [rolesLoading, setRolesLoading] = useState(true)
@@ -38,7 +37,7 @@ console.log(roles)
 
     return (
         <>
-        <div className='flex justify-center px-16 flex-col py-8'>
+        <div className='flex justify-center px-16 flex-col py-12 lg:py-16'>
         <h1 className='text-2xl py-4'>My Go-To's</h1>
         {rolesLoading ? <div>Loading..</div> : <div>{roles.map((role)=>{
             return <Personnel role={role.name} people={role.people}/>
