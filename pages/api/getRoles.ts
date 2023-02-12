@@ -7,8 +7,10 @@ export default async function handler(
   res: NextApiResponse
 ) {
     try{
-        const goTos = await prisma.goTos.findMany();
-        return res.status(200).json(goTos)
+        const roles = await prisma.role.findMany({
+            include: { people: true },
+        });
+        return res.status(200).json(roles)
     } catch (error) {
       return res.status(500).json(error)
     }

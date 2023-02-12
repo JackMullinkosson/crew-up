@@ -1,23 +1,24 @@
 "use client";
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import { useGlobalContext } from '.././Context/store';
-import Personnel from '../Components/Personnel';
+import { useGlobalContext } from '../../Context/store';
+import Personnel from '../../Components/Personnel';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid'
 
-export default function GoTos() {
+export default function goTo ({ params }: any) {
     // const defaultRoles = ['Gaffer', 'BBE', 'Electric', 'Key Grip', 'BBG', 'Grip', 'Camera Operator', 'First AC', 'Second AC', 'Camera Utility' ]
+    const [id, setId] = useState(parseInt(params.id))
     const { roles, setRoles } = useGlobalContext();
     const [rolesLoading, setRolesLoading] = useState(true)
 
     useEffect(()=>{
         setRolesLoading(true)
-        getGoTos()
+        getRoles()
     },[])
 
-    async function getGoTos (){
+    async function getRoles (){
         try {
-            const res = await fetch(`/api/getGoTos`,{
+            const res = await fetch(`/api/getRoles`,{
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json",
@@ -33,7 +34,7 @@ export default function GoTos() {
         }
     }
 
-
+console.log(roles)
 
     return (
         <>
