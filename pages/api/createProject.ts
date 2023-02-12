@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!projectName || projectName.length === 0) {
         return res.status(400).json({ message: 'Project name is required' });
       }
-
+      
       const existingProject = await prisma.project.findFirst({
         where: {
           name: projectName

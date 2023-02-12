@@ -37,7 +37,7 @@ model Day {
 
 model Person {
   name        String
-  order       Int   
+  order       Int
   id          Int    @id @default(autoincrement())
   email       String @unique
   phoneNumber String
@@ -47,7 +47,8 @@ model Person {
 
 model GoTos {
   id    Int    @id @default(autoincrement())
-  roles Role[]
+  name  String
+  roles Role[] @relation("GoTosToRole")
 }
 
 model Role {
@@ -55,7 +56,7 @@ model Role {
   id           Int           @id @default(autoincrement())
   people       Person[]
   projectRoles ProjectRole[]
-  goTos        GoTos[]
+  goTos        GoTos[]       @relation("GoTosToRole")
 }
 
 model ProjectRole {
