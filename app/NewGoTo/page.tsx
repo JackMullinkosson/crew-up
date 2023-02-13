@@ -16,18 +16,22 @@ const NewGoTo = () => {
     const [listName, setListName] = useState("")
     const [defaultRoles, setDefaultRoles] = useState([])
     const [postRequestNotReady, setPostRequestNotReady] = useState(false)
+    const [people, setPeople] = useState<Array<{ name: string, order: number, id: number | undefined, email: string, phoneNumber: string }>>([
+      { name: '', order: 0, id: undefined, email: '', phoneNumber: '' },
+  ]);
 
-
-    async function submitList(){
+    async function submitList(e: React.FormEvent){
+      e.preventDefault();
         try{
-          const res = await fetch(`/api/postGoTo`,{
+          const res = await fetch(`/api/createGoTo`,{
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
               name: listName,
-              roles: defaultRoles
+              roles: defaultRoles,
+              people: people
           })
           })
           if (res.status !== 200) {
@@ -92,7 +96,7 @@ const NewGoTo = () => {
                  </div>
             </div>
             <div className='w-full py-2'>
-            <button onClick={()=>submitList()} className={successButtonStyles} disabled={postRequestNotReady ? true : false}>Create Go-To List</button>
+            <button type="submit" className={successButtonStyles} disabled={postRequestNotReady ? true : false}>Create Go-To List</button>
             </div>
         </form>
         </>
