@@ -4,11 +4,10 @@ import prisma from '../../prisma/client'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try{
-        const { name } = req.body;
+        const { name, roles } = req.body;
         if (!name || name.length === 0) {
-            return res.status(400).json({ message: 'Project name is required' });
+            return res.status(400).json({ message: 'List name is required' });
           }
-          
           const existingList = await prisma.goTos.findFirst({
             where: {
               name: name
@@ -16,11 +15,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           });
     
           if (existingList) {
-            return res.status(409).json({ message: 'Project already exists' });
+            return res.status(409).json({ message: 'List already exists' });
           }
         const goTo = await prisma.goTos.create({
             data: {
-                name: name
+                name: name,
+                roles: {
+                  create: roles.map((role: { name: String, endTime: Date, location: String }) => ({
+                    name: role
+                  }))
+                }
             }
         })
         return res.status(200).json({ goTo });
