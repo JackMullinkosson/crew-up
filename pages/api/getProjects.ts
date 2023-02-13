@@ -8,7 +8,7 @@ export default async function handler(
 ) {
   try {
     const data = await prisma.project.findMany({
-      include: { dayDetails: true },
+      include:{dayDetails: true} 
     });
     return res.status(200).json(data)
   } catch (error) {

@@ -7,39 +7,41 @@ import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid'
 
 export default function goTo ({ params }: any) {
     const [id, setId] = useState(parseInt(params.id))
-    const { roles, setRoles } = useGlobalContext();
-    const [rolesLoading, setRolesLoading] = useState(true)
+    const { goTos, setGoTos } = useGlobalContext();
+    const [goTosLoading, setGoTosLoading] = useState(true)
+    const thisGoTo = goTos.find((i)=>i.id===id)
+
+    console.log(goTos)
 
     useEffect(()=>{
-        setRolesLoading(true)
-        getRoles()
+        if(goTos.length>1)
+        setGoTosLoading(true)
+        console.log('recalled api')
+        getGoTos()
     },[])
 
-    async function getRoles (){
-        try {
-            const res = await fetch(`/api/getRoles`,{
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-            })
-            setRoles(await res.json())
-        }
-        catch(e){
-            console.error(e)
-        }
-        finally{
-            setRolesLoading(false)
-        }
-    }
 
-console.log(roles)
+    async function getGoTos(){
+      try {
+        const res = await fetch(`/api/getGoTos`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        });
+        setGoTos(await res.json())
+    } catch (error) {
+        console.error(error);
+    } finally {
+        setGoTosLoading(false);
+    }
+  }
 
     return (
         <>
         <div className='flex justify-center px-16 flex-col py-12 lg:py-16'>
         <h1 className='text-2xl py-4'>My Go-To's</h1>
-        {rolesLoading ? <div>Loading..</div> : <div>{roles.map((role)=>{
+        {goTosLoading ? <div>Loading..</div> : <div>{thisGoTo.roles.map((role)=>{
             return <Personnel role={role.name} people={role.people}/>
         })}</div>}
     </div>
