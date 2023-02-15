@@ -13,6 +13,7 @@ export default function goTo ({ params }: any) {
     const [tempId, setTempId] = useState()
 
     useEffect(()=>{
+    console.log('this was called')
      getTempId()
     },[goTos])
   
@@ -55,7 +56,7 @@ function getTempId(){
   setTempId(arrOfIds[0])
 }
 
-   
+   console.log(thisGoTo)
 
 
     return (
