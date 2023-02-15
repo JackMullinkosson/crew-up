@@ -9,6 +9,7 @@ interface Props {
     role: String;
     roleId: Number;
     goToId: Number;
+    tempId: number;
     people: {
         name: String;
         order: Number;
@@ -19,7 +20,7 @@ interface Props {
   }
   
 
-const Personnel: React.FC<Props> = ({ role, people, goToId, roleId }) => {
+const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) => {
     const { goTos, setGoTos } = useGlobalContext();
     const [isCreatingUser, setIsCreatingUser] = useState(false)
     const [isViewingRole, setIsViewingRole] = useState(false)
@@ -31,7 +32,7 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId }) => {
     const successButtonStyles = "mx-4 mt-4 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded my-2"
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
-    
+
     function handleRoleClick (){
         if(isViewingRole)
         setIsViewingRole(false)
@@ -39,6 +40,7 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId }) => {
     }
 
     function handleEditUser(id){
+        console.log('the id', id)
         const personIndex = people.findIndex(i => i.id === id)
         const currentEditee = people[personIndex]
         setEditeeId(Number(currentEditee.id))
@@ -51,11 +53,12 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId }) => {
     async function createPerson (){
         setIsCreatingUser(false)
         setEditeeId(null)
+        const newTempId = tempId+1
         const newPerson = {
             name: name,
             email: email,
             order: people.length+1,
-            id: undefined,
+            id: newTempId,
             phoneNumber: phoneNumber,
             roleId: roleId
         }
@@ -91,7 +94,7 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId }) => {
     }
 
     async function deletePerson(id){
-        const goTosIndex = goTos.findIndex(i => i.id === id);
+        const goTosIndex = goTos.findIndex(i => i.id === goToId);
         const roleIndex = goTos[goTosIndex].roles.findIndex(i => i.name === role);
         const updatedGoTos = [...goTos]
         updatedGoTos[goTosIndex].roles[roleIndex].people = [...updatedGoTos[goTosIndex].roles[roleIndex].people.filter(i=> i.id !== id)];
@@ -113,6 +116,7 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId }) => {
     }
 
     async function editPerson(id){
+        console.log('the id', id)
         const editedPerson = {
             name: name,
             email: email,
@@ -121,7 +125,7 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId }) => {
             phoneNumber: phoneNumber,
             roleId: roleId
         }
-        const goTosIndex = goTos.findIndex(i => i.id === id);
+        const goTosIndex = goTos.findIndex(i => i.id === goToId);
         const roleIndex = goTos[goTosIndex].roles.findIndex(i => i.name === role);
         const personIndex = people.findIndex(i => i.id === id)
         const updatedGoTos = [...goTos]
@@ -129,7 +133,7 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId }) => {
         setGoTos(updatedGoTos);
         setEditeeId(null)
         try{
-            await fetch(`api/editPerson`,{
+            const res = await fetch(`/api/editPerson`,{
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -147,6 +151,12 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId }) => {
         }
         catch(e){
             console.error(e)
+        }
+        finally{
+            setName('')
+            setEmail('')
+            setPhoneNumber('')
+            setOrder(Number)  
         }
     }
 

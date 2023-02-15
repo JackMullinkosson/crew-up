@@ -5,7 +5,7 @@ import prisma from '../../prisma/client'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try{
         const {name, email, phoneNumber, roleName, order, id} = req.body
-        await prisma.person.update({
+        const res = await prisma.person.update({
             where: {
                 id: id
             },
