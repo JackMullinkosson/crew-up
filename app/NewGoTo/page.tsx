@@ -95,7 +95,7 @@ const NewGoTo = () => {
                  </div>
             </div>
             <div className='w-full py-2'>
-            <button type="submit" className={successButtonStyles} disabled={postRequestNotReady ? true : false}>Create Go-To List</button>
+            <button type="submit" className={successButtonStyles} disabled={postRequestNotReady}>Create Go-To List</button>
             </div>
         </form>
         </>

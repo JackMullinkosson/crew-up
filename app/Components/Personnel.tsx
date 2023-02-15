@@ -23,15 +23,39 @@ interface Props {
 const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) => {
     const { goTos, setGoTos } = useGlobalContext();
     const [isCreatingUser, setIsCreatingUser] = useState(false)
+    const [isEditingUser, setIsEditingUser] = useState(false)
     const [isViewingRole, setIsViewingRole] = useState(false)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [order, setOrder] = useState<Number>()
     const [editeeId, setEditeeId] = useState<Number>()
-    const successButtonStyles = "mx-4 mt-4 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded my-2"
+    const [noAdding, setNoAdding] = useState(false)
+    const [noEditing, setNoEditing] = useState(false)
+    const successButtonStyles = "mx-4 mt-4 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded my-2 disabled:cursor-not-allowed"
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
+
+
+    useEffect(()=>{
+        setName('')
+        setEmail('')
+        setPhoneNumber('')
+        setOrder(Number)     
+    },[goTos])
+
+    useEffect(()=>{
+        if (isCreatingUser){
+        setNoEditing(true)
+        return
+        }
+        if(isEditingUser){
+        setNoAdding(true)
+        return
+        }
+        setNoAdding(false)
+        setNoEditing(false)
+    },[isCreatingUser, isEditingUser])
 
     function handleRoleClick (){
         if(isViewingRole)
@@ -41,6 +65,7 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
 
     function handleEditUser(id){
         console.log('the id', id)
+        setIsEditingUser(true)
         const personIndex = people.findIndex(i => i.id === id)
         const currentEditee = people[personIndex]
         setEditeeId(Number(currentEditee.id))
@@ -83,9 +108,6 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
                     order: people.length+1,
                 }),
               });
-              if (res.status !== 200) {
-                console.log(await res.json())
-              } 
         }
         catch(e){
             console.error(e)
@@ -123,6 +145,7 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
 
     async function editPerson(id){
         console.log('the id', id)
+        setIsEditingUser(false)
         const editedPerson = {
             name: name,
             email: email,
@@ -158,12 +181,6 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
         catch(e){
             console.error(e)
         }
-        finally{
-            setName('')
-            setEmail('')
-            setPhoneNumber('')
-            setOrder(Number)  
-        }
     }
 
 
@@ -186,7 +203,7 @@ return (
             </tr>
         </thead>
         <tbody>
-            <tr className='bg-white dark:bg-gray-800 dark:border-gray-700'><td><button className={successButtonStyles} onClick={()=>setIsCreatingUser(true)}><PlusIcon className='h-6 w-6'/>Add Go-To {role}</button></td>
+            <tr className='bg-white dark:bg-gray-800 dark:border-gray-700'><td><button  type="submit" className={successButtonStyles} onClick={()=>setIsCreatingUser(true)} disabled={noAdding}><PlusIcon className='h-6 w-6'/>Add Go-To {role}</button></td>
             <td></td>
             <td></td>
             <td></td>
@@ -214,7 +231,7 @@ return (
                 <td className="px-6 py-4">{person.email}</td>
                 <td className="px-6 py-4">{person.phoneNumber}</td>
                 <td className="px-6 py-4 flex items-center">
-                    <button onClick={()=>handleEditUser(person.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
+                    <button onClick={()=>handleEditUser(person.id)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline disabled:cursor-not-allowed" disabled={noEditing}>Edit</button>
                     <TrashIcon onClick={()=>deletePerson(person.id)} className='h-4 w-4 mx-3 hover:cursor-pointer text-red-500'/>
                 </td>
             </tr>
