@@ -37,12 +37,14 @@ export default function goTo ({ params }: any) {
     }
   }
 
+  console.log(goTos)
+
     return (
         <>
         <div className='flex justify-center px-16 flex-col py-12 lg:py-16'>
         <h1 className='text-2xl py-4'>My Go-To's</h1>
         {goTosLoading ? <div>Loading..</div> : <div>{thisGoTo.roles.map((role)=>{
-            return <Personnel role={role.name} people={role.people}/>
+            return <Personnel goToId={id} role={role.name} people={role.people} roleId={role.id}/>
         })}</div>}
     </div>
     </>

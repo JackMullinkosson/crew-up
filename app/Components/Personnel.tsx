@@ -7,6 +7,8 @@ import { useGlobalContext } from '../Context/store';
 
 interface Props {
     role: String;
+    roleId: Number;
+    goToId: Number;
     people: {
         name: String;
         order: Number;
@@ -17,9 +19,8 @@ interface Props {
   }
   
 
-const Personnel: React.FC<Props> = ({ role, people }) => {
-    const { roles, setRoles } = useGlobalContext();
-    const [roleName, setRoleName] = useState(role)
+const Personnel: React.FC<Props> = ({ role, people, goToId, roleId }) => {
+    const { goTos, setGoTos } = useGlobalContext();
     const [isCreatingUser, setIsCreatingUser] = useState(false)
     const [isViewingRole, setIsViewingRole] = useState(false)
     const [name, setName] = useState('')
@@ -31,7 +32,6 @@ const Personnel: React.FC<Props> = ({ role, people }) => {
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
     
-
     function handleRoleClick (){
         if(isViewingRole)
         setIsViewingRole(false)
@@ -49,19 +49,21 @@ const Personnel: React.FC<Props> = ({ role, people }) => {
     }
 
     async function createPerson (){
+        setIsCreatingUser(false)
+        setEditeeId(null)
         const newPerson = {
             name: name,
             email: email,
             order: people.length+1,
             id: undefined,
             phoneNumber: phoneNumber,
-            roleName: roleName
+            roleId: roleId
         }
-        const roleIndex = roles.findIndex(i => i.name === role);
-        const newRoles = [...roles]
-        newRoles[roleIndex].people = [...newRoles[roleIndex].people, newPerson];
-        setRoles(newRoles);
-        setIsCreatingUser(false)
+        const goTosIndex = goTos.findIndex(i => i.id === goToId);
+        const roleIndex = goTos[goTosIndex].roles.findIndex(i => i.name === role);
+        const updatedGoTos = [...goTos];
+        updatedGoTos[goTosIndex].roles[roleIndex].people = [  ...updatedGoTos[goTosIndex].roles[roleIndex].people, newPerson];
+        setGoTos(updatedGoTos);
         try{
             const res = await fetch(`/api/createPerson`,{
                 method: "POST",
@@ -71,8 +73,9 @@ const Personnel: React.FC<Props> = ({ role, people }) => {
                 body: JSON.stringify({
                     name: name,
                     email: email,
+                    id: undefined,
                     phoneNumber: phoneNumber,
-                    roleName: roleName,
+                    roleId: roleId,
                     order: people.length+1,
                 }),
               });
@@ -88,10 +91,11 @@ const Personnel: React.FC<Props> = ({ role, people }) => {
     }
 
     async function deletePerson(id){
-        const roleIndex = roles.findIndex(i => i.name === role);
-        const newRoles = [...roles]
-        newRoles[roleIndex].people = [...newRoles[roleIndex].people.filter(i=> i.id !== id)];
-        setRoles(newRoles);
+        const goTosIndex = goTos.findIndex(i => i.id === id);
+        const roleIndex = goTos[goTosIndex].roles.findIndex(i => i.name === role);
+        const updatedGoTos = [...goTos]
+        updatedGoTos[goTosIndex].roles[roleIndex].people = [...updatedGoTos[goTosIndex].roles[roleIndex].people.filter(i=> i.id !== id)];
+        setGoTos(updatedGoTos);
         try{
             await fetch(`/api/deletePerson`,{
                 method: "DELETE",
@@ -115,13 +119,14 @@ const Personnel: React.FC<Props> = ({ role, people }) => {
             order: order,
             id: id,
             phoneNumber: phoneNumber,
-            roleName: roleName
+            roleId: roleId
         }
-        const roleIndex = roles.findIndex(i => i.name === role);
+        const goTosIndex = goTos.findIndex(i => i.id === id);
+        const roleIndex = goTos[goTosIndex].roles.findIndex(i => i.name === role);
         const personIndex = people.findIndex(i => i.id === id)
-        const newRoles = [...roles]
-        newRoles[roleIndex].people = [...newRoles[roleIndex].people.slice(0, personIndex), editedPerson, ...newRoles[roleIndex].people.slice(personIndex + 1)];
-        setRoles(newRoles);
+        const updatedGoTos = [...goTos]
+        updatedGoTos[goTosIndex].roles[roleIndex].people = [...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(0, personIndex), editedPerson, ...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(personIndex + 1)];
+        setGoTos(updatedGoTos);
         setEditeeId(null)
         try{
             await fetch(`api/editPerson`,{
@@ -134,7 +139,7 @@ const Personnel: React.FC<Props> = ({ role, people }) => {
                     name: name,
                     email: email,
                     phoneNumber: phoneNumber,
-                    roleName: roleName,
+                    roleId: roleId,
                     order: order
                 })
 
@@ -165,7 +170,7 @@ return (
             </tr>
         </thead>
         <tbody>
-            <tr className='bg-white dark:bg-gray-800 dark:border-gray-700'><button className={successButtonStyles} onClick={()=>setIsCreatingUser(true)}><PlusIcon className='h-6 w-6'/>Add Go-To {role}</button>
+            <tr className='bg-white dark:bg-gray-800 dark:border-gray-700'><td><button className={successButtonStyles} onClick={()=>setIsCreatingUser(true)}><PlusIcon className='h-6 w-6'/>Add Go-To {role}</button></td>
             <td></td>
             <td></td>
             <td></td>
