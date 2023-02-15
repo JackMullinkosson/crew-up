@@ -54,6 +54,7 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
         setIsCreatingUser(false)
         setEditeeId(null)
         const newTempId = tempId+1
+        console.log(newTempId)
         const newPerson = {
             name: name,
             email: email,
@@ -67,8 +68,9 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
         const updatedGoTos = [...goTos];
         updatedGoTos[goTosIndex].roles[roleIndex].people = [  ...updatedGoTos[goTosIndex].roles[roleIndex].people, newPerson];
         setGoTos(updatedGoTos);
+        let res;
         try{
-            const res = await fetch(`/api/createPerson`,{
+             res = await fetch(`/api/createPerson`,{
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -76,7 +78,6 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
                 body: JSON.stringify({
                     name: name,
                     email: email,
-                    id: undefined,
                     phoneNumber: phoneNumber,
                     roleId: roleId,
                     order: people.length+1,
@@ -84,12 +85,17 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
               });
               if (res.status !== 200) {
                 console.log(await res.json())
-              } else {
-                console.log(await res.json());
-              }
+              } 
         }
         catch(e){
             console.error(e)
+        }
+        finally{
+            const resPerson = await res.json();
+            const resGoTos = [...goTos];
+            const lastPersonIndex = resGoTos[goTosIndex].roles[roleIndex].people.length - 1;
+            resGoTos[goTosIndex].roles[roleIndex].people[lastPersonIndex] = resPerson;
+            setGoTos(resGoTos);
         }
     }
 
