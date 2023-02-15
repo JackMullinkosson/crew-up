@@ -30,8 +30,7 @@ const NewGoTo = () => {
             },
             body: JSON.stringify({
               name: listName,
-              roles: defaultRoles,
-              people: people
+              roles: defaultRoles
           })
           })
           if (res.status !== 200) {
