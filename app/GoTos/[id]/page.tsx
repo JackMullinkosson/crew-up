@@ -53,10 +53,11 @@ function getTempId(){
     }
   }
   arrOfIds.sort((a, b)=>b-a)
+  if(arrOfIds.length<1){
+    arrOfIds.push(0)
+  }
   setTempId(arrOfIds[0])
 }
-
-   console.log(thisGoTo)
 
 
     return (

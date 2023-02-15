@@ -64,7 +64,6 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
     }
 
     function handleEditUser(id){
-        console.log('the id', id)
         setIsEditingUser(true)
         const personIndex = people.findIndex(i => i.id === id)
         const currentEditee = people[personIndex]
@@ -79,7 +78,6 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
         setIsCreatingUser(false)
         setEditeeId(null)
         const newTempId = tempId+1
-        console.log(newTempId)
         const newPerson = {
             name: name,
             email: email,
@@ -127,8 +125,9 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
         const updatedGoTos = [...goTos]
         updatedGoTos[goTosIndex].roles[roleIndex].people = [...updatedGoTos[goTosIndex].roles[roleIndex].people.filter(i=> i.id !== id)];
         setGoTos(updatedGoTos);
+        let res;
         try{
-            await fetch(`/api/deletePerson`,{
+             res = await fetch(`/api/deletePerson`,{
                 method: "DELETE",
                 headers: {
                   "Content-Type": "application/json",
@@ -141,10 +140,15 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
         catch(e){
             console.error(e)
         }
+        finally{
+            const deletedPerson = await res.json()
+            const resGoTos = [...goTos]
+            resGoTos[goTosIndex].roles[roleIndex].people = [...resGoTos[goTosIndex].roles[roleIndex].people.filter(i=> i.id !== deletedPerson.id)]
+            setGoTos(resGoTos);
+        }
     }
 
     async function editPerson(id){
-        console.log('the id', id)
         setIsEditingUser(false)
         const editedPerson = {
             name: name,
@@ -161,8 +165,9 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
         updatedGoTos[goTosIndex].roles[roleIndex].people = [...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(0, personIndex), editedPerson, ...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(personIndex + 1)];
         setGoTos(updatedGoTos);
         setEditeeId(null)
+        let res;
         try{
-            const res = await fetch(`/api/editPerson`,{
+             res = await fetch(`/api/editPerson`,{
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -180,6 +185,12 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
         }
         catch(e){
             console.error(e)
+        }
+        finally{
+            const resPerson = await res.json()
+            const resGoTos = [...goTos]
+            resGoTos[goTosIndex].roles[roleIndex].people = [...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(0, personIndex), resPerson, ...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(personIndex + 1)];
+            setGoTos(resGoTos);
         }
     }
 
