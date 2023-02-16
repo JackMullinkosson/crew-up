@@ -23,8 +23,7 @@ export interface Person {
         {name: "Gabi", order: 2, id: 93, email: "2", phoneNumber: "2",roleId: 41},
         {name: "Brinker", order: 3, id: 94, email: "3", phoneNumber: "3", roleId: 41}
     ])
-    const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-    const tdStyles = 'mx-4 flex justify-center items-center flex-col'
+ 
     const boxStyles = "flex flex-col justify-center items-center py-20 mx-20 mt-20"
 
     const movePerson = useCallback((dragIndex: number, hoverIndex: number) => {
