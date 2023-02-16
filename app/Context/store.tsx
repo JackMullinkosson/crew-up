@@ -23,23 +23,17 @@ interface GoTo {
   roles: {
     name: String;
     id: Number;
-    people: {
-      name: String;
-      order: Number;
-      id: Number;
-      email: String;
-      phoneNumber: String;
-    }[]  
+    people: Person[]
   }[]
 }
 
 interface Person {
-  name: String
-  order: Number
-  id: Number
-  email: String
-  phoneNumber: String
-  roleId: Number
+  name: string;
+  order: number;
+  id: number;
+  email: string;
+  phoneNumber: string;
+  roleId: number;
 }
 
 
@@ -48,21 +42,27 @@ interface ContextProps {
     setProjects: Dispatch<SetStateAction<Project[]>>;
     goTos: GoTo[];
     setGoTos: Dispatch<SetStateAction<GoTo[]>>;
+    people: Person[];
+    setPeople: Dispatch<SetStateAction<Person[]>>;
   }
   
 const GlobalContext = createContext<ContextProps>({
     projects: [],
     setProjects: () => {},
     goTos: [],
-    setGoTos: () => {}
+    setGoTos: () => {},
+    people: [],
+    setPeople: () => {}
+
 });
   
 export const GlobalContextProvider = ({ children }) => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [goTos, setGoTos] = useState<GoTo[]>([])
+    const [people, setPeople] = useState<Person[]>([])
       
     return (
-        <GlobalContext.Provider value={{ projects, setProjects, goTos, setGoTos }}>
+        <GlobalContext.Provider value={{ projects, setProjects, goTos, setGoTos, people, setPeople }}>
             {children}
         </GlobalContext.Provider>
     );

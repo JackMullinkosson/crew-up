@@ -6,16 +6,16 @@ import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid'
 import { useGlobalContext } from '../Context/store';
 
 interface Props {
-    role: String;
-    roleId: Number;
-    goToId: Number;
+    role: string;
+    roleId: number;
+    goToId: number;
     tempId: number;
     people: {
-        name: String;
-        order: Number;
-        id: Number;
-        email: String;
-        phoneNumber: String;
+        name: string;
+        order: number;
+        id: number;
+        email: string;
+        phoneNumber: string;
       }[] 
   }
   
@@ -28,8 +28,8 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
-    const [order, setOrder] = useState<Number>()
-    const [editeeId, setEditeeId] = useState<Number>()
+    const [order, setOrder] = useState<number>()
+    const [editeeId, setEditeeId] = useState<number>()
     const [noAdding, setNoAdding] = useState(false)
     const [noEditing, setNoEditing] = useState(false)
     const successButtonStyles = "mx-4 mt-4 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded my-2 disabled:cursor-not-allowed"

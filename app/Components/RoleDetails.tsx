@@ -3,11 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { Container } from './Container'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import { useGlobalContext } from '../Context/store';
 
 
 
 
-const RoleDetails = ({id, name}) =>{
+const RoleDetails = ({id, name, personnel}) =>{
     const [isViewingRole, setIsViewingRole] = useState(false)
     const boxStyles = "flex flex-col justify-center items-center mx-4 w-lg border rounded"
     const thStyles = "flex flex-row py-2 bg-gray-200 rounded w-full justify-between"
@@ -18,12 +19,6 @@ const RoleDetails = ({id, name}) =>{
         }
         else setIsViewingRole(true)
       }
-
-    const [people, setPeople] = useState([
-        {name: "Jack", order: 1, id: 92, email: "1", phoneNumber: "1",roleId:41},
-        {name: "Gabi", order: 2, id: 93, email: "2", phoneNumber: "2",roleId: 41},
-        {name: "Brinker", order: 3, id: 94, email: "3", phoneNumber: "3", roleId: 41}
-    ])
       
 
     return(
@@ -37,7 +32,7 @@ const RoleDetails = ({id, name}) =>{
                     <label className="px-6 py-3">Action</label>
                 </div>
                 <DndProvider backend={HTML5Backend}>
-                    <Container roleName={name}/>
+                    <Container roleId={id}/>
                 </DndProvider>
           </div>
       </div>

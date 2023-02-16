@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import type { FC } from 'react'
 import update from 'immutability-helper'
 import { Person } from './Person'
+import { useGlobalContext } from '../Context/store';
 
 export interface Person {
     name: string
@@ -18,17 +19,13 @@ export interface Person {
   }
 
   interface Props {
-    roleName: string
+    roleId: number
   }
 
-  export const Container: React.FC<Props> = ({roleName}) => {
-    const [people, setPeople] = useState([
-        {name: "Jack", order: 1, id: 92, email: "1", phoneNumber: "1",roleId:41},
-        {name: "Gabi", order: 2, id: 93, email: "2", phoneNumber: "2",roleId: 41},
-        {name: "Brinker", order: 3, id: 94, email: "3", phoneNumber: "3", roleId: 41}
-    ])
+  export const Container: React.FC<Props> = ({roleId}) => {
+    const { people, setPeople } = useGlobalContext();
+
  
-    const boxStyles = "flex flex-col justify-center items-center py-20 mx-20 mt-20"
 
     const movePerson = useCallback((dragIndex: number, hoverIndex: number) => {
         setPeople((prevPeople: Person[]) =>
@@ -43,6 +40,7 @@ export interface Person {
 
       const renderPerson = useCallback(
         (person: { id: number; name: string, order: number, email: string, phoneNumber: string, roleId: number }, index: number) => {
+          if(person.roleId===roleId)
           return (
             <Person
               key={person.id}

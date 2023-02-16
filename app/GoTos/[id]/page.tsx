@@ -8,11 +8,12 @@ import RoleDetails from '@/app/Components/RoleDetails';
 export default function goTo ({ params }: any) {
     const [id, setId] = useState(parseInt(params.id))
     const { goTos, setGoTos } = useGlobalContext();
+    const { people, setPeople } = useGlobalContext();
     const [goTosLoading, setGoTosLoading] = useState(true)
     const thisGoTo = goTos.find((i)=>i.id===id)
     const [tempId, setTempId] = useState()
    
-
+    console.log(people)
     useEffect(()=>{
     console.log('this was called')
      getTempId()
@@ -46,10 +47,12 @@ export default function goTo ({ params }: any) {
 
 function getTempId(){
  const arrOfIds = []
+ const arrOfPeople = []
   for (const goTo of goTos) {
     for (const role of goTo.roles) {
       for (const person of role.people) {
         arrOfIds.push(person.id);
+        arrOfPeople.push(person)
       }
     }
   }
@@ -58,6 +61,7 @@ function getTempId(){
     arrOfIds.push(0)
   }
   setTempId(arrOfIds[0])
+  setPeople(arrOfPeople)
 }
 
 
@@ -75,7 +79,7 @@ return (
       ) : (
         <div>
           {thisGoTo.roles.map((role) => {
-            return <RoleDetails id={role.id} name={role.name}/>
+            return <RoleDetails id={role.id} name={role.name} personnel={role.people}/>
           })}
         </div>
       )}
