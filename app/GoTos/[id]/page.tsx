@@ -79,7 +79,7 @@ return (
       ) : (
         <div>
           {thisGoTo.roles.map((role) => {
-            return <RoleDetails id={role.id} name={role.name} personnel={role.people}/>
+            return <RoleDetails id={role.id} name={role.name} tempId={tempId} goToId={thisGoTo.id}/>
           })}
         </div>
       )}
