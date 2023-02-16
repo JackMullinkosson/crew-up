@@ -1,15 +1,16 @@
 "use client"
 import React, { useState, useEffect } from 'react';
+import { Container } from './Container'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
+
+
 
 
 const RoleDetails = ({id, name}) =>{
-
     const [isViewingRole, setIsViewingRole] = useState(false)
-    const boxStyles = "flex flex-col justify-center items-center py-4 mx-4 w-lg"
-    const thStyles = "flex flex-row py-2 my-2 bg-gray-200 rounded w-full justify-between"
-    const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-    const tdStyles = 'mx-4 flex justify-center items-center flex-col'
-    const rowStyles = "flex flex-row py-2 my-2 bg-gray-200 rounded w-full justify-between"
+    const boxStyles = "flex flex-col justify-center items-center mx-4 w-lg border rounded"
+    const thStyles = "flex flex-row py-2 bg-gray-200 rounded w-full justify-between"
 
     function handleRoleClick (){
         if(isViewingRole){
@@ -17,6 +18,12 @@ const RoleDetails = ({id, name}) =>{
         }
         else setIsViewingRole(true)
       }
+
+    const [people, setPeople] = useState([
+        {name: "Jack", order: 1, id: 92, email: "1", phoneNumber: "1",roleId:41},
+        {name: "Gabi", order: 2, id: 93, email: "2", phoneNumber: "2",roleId: 41},
+        {name: "Brinker", order: 3, id: 94, email: "3", phoneNumber: "3", roleId: 41}
+    ])
       
 
     return(
@@ -29,6 +36,9 @@ const RoleDetails = ({id, name}) =>{
                     <label className="px-6 py-3">Phone Number</label>
                     <label className="px-6 py-3">Action</label>
                 </div>
+                <DndProvider backend={HTML5Backend}>
+                    <Container roleName={name}/>
+                </DndProvider>
           </div>
       </div>
     )

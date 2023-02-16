@@ -17,7 +17,11 @@ export interface Person {
     people: Person[]
   }
 
-  export const Container: FC = () => {
+  interface Props {
+    roleName: string
+  }
+
+  export const Container: React.FC<Props> = ({roleName}) => {
     const [people, setPeople] = useState([
         {name: "Jack", order: 1, id: 92, email: "1", phoneNumber: "1",roleId:41},
         {name: "Gabi", order: 2, id: 93, email: "2", phoneNumber: "2",roleId: 41},
@@ -58,7 +62,7 @@ export interface Person {
 
     return(
         <>
-        <div className={boxStyles}>{people.map((person, index)=> renderPerson(person, index))}</div>
+        {people.map((person, index)=> renderPerson(person, index))}
         </>
     )
 }
