@@ -33,6 +33,15 @@ interface GoTo {
   }[]
 }
 
+interface Person {
+  name: String
+  order: Number
+  id: Number
+  email: String
+  phoneNumber: String
+  roleId: Number
+}
+
 
 interface ContextProps {
     projects: Project[];
