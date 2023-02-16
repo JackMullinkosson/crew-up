@@ -80,7 +80,7 @@ export const Person: FC<PersonProps> = ({ id, name, index, email, phoneNumber, m
     <div ref={ref} style={{ opacity }} className={rowStyles} data-handler-id={handlerId}>
       <div className={tdStyles}>
         <label className={labelStyles}>Order</label>
-        <div>{index}</div>
+        <div>{index+1}</div>
       </div>  
       <div className={tdStyles}>
         <label className={labelStyles}>Name</label>
