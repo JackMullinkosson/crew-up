@@ -2,8 +2,8 @@
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../../Context/store';
-import Personnel from '../../Components/Personnel';
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid'
+import RoleDetails from '@/app/Components/RoleDetails';
 
 export default function goTo ({ params }: any) {
     const [id, setId] = useState(parseInt(params.id))
@@ -11,6 +11,7 @@ export default function goTo ({ params }: any) {
     const [goTosLoading, setGoTosLoading] = useState(true)
     const thisGoTo = goTos.find((i)=>i.id===id)
     const [tempId, setTempId] = useState()
+   
 
     useEffect(()=>{
     console.log('this was called')
@@ -60,15 +61,27 @@ function getTempId(){
 }
 
 
-    return (
-        <>
-        <div className='flex justify-center px-16 flex-col py-12 lg:py-16'>
-        <h1 className='text-2xl py-4'>My Go-To's</h1>
-        {goTosLoading ? <div>Loading..</div> : <div>{thisGoTo.roles.map((role)=>{
-            return <Personnel key={String(role.id)} goToId={id} role={role.name} people={role.people} roleId={role.id} tempId={tempId}/>
-        })}</div>}
+//<Personnel key={String(role.id)} goToId={id} role={role.name} people={role.people} roleId={role.id} tempId={tempId}/>
+
+
+
+
+return (
+  <>
+    <div className='flex justify-center px-16 flex-col py-12 lg:py-16'>
+      <h1 className='text-2xl py-4'>My Go-To's</h1>
+      {goTosLoading ? (
+        <div>Loading..</div>
+      ) : (
+        <div>
+          {thisGoTo.roles.map((role) => {
+            return <RoleDetails id={role.id} name={role.name} />
+          })}
+        </div>
+      )}
     </div>
-    </>
-    )
+  </>
+);
+
 
 }

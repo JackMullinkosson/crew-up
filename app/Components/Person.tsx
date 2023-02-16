@@ -2,10 +2,11 @@ import type { Identifier, XYCoord } from 'dnd-core'
 import type { FC } from 'react'
 import { useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
-import { ItemTypes } from './ItemTypes'
+import { ItemTypes } from '../ItemTypes'
 
 const rowStyles = "flex flex-row py-2 my-2 bg-gray-200 rounded w-full justify-between"
-
+const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+const tdStyles = 'mx-4 flex justify-center items-center flex-col'
 
 export interface PersonProps {
   id: number
@@ -24,7 +25,7 @@ interface DragItem {
   type: string
 }
 
-export const Person: FC<PersonProps> = ({ id, name, index, movePerson }) => {
+export const Person: FC<PersonProps> = ({ id, name, index, email, phoneNumber, movePerson }) => {
   const ref = useRef<HTMLDivElement>(null)
   const [{ handlerId }, drop] = useDrop<
     DragItem,
@@ -97,33 +98,26 @@ export const Person: FC<PersonProps> = ({ id, name, index, movePerson }) => {
     }),
   })
 
-
-  //person styles:
-
-//   <div  key={person.id} className={rowStyles}>
-//   <div className={tdStyles}>
-//       <label className={labelStyles}>Order</label>
-//       <div>{person.order}</div>
-//   </div>
-//   <div className={tdStyles}>
-//       <label className={labelStyles}>Name</label>
-//       <div>{person.name}</div>
-//   </div>
-//   <div className={tdStyles}>
-//       <label className={labelStyles}>Email</label>
-//       <div>{person.email}</div>
-//   </div>
-//   <div className={tdStyles}>
-//       <label className={labelStyles}>Phone #</label>
-//       <div>{person.phoneNumber}</div>
-//   </div>
-// </div>
-
   const opacity = isDragging ? 0 : 1
   drag(drop(ref))
   return (
     <div ref={ref} style={{ opacity }} className={rowStyles} data-handler-id={handlerId}>
-      {name}
+      <div className={tdStyles}>
+        <label className={labelStyles}>Order</label>
+        <div>{index}</div>
+      </div>  
+      <div className={tdStyles}>
+        <label className={labelStyles}>Name</label>
+        <div>{name}</div>
+      </div>
+      <div className={tdStyles}>
+        <label className={labelStyles}>Email</label>
+        <div>{email}</div>
+      </div>
+      <div className={tdStyles}>
+        <label className={labelStyles}>Phone #</label>
+        <div>{phoneNumber}</div>
+      </div>
     </div>
   )
 }
