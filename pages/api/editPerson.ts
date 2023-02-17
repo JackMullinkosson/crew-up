@@ -4,7 +4,7 @@ import prisma from '../../prisma/client'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try{
-        const {name, email, phoneNumber, roleName, order, id} = req.body
+        const {name, email, phoneNumber, roleId, order, id} = req.body
         const person = await prisma.person.update({
             where: {
                 id: id
@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 name: name,
                 email: email,
                 phoneNumber: phoneNumber,
-                roleName: roleName,
+                roleId: roleId,
                 order: order
             }
           });
