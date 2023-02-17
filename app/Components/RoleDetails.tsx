@@ -58,6 +58,7 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
             name: newName,
             email: email,
             order: people.length+1,
+            index: people.length+1,
             id: newTempId,
             phoneNumber: phoneNumber,
             roleId: id

@@ -84,7 +84,8 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
             order: people.length+1,
             id: newTempId,
             phoneNumber: phoneNumber,
-            roleId: roleId
+            roleId: roleId,
+            index: 1
         }
         const goTosIndex = goTos.findIndex(i => i.id === goToId);
         const roleIndex = goTos[goTosIndex].roles.findIndex(i => i.name === role);
@@ -148,51 +149,51 @@ const Personnel: React.FC<Props> = ({ role, people, goToId, roleId, tempId }) =>
         }
     }
 
-    async function editPerson(id){
-        setIsEditingUser(false)
-        const editedPerson = {
-            name: name,
-            email: email,
-            order: order,
-            id: id,
-            phoneNumber: phoneNumber,
-            roleId: roleId
-        }
-        const goTosIndex = goTos.findIndex(i => i.id === goToId);
-        const roleIndex = goTos[goTosIndex].roles.findIndex(i => i.name === role);
-        const personIndex = people.findIndex(i => i.id === id)
-        const updatedGoTos = [...goTos]
-        updatedGoTos[goTosIndex].roles[roleIndex].people = [...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(0, personIndex), editedPerson, ...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(personIndex + 1)];
-        setGoTos(updatedGoTos);
-        setEditeeId(null)
-        let res;
-        try{
-             res = await fetch(`/api/editPerson`,{
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    id: id,
-                    name: name,
-                    email: email,
-                    phoneNumber: phoneNumber,
-                    roleId: roleId,
-                    order: order
-                })
+    // async function editPerson(id){
+    //     setIsEditingUser(false)
+    //     const editedPerson = {
+    //         name: name,
+    //         email: email,
+    //         order: order,
+    //         id: id,
+    //         phoneNumber: phoneNumber,
+    //         roleId: roleId
+    //     }
+    //     const goTosIndex = goTos.findIndex(i => i.id === goToId);
+    //     const roleIndex = goTos[goTosIndex].roles.findIndex(i => i.name === role);
+    //     const personIndex = people.findIndex(i => i.id === id)
+    //     const updatedGoTos = [...goTos]
+    //     updatedGoTos[goTosIndex].roles[roleIndex].people = [...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(0, personIndex), editedPerson, ...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(personIndex + 1)];
+    //     setGoTos(updatedGoTos);
+    //     setEditeeId(null)
+    //     let res;
+    //     try{
+    //          res = await fetch(`/api/editPerson`,{
+    //             method: "PUT",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //             },
+    //             body: JSON.stringify({
+    //                 id: id,
+    //                 name: name,
+    //                 email: email,
+    //                 phoneNumber: phoneNumber,
+    //                 roleId: roleId,
+    //                 order: order
+    //             })
 
-            })
-        }
-        catch(e){
-            console.error(e)
-        }
-        finally{
-            const resPerson = await res.json()
-            const resGoTos = [...goTos]
-            resGoTos[goTosIndex].roles[roleIndex].people = [...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(0, personIndex), resPerson, ...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(personIndex + 1)];
-            setGoTos(resGoTos);
-        }
-    }
+    //         })
+    //     }
+    //     catch(e){
+    //         console.error(e)
+    //     }
+    //     finally{
+    //         const resPerson = await res.json()
+    //         const resGoTos = [...goTos]
+    //         resGoTos[goTosIndex].roles[roleIndex].people = [...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(0, personIndex), resPerson, ...updatedGoTos[goTosIndex].roles[roleIndex].people.slice(personIndex + 1)];
+    //         setGoTos(resGoTos);
+    //     }
+    // }
 
 
 
@@ -256,7 +257,7 @@ return (
             <td className="px-6 py-4"><input className={inputStyles} value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email"/></td>
             <td className="px-6 py-4"><input className={inputStyles} value={phoneNumber} onChange={(e)=>setPhoneNumber(e.target.value)} placeholder="Phone Number"/></td>
             <td className="px-6 py-4">
-                <button type="button" onClick={()=>editPerson(person.id)} className={infoButtonStyles}>Save</button>
+                <button type="button" className={infoButtonStyles}>Save</button>
             </td>
         </tr> }</>})}
             </tbody>

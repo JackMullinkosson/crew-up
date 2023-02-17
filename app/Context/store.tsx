@@ -34,6 +34,7 @@ interface Person {
   email: string;
   phoneNumber: string;
   roleId: number;
+  index: number;
 }
 
 

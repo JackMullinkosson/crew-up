@@ -12,6 +12,7 @@ export interface Person {
     email: string
     phoneNumber: string
     roleId: number
+    index: number
   }
   
   export interface ContainerState {
@@ -24,32 +25,31 @@ export interface Person {
 
   export const Container: React.FC<Props> = ({roleId}) => {
     const { people, setPeople } = useGlobalContext();
-    let orderInRole = 0;
-    
+
+    useEffect(()=>{
     async function updateOrder(){
       let res;
-      console.log('from the front end', people)
-        try{
-            res = await fetch(`/api/reorderPeople`,{
+      try{
+           res = await fetch(`/api/reorderPeople`,{
               method: "PUT",
               headers: {
-                      "Content-Type": "application/json",
-                      },
-                  body: JSON.stringify({
-                  people: people
-                })
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                 people: people
               })
-            }
-        catch(e){
-            console.error(e)
-        }
-        finally{
-            const resPeople = await res.json()
-            setPeople(resPeople);
-        }
-    }
-
-
+  
+          })
+          console.log(await res.json())
+      }
+      catch(e){
+          console.error(e)
+      }
+  }
+  updateOrder()
+},[people])
+    
+    
     const movePerson = useCallback((dragIndex: number, hoverIndex: number) => {
         setPeople((prevPeople: Person[]) =>
           update(prevPeople, {
@@ -59,11 +59,10 @@ export interface Person {
             ],
           }),
         )
-        // updateOrder()
       }, [])
 
       const renderPerson = useCallback(
-        (person: { id: number; name: string, order: number, email: string, phoneNumber: string, roleId: number }, index: number) => {
+        (person: { id: number; name: string, order: number, email: string, phoneNumber: string, roleId: number}, index: number) => {
           if(person.roleId===roleId){
           return (
             <Person

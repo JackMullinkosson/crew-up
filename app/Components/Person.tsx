@@ -37,7 +37,6 @@ export const Person: FC<PersonProps> = ({ id, name, index, email, phoneNumber, r
   const [newEmail, setNewEmail] = useState('')
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [order, setOrder] = useState<number>()
-  const [editeeId, setEditeeId] = useState<number>()
   const [isEditingUser, setIsEditingUser] = useState(false)
   
   let arrOfPersonnel = {}
@@ -53,12 +52,55 @@ export const Person: FC<PersonProps> = ({ id, name, index, email, phoneNumber, r
     setIsEditingUser(true)
     const personIndex = people.findIndex(i => i.id === id)
     const currentEditee = people[personIndex]
-    setEditeeId(Number(currentEditee.id))
     setNewName(String(currentEditee.name))
     setNewEmail(String(currentEditee.email))
     setNewPhoneNumber(String(currentEditee.phoneNumber))
     setOrder(Number(currentEditee.order))
   }
+
+  async function editPerson(){
+    setIsEditingUser(false)
+    const editedPerson = {
+        name: name,
+        email: email,
+        order: order,
+        id: id,
+        phoneNumber: phoneNumber,
+        roleId: roleId,
+        index: index
+    }
+    const personIndex = people.findIndex(i => i.id === id)
+    const updatedPeople = [...people]
+    updatedPeople[personIndex] = editedPerson
+    setPeople(updatedPeople);
+    let res;
+    try{
+         res = await fetch(`/api/editPerson`,{
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                id: id,
+                name: name,
+                email: email,
+                phoneNumber: phoneNumber,
+                roleId: roleId,
+                order: order
+            })
+
+        })
+    }
+    catch(e){
+        console.error(e)
+    }
+    finally{
+        const resPerson = await res.json()
+        const resPeople = [...people]
+        resPeople[personIndex] = resPerson
+        setPeople(resPeople)
+    }
+}
   
 
   const ref = useRef<HTMLDivElement>(null)

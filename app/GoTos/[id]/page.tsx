@@ -13,7 +13,6 @@ export default function goTo ({ params }: any) {
     const thisGoTo = goTos.find((i)=>i.id===id)
     const [tempId, setTempId] = useState()
    
-    console.log(people)
     useEffect(()=>{
     console.log('this was called')
      getTempId()
@@ -25,6 +24,7 @@ export default function goTo ({ params }: any) {
         setGoTosLoading(true)
         console.log('recalled api')
         getGoTos()
+        getPeople()
     },[])
 
 
@@ -44,29 +44,32 @@ export default function goTo ({ params }: any) {
     }
   }
 
-
-function getTempId(){
- const arrOfIds = []
- const arrOfPeople = []
-  for (const goTo of goTos) {
-    for (const role of goTo.roles) {
-      for (const person of role.people) {
-        arrOfIds.push(person.id);
-        arrOfPeople.push(person)
-      }
-    }
+  async function getPeople(){
+    try {
+      const res = await fetch(`/api/getPeople`, {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      });
+      setPeople(await res.json())
+  } catch (error) {
+      console.error(error);
   }
-  arrOfIds.sort((a, b)=>b-a)
-  if(arrOfIds.length<1){
-    arrOfIds.push(0)
-  }
-  setTempId(arrOfIds[0])
-  setPeople(arrOfPeople)
 }
 
 
-//<Personnel key={String(role.id)} goToId={id} role={role.name} people={role.people} roleId={role.id} tempId={tempId}/>
-
+function getTempId(){
+  const arrOfIds = []
+  for (const person of people) {
+        arrOfIds.push(person.id);
+      }
+    arrOfIds.sort((a, b)=>b-a)
+    if(arrOfIds.length<1){
+    arrOfIds.push(0)
+  }
+  setTempId(arrOfIds[0])
+}
 
 
 
