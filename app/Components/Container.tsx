@@ -24,8 +24,31 @@ export interface Person {
 
   export const Container: React.FC<Props> = ({roleId}) => {
     const { people, setPeople } = useGlobalContext();
+    let orderInRole = 0;
+    
+    async function updateOrder(){
+      let res;
+      console.log('from the front end', people)
+        try{
+            res = await fetch(`/api/reorderPeople`,{
+              method: "PUT",
+              headers: {
+                      "Content-Type": "application/json",
+                      },
+                  body: JSON.stringify({
+                  people: people
+                })
+              })
+            }
+        catch(e){
+            console.error(e)
+        }
+        finally{
+            const resPeople = await res.json()
+            setPeople(resPeople);
+        }
+    }
 
- 
 
     const movePerson = useCallback((dragIndex: number, hoverIndex: number) => {
         setPeople((prevPeople: Person[]) =>
@@ -36,11 +59,12 @@ export interface Person {
             ],
           }),
         )
+        // updateOrder()
       }, [])
 
       const renderPerson = useCallback(
         (person: { id: number; name: string, order: number, email: string, phoneNumber: string, roleId: number }, index: number) => {
-          if(person.roleId===roleId)
+          if(person.roleId===roleId){
           return (
             <Person
               key={person.id}
@@ -54,13 +78,14 @@ export interface Person {
               movePerson={movePerson}
             />
           )
+          }
         },
         [],
       )
 
     return(
         <>
-        {people.map((person, index)=> renderPerson(person, index))}
+        {people?.map((person, index)=> renderPerson(person, index))}
         </>
     )
 }

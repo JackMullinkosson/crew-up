@@ -24,6 +24,7 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
     const boxStyles = "flex flex-col justify-center items-center mx-4 w-lg border rounded"
     const thStyles = "flex flex-row py-2 bg-gray-200 rounded w-full justify-between"
     const newRowStyles = "flex flex-row py-2 bg-gray-50 w-full justify-between border"
+    const rowStyles = "flex flex-row py-4 bg-gray-50 w-full justify-between border"
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
     const tdStyles = 'mx-4 flex justify-center items-center flex-col'
     const successButtonStyles = "mx-4 mt-4 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded my-2 disabled:cursor-not-allowed"
@@ -54,7 +55,7 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
         setIsCreatingUser(false)
         const newTempId = tempId+1
         const newPerson = {
-            name: name,
+            name: newName,
             email: email,
             order: people.length+1,
             id: newTempId,
@@ -74,7 +75,7 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    name: name,
+                    name: newName,
                     email: email,
                     phoneNumber: phoneNumber,
                     roleId: id,
@@ -94,6 +95,8 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
         }
     }
     
+   
+
       
 
     return(
@@ -111,7 +114,7 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
                 <div className={newRowStyles}>
                     <button className={successButtonStyles} onClick={()=>setIsCreatingUser(true)} disabled={noAdding}><PlusIcon className='h-6 w-6'/>Add Go-To {name}</button>
                 </div>  
-                <div className={`${newRowStyles} ${isCreatingUser ? '' : 'hidden'}`}>
+                <div className={`${rowStyles} ${isCreatingUser ? '' : 'hidden'}`}>
                         <div className={tdStyles}>
                             <input className={inputStyles} value={newName} onChange={(e)=>setNewName(e.target.value)} placeholder="Name"/>
                         </div>
