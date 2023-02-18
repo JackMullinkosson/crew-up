@@ -21,9 +21,10 @@ export interface Person {
 
   interface Props {
     roleId: number
+    setNoAdding: (boolean) => void
   }
 
-  export const Container: React.FC<Props> = ({roleId}) => {
+  export const Container: React.FC<Props> = ({roleId, setNoAdding}) => {
     const { people, setPeople } = useGlobalContext();
     const [dragged, setDragged] = useState<number>(-1)
 
@@ -82,6 +83,7 @@ export interface Person {
               id={person.id}
               name={person.name}
               movePerson={movePerson}
+              setNoAdding={setNoAdding}
             />
           )
           }

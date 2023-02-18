@@ -9,17 +9,14 @@ import { PlusIcon } from '@heroicons/react/24/solid';
 
 
 
-const RoleDetails = ({id, name, goToId, peopleLoading}) =>{
-    const {people, setPeople} = useGlobalContext()
+const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
+    const {people, setPeople, setNoEditing} = useGlobalContext()
     const [isViewingRole, setIsViewingRole] = useState(false)
     const [isCreatingUser, setIsCreatingUser] = useState(false)
-    const [isEditingUser, setIsEditingUser] = useState(false)
-    const [noAdding, setNoAdding] = useState(false)
-    const [noEditing, setNoEditing] = useState(false)
-    const [newName, setNewName] = useState('')
+    const [noAdding, setNoAdding] = useState<boolean>(false)
+    const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
-    const [order, setOrder] = useState<number>()
     const [tempId, setTempId] = useState<number>()
     const boxStyles = "flex flex-col justify-center items-center mx-4 w-lg border rounded"
     const thStyles = "flex flex-row py-2 bg-gray-200 rounded w-full justify-between"
@@ -47,18 +44,11 @@ const RoleDetails = ({id, name, goToId, peopleLoading}) =>{
         setTempId(arrOfIds[0])
       }
       
-    useEffect(()=>{
-        if (isCreatingUser){
+    function handleCreateUserClick(){
         setNoEditing(true)
-        return
-        }
-        if(isEditingUser){
-        setNoAdding(true)
-        return
-        }
-        setNoAdding(false)
-        setNoEditing(false)
-    },[isCreatingUser, isEditingUser])
+        setIsCreatingUser(true)
+    }
+
     
     function handleRoleClick (){
         if(isViewingRole){
@@ -70,13 +60,13 @@ const RoleDetails = ({id, name, goToId, peopleLoading}) =>{
     
 
       async function createPerson (){
+        setNoEditing(false)
         setIsCreatingUser(false)
         const newTempId = tempId+1
         const newPerson = {
-            name: newName,
+            name: name,
             email: email,
             order: people.length+1,
-            index: people.length+1,
             id: newTempId,
             phoneNumber: phoneNumber,
             roleId: id
@@ -91,19 +81,16 @@ const RoleDetails = ({id, name, goToId, peopleLoading}) =>{
                 headers: {
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    name: newName,
-                    email: email,
-                    phoneNumber: phoneNumber,
-                    roleId: id,
-                    order: people.length+1,
-                }),
+                body: JSON.stringify({newPerson}),
               });
         }
         catch(e){
             console.error(e)
         }
         finally{
+            setName('')
+            setPhoneNumber('')
+            setEmail('')
             const resPerson = await res.json();
             let resPeople = [...people];
             resPeople = [...people, resPerson]
@@ -118,7 +105,7 @@ const RoleDetails = ({id, name, goToId, peopleLoading}) =>{
     return(
         <div className="flex flex-col py-3 bg-gray-50 hover:bg-white rounded border hover:cursor-pointer">
         <div onClick={() => handleRoleClick()} className="w-full">
-        <h1 className='text-2xl px-4 py-2 hover:cursor-pointer'>{name}</h1>
+        <h1 className='text-2xl px-4 py-2 hover:cursor-pointer'>{roleName}</h1>
         </div>
             <div className={`${boxStyles} ${isViewingRole ? '' : 'hidden'}`}>
                 <div className={thStyles}>
@@ -128,11 +115,11 @@ const RoleDetails = ({id, name, goToId, peopleLoading}) =>{
                     <label className="px-6 py-3">Action</label>
                 </div>
                 <div className={newRowStyles}>
-                    <button className={successButtonStyles} onClick={()=>setIsCreatingUser(true)} disabled={noAdding}><PlusIcon className='h-6 w-6'/>Add Go-To {name}</button>
+                    <button className={`${successButtonStyles} disabled:cursor-not-allowed`} onClick={()=>handleCreateUserClick()} disabled={noAdding}><PlusIcon className='h-6 w-6'/>Add Go-To {roleName}</button>
                 </div>  
                 <div className={`${rowStyles} ${isCreatingUser ? '' : 'hidden'}`}>
                         <div className={tdStyles}>
-                            <input className={inputStyles} value={newName} onChange={(e)=>setNewName(e.target.value)} placeholder="Name"/>
+                            <input className={inputStyles} value={name} onChange={(e)=>setName(e.target.value)} placeholder="Name"/>
                         </div>
                         <div className={tdStyles}>
                             <input className={inputStyles} value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email"/>
@@ -146,7 +133,7 @@ const RoleDetails = ({id, name, goToId, peopleLoading}) =>{
                 </div>
                 {peopleLoading ? <div>Loading..</div>:
                 <DndProvider backend={HTML5Backend}>
-                    <Container roleId={id}/>
+                    <Container roleId={id} setNoAdding={setNoAdding}/>
                 </DndProvider>}
                 </div>
           </div>

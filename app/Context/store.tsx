@@ -34,8 +34,8 @@ interface Person {
   email: string;
   phoneNumber: string;
   roleId: number;
-  index: number;
 }
+
 
 
 interface ContextProps {
@@ -45,6 +45,8 @@ interface ContextProps {
     setGoTos: Dispatch<SetStateAction<GoTo[]>>;
     people: Person[];
     setPeople: Dispatch<SetStateAction<Person[]>>;
+    noEditing: boolean;
+    setNoEditing: Dispatch<SetStateAction<boolean>>;
   }
   
 const GlobalContext = createContext<ContextProps>({
@@ -53,17 +55,19 @@ const GlobalContext = createContext<ContextProps>({
     goTos: [],
     setGoTos: () => {},
     people: [],
-    setPeople: () => {}
-
+    setPeople: () => {},
+    noEditing: false,
+    setNoEditing: () => {},
 });
   
 export const GlobalContextProvider = ({ children }) => {
     const [projects, setProjects] = useState<Project[]>([]);
     const [goTos, setGoTos] = useState<GoTo[]>([])
     const [people, setPeople] = useState<Person[]>([])
+    const [noEditing, setNoEditing] = useState(false);
       
     return (
-        <GlobalContext.Provider value={{ projects, setProjects, goTos, setGoTos, people, setPeople }}>
+        <GlobalContext.Provider value={{ projects, setProjects, goTos, setGoTos, people, setPeople, noEditing, setNoEditing }}>
             {children}
         </GlobalContext.Provider>
     );

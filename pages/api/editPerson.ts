@@ -4,17 +4,17 @@ import prisma from '../../prisma/client'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try{
-        const {name, email, phoneNumber, roleId, order, id} = req.body
+        const {editedPerson} = req.body
         const person = await prisma.person.update({
             where: {
-                id: id
+                id: editedPerson.id
             },
             data: {
-                name: name,
-                email: email,
-                phoneNumber: phoneNumber,
-                roleId: roleId,
-                order: order
+                name: editedPerson.name,
+                email: editedPerson.email,
+                phoneNumber: editedPerson.phoneNumber,
+                roleId: editedPerson.roleId,
+                order: editedPerson.order
             }
           });
           return res.status(200).json( person );

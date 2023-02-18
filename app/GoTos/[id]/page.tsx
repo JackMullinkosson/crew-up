@@ -60,7 +60,7 @@ return (
       ) : (
         <div>
           {thisGoTo.roles.map((role) => {
-            return <RoleDetails id={role.id} name={role.name} goToId={thisGoTo.id} peopleLoading={peopleLoading}/>
+            return <RoleDetails id={role.id} roleName={role.name} goToId={thisGoTo.id} peopleLoading={peopleLoading}/>
           })}
         </div>
       )}
