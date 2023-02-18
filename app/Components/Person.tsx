@@ -1,6 +1,6 @@
 import type { Identifier, XYCoord } from 'dnd-core'
 import type { FC } from 'react'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { ItemTypes } from '../ItemTypes'
 import { useGlobalContext } from '../Context/store';
@@ -21,6 +21,7 @@ export interface PersonProps {
   phoneNumber: string
   roleId: number
   index: number
+  setNoAdding: (boolean) => void
   movePerson: (dragIndex: number, hoverIndex: number) => void
 }
 
@@ -30,8 +31,8 @@ interface DragItem {
   type: string
 }
 
-export const Person: FC<PersonProps> = ({ id, name, index, email, phoneNumber, roleId, movePerson }) => {
-  const { people, setPeople } = useGlobalContext();
+export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, index, movePerson, setNoAdding }) => {
+  const { people, setPeople, noEditing } = useGlobalContext();
   const [isHovering, setIsHovering] = useState(false)
   const [newName, setNewName] = useState('')
   const [newEmail, setNewEmail] = useState('')
@@ -50,6 +51,7 @@ export const Person: FC<PersonProps> = ({ id, name, index, email, phoneNumber, r
 
   function handleEditUser(){
     setIsEditingUser(true)
+    setNoAdding(true)
     const personIndex = people.findIndex(i => i.id === id)
     const currentEditee = people[personIndex]
     setNewName(String(currentEditee.name))
@@ -60,14 +62,14 @@ export const Person: FC<PersonProps> = ({ id, name, index, email, phoneNumber, r
 
   async function editPerson(){
     setIsEditingUser(false)
+    setNoAdding(false)
     const editedPerson = {
-        name: name,
-        email: email,
+        name: newName,
+        email: newEmail,
         order: order,
         id: id,
-        phoneNumber: phoneNumber,
-        roleId: roleId,
-        index: index
+        phoneNumber: newPhoneNumber,
+        roleId: roleId
     }
     const personIndex = people.findIndex(i => i.id === id)
     const updatedPeople = [...people]
@@ -81,12 +83,7 @@ export const Person: FC<PersonProps> = ({ id, name, index, email, phoneNumber, r
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                id: id,
-                name: name,
-                email: email,
-                phoneNumber: phoneNumber,
-                roleId: roleId,
-                order: order
+                editedPerson
             })
 
         })
@@ -99,7 +96,38 @@ export const Person: FC<PersonProps> = ({ id, name, index, email, phoneNumber, r
         const resPeople = [...people]
         resPeople[personIndex] = resPerson
         setPeople(resPeople)
+        setNewName('')
+        setNewEmail('')
+        setNewPhoneNumber('')
+        setOrder(null)
     }
+}
+
+async function deletePerson(){
+  let updatedPeople = [...people]
+  updatedPeople = updatedPeople.filter(i=> i.id !== id);
+  setPeople(updatedPeople)
+  let res;
+  try{
+       res = await fetch(`/api/deletePerson`,{
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+              id: id
+          })
+      })
+  }
+  catch(e){
+      console.error(e)
+  }
+  finally{
+    let resPerson = await res.json()
+    let resPeople = [...people]
+    resPeople = resPeople.filter(i=> i.id !== resPerson.id);
+    setPeople(resPeople)
+  }
 }
   
 
@@ -173,10 +201,10 @@ const opacity = isDragging ? 0 : 1
         <div>{phoneNumber}</div>}
       </div>
       <div className={tdStyles}>
-      {isEditingUser ? (<button className={infoButtonStyles}>Save</button>) : 
+      {isEditingUser ? (<button className={infoButtonStyles} onClick={()=>editPerson()}>Save</button>) : 
       (<div className={isHovering ? 'flex items-center justfy-content' : 'hidden'}>
-      <button onClick={()=>handleEditUser()} className="font-medium text-blue-600 dark:text-blue-500 hover:underline disabled:cursor-not-allowed">Edit</button>
-      <TrashIcon onClick={()=>console.log('bye')} className='h-5 w-5 mx-6 hover:cursor-pointer text-red-500'/>
+      <button onClick={()=>handleEditUser()} className="font-medium text-blue-600 dark:text-blue-500 hover:underline disabled:cursor-not-allowed" disabled={noEditing}>Edit</button>
+      <TrashIcon onClick={()=>deletePerson()} className='h-5 w-5 mx-6 hover:cursor-pointer text-red-500'/>
       </div>)}
       </div>
     </div>
