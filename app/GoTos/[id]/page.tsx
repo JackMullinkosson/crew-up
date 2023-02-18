@@ -10,21 +10,13 @@ export default function goTo ({ params }: any) {
     const { goTos, setGoTos } = useGlobalContext();
     const { people, setPeople } = useGlobalContext();
     const [goTosLoading, setGoTosLoading] = useState(true)
-    const thisGoTo = goTos.find((i)=>i.id===id)
-    const [tempId, setTempId] = useState()
-   
-    useEffect(()=>{
-    console.log('this was called')
-     getTempId()
-    },[goTos])
+    const thisGoTo = goTos.find((i)=>i.id===id) 
   
-
     useEffect(()=>{
         if(goTos.length>1)
         setGoTosLoading(true)
         console.log('recalled api')
         getGoTos()
-        getPeople()
     },[])
 
 
@@ -44,34 +36,6 @@ export default function goTo ({ params }: any) {
     }
   }
 
-  async function getPeople(){
-    try {
-      const res = await fetch(`/api/getPeople`, {
-      method: "GET",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      });
-      setPeople(await res.json())
-  } catch (error) {
-      console.error(error);
-  }
-}
-
-
-function getTempId(){
-  const arrOfIds = []
-  for (const person of people) {
-        arrOfIds.push(person.id);
-      }
-    arrOfIds.sort((a, b)=>b-a)
-    if(arrOfIds.length<1){
-    arrOfIds.push(0)
-  }
-  setTempId(arrOfIds[0])
-}
-
-
 
 return (
   <>
@@ -82,7 +46,7 @@ return (
       ) : (
         <div>
           {thisGoTo.roles.map((role) => {
-            return <RoleDetails id={role.id} name={role.name} tempId={tempId} goToId={thisGoTo.id}/>
+            return <RoleDetails id={role.id} name={role.name} goToId={thisGoTo.id}/>
           })}
         </div>
       )}
