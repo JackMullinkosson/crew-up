@@ -25,7 +25,7 @@ export interface Person {
 
   export const Container: React.FC<Props> = ({roleId}) => {
     const { people, setPeople } = useGlobalContext();
-    const [dragged, setDragged] = useState<number>()
+    const [dragged, setDragged] = useState<number>(-1)
 
     useEffect(()=>{
       setDragged(-1)

@@ -9,9 +9,8 @@ import { PlusIcon } from '@heroicons/react/24/solid';
 
 
 
-const RoleDetails = ({id, name, goToId}) =>{
+const RoleDetails = ({id, name, goToId, peopleLoading}) =>{
     const {people, setPeople} = useGlobalContext()
-    const [peopleLoading, setPeopleLoading] = useState(true)
     const [isViewingRole, setIsViewingRole] = useState(false)
     const [isCreatingUser, setIsCreatingUser] = useState(false)
     const [isEditingUser, setIsEditingUser] = useState(false)
@@ -31,10 +30,6 @@ const RoleDetails = ({id, name, goToId}) =>{
     const successButtonStyles = "mx-4 mt-4 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded my-2 disabled:cursor-not-allowed"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
-
-    useEffect(()=>{
-        getPeople()
-    },[])
 
     useEffect(()=>{
         getTempId()
@@ -72,23 +67,7 @@ const RoleDetails = ({id, name, goToId}) =>{
         else setIsViewingRole(true)
       }
 
-      async function getPeople(){
-        try {
-           setPeopleLoading(true) 
-          const res = await fetch(`/api/getPeople`, {
-          method: "GET",
-          headers: {
-              "Content-Type": "application/json",
-          },
-          });
-          setPeople(await res.json())
-      } catch (error) {
-          console.error(error);
-      }
-      finally{
-        setPeopleLoading(false)
-      }
-    }
+    
 
       async function createPerson (){
         setIsCreatingUser(false)
@@ -165,9 +144,10 @@ const RoleDetails = ({id, name, goToId}) =>{
                             <button className={infoButtonStyles} value={phoneNumber} onClick={()=>createPerson()}>Save</button>
                         </div>      
                 </div>
+                {peopleLoading ? <div>Loading..</div>:
                 <DndProvider backend={HTML5Backend}>
                     <Container roleId={id}/>
-                </DndProvider>
+                </DndProvider>}
                 </div>
           </div>
     )
