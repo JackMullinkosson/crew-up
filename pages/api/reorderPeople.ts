@@ -8,13 +8,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     try {
       const {people}  = req.body;
-      console.log(people)
       let updatedPeople = []
-      for (const person of people) {
-        const {name, email, phoneNumber, roleId, order, id} = person;
+      for (const [index, person] of people.entries()) {
+        const {id} = person;
         const newPerson = await prisma.person.update({
-          where: { id },
-          data: { name, email, phoneNumber, roleId, order, id },
+          where: { 
+            id
+          },
+          data: { 
+            order: index+1
+           },
         });
         updatedPeople.push(newPerson)
       }

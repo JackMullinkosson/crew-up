@@ -25,9 +25,15 @@ export interface Person {
 
   export const Container: React.FC<Props> = ({roleId}) => {
     const { people, setPeople } = useGlobalContext();
+    const [dragged, setDragged] = useState<number>()
+
+    useEffect(()=>{
+      setDragged(-1)
+    },[])
 
     useEffect(()=>{
     async function updateOrder(){
+      console.log(dragged)
       let res;
       try{
            res = await fetch(`/api/reorderPeople`,{
@@ -45,6 +51,7 @@ export interface Person {
           console.error(e)
       }
   }
+  if(dragged===-1) return
   updateOrder()
 },[people])
     
@@ -58,6 +65,7 @@ export interface Person {
             ],
           }),
         )
+        setDragged(dragIndex)
       }, [])
 
       const renderPerson = useCallback(

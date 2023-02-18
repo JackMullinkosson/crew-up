@@ -9,9 +9,9 @@ import { PlusIcon } from '@heroicons/react/24/solid';
 
 
 
-const RoleDetails = ({id, name, goToId, tempId}) =>{
-    const {goTos, setGoTos} = useGlobalContext()
+const RoleDetails = ({id, name, goToId}) =>{
     const {people, setPeople} = useGlobalContext()
+    const [peopleLoading, setPeopleLoading] = useState(true)
     const [isViewingRole, setIsViewingRole] = useState(false)
     const [isCreatingUser, setIsCreatingUser] = useState(false)
     const [isEditingUser, setIsEditingUser] = useState(false)
@@ -21,6 +21,7 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
     const [email, setEmail] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [order, setOrder] = useState<number>()
+    const [tempId, setTempId] = useState<number>()
     const boxStyles = "flex flex-col justify-center items-center mx-4 w-lg border rounded"
     const thStyles = "flex flex-row py-2 bg-gray-200 rounded w-full justify-between"
     const newRowStyles = "flex flex-row py-2 bg-gray-50 w-full justify-between border"
@@ -31,6 +32,26 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
 
+    useEffect(()=>{
+        getPeople()
+    },[])
+
+    useEffect(()=>{
+        getTempId()
+       },[people])
+
+    function getTempId(){
+        const arrOfIds = []
+        for (const person of people) {
+              arrOfIds.push(person.id);
+            }
+          arrOfIds.sort((a, b)=>b-a)
+          if(arrOfIds.length<1){
+          arrOfIds.push(0)
+        }
+        setTempId(arrOfIds[0])
+      }
+      
     useEffect(()=>{
         if (isCreatingUser){
         setNoEditing(true)
@@ -51,6 +72,24 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
         else setIsViewingRole(true)
       }
 
+      async function getPeople(){
+        try {
+           setPeopleLoading(true) 
+          const res = await fetch(`/api/getPeople`, {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          });
+          setPeople(await res.json())
+      } catch (error) {
+          console.error(error);
+      }
+      finally{
+        setPeopleLoading(false)
+      }
+    }
+
       async function createPerson (){
         setIsCreatingUser(false)
         const newTempId = tempId+1
@@ -63,11 +102,9 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
             phoneNumber: phoneNumber,
             roleId: id
         }
-        const goTosIndex = goTos.findIndex(i => i.id === goToId);
-        const roleIndex = goTos[goTosIndex].roles.findIndex(i => i.name === name);
-        const updatedGoTos = [...goTos];
-        updatedGoTos[goTosIndex].roles[roleIndex].people = [  ...updatedGoTos[goTosIndex].roles[roleIndex].people, newPerson];
-        setGoTos(updatedGoTos);
+        let updatedPeople = [...people];
+        updatedPeople = [  ...people, newPerson];
+        setPeople(updatedPeople);
         let res;
         try{
              res = await fetch(`/api/createPerson`,{
@@ -89,10 +126,9 @@ const RoleDetails = ({id, name, goToId, tempId}) =>{
         }
         finally{
             const resPerson = await res.json();
-            const resGoTos = [...goTos];
-            const lastPersonIndex = resGoTos[goTosIndex].roles[roleIndex].people.length - 1;
-            resGoTos[goTosIndex].roles[roleIndex].people[lastPersonIndex] = resPerson;
-            setGoTos(resGoTos);
+            let resPeople = [...people];
+            resPeople = [...people, resPerson]
+            setPeople(resPeople);
         }
     }
     
