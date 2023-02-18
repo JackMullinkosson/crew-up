@@ -10,19 +10,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const {people}  = req.body;
       console.log(people)
       let updatedPeople = []
-      people.map(async (crew)=>{
-      const newPerson = await prisma.person.update({
-          where: {
-            id: crew.id
-          },
-          data: {
-            order: crew.index
-          }
-        })
-      updatedPeople.push(newPerson)
-      })
+      for (const person of people) {
+        const {name, email, phoneNumber, roleId, order, id} = person;
+        const newPerson = await prisma.person.update({
+          where: { id },
+          data: { name, email, phoneNumber, roleId, order, id },
+        });
+        updatedPeople.push(newPerson)
+      }
       return res.status(200).json(updatedPeople);
-    } catch (error) {
+      }
+     catch (error) {
       console.error(`An error occurred while trying to edit people: ${error}`);
     }
   }
