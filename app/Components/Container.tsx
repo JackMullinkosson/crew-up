@@ -40,7 +40,6 @@ export interface Person {
               })
   
           })
-          console.log(await res.json())
       }
       catch(e){
           console.error(e)
