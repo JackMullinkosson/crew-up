@@ -10,13 +10,12 @@ export default function goTo ({ params }: any) {
     const { goTos, setGoTos } = useGlobalContext();
     const { people, setPeople } = useGlobalContext();
     const [goTosLoading, setGoTosLoading] = useState(true)
+    const [peopleLoading, setPeopleLoading] = useState(true)
     const thisGoTo = goTos.find((i)=>i.id===id) 
   
     useEffect(()=>{
-        if(goTos.length>1)
-        setGoTosLoading(true)
-        console.log('recalled api')
         getGoTos()
+        getPeople()
     },[])
 
 
@@ -29,12 +28,27 @@ export default function goTo ({ params }: any) {
         },
         });
         setGoTos(await res.json())
+        setGoTosLoading(false);
     } catch (error) {
         console.error(error);
-    } finally {
-        setGoTosLoading(false);
-    }
+    } 
   }
+
+  async function getPeople(){
+    try {
+       setPeopleLoading(true) 
+      const res = await fetch(`/api/getPeople`, {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      });
+      setPeople(await res.json())
+      setPeopleLoading(false)
+  } catch (error) {
+      console.error(error);
+  }
+}
 
 
 return (
@@ -46,7 +60,7 @@ return (
       ) : (
         <div>
           {thisGoTo.roles.map((role) => {
-            return <RoleDetails id={role.id} name={role.name} goToId={thisGoTo.id}/>
+            return <RoleDetails id={role.id} name={role.name} goToId={thisGoTo.id} peopleLoading={peopleLoading}/>
           })}
         </div>
       )}
