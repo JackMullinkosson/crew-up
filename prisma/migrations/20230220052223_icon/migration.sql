@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "GoTos" ADD COLUMN     "icon" INTEGER NOT NULL DEFAULT 1;

@@ -20,6 +20,7 @@ interface Project {
 interface GoTo {
   name: String;
   id: Number;
+  icon: Number;
   roles: {
     name: String;
     id: Number;
