@@ -10,6 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const {people}  = req.body;
       let updatedPeople = []
       for (const [index, person] of people.entries()) {
+        console.log('the index', index)
         const {id} = person;
         const newPerson = await prisma.person.update({
           where: { 

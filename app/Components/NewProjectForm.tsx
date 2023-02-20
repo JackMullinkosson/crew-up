@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import TimePicker from 'rc-time-picker';
 import 'rc-time-picker/assets/index.css';
 import moment from "moment";
+import { ClipLoader } from 'react-spinners';
 
 
 const NewProjectForm = () => {
@@ -18,13 +19,13 @@ const NewProjectForm = () => {
     const [dayLengths, setDayLengths] = useState<string[]>([]);
     const [locations, setLocations] = useState<string[]>([]);
     const [postRequestNotReady, setPostRequestNotReady] = useState(true)
+    const [isPosting, setIsPosting] = useState(false)
     const ownerId = 1;
     const router = useRouter()
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
     const borderStyles = "bg-gray-200 text-gray-700 border border-500 rounded focus:outline-none focus:bg-white"
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-    const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
-    const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
+    const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed items-center w-40"
 
     useEffect(()=>{
       if(projectName==="") return
@@ -72,14 +73,12 @@ const NewProjectForm = () => {
           };
         });
         setDayDetails(newDayDetails);
-        console.log(dayDetails)
       }, [callTimes, wrapTimes, locations]);
       
 
 
     function calculateDays(firstDay: string, lastDay: string){
         const start = new Date(firstDay);
-        console.log(start)
         const end = new Date(lastDay);
         const diffTime = Math.abs(end.valueOf() - start.valueOf());
         const diffDays: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -88,8 +87,10 @@ const NewProjectForm = () => {
 
     async function submitProject(e: React.FormEvent) {
         e.preventDefault();
+        let res;
         try {
-          const res = await fetch(`/api/createProject`, {
+          setIsPosting(true)
+           res = await fetch(`/api/createProject`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -104,14 +105,13 @@ const NewProjectForm = () => {
             }),
           });
           if (res.status !== 200) {
-            const error = await res.json();
-          } else {
-            console.log(await res.json());
-            router.push("/")
-          }
+            console.log('error creating project')
+          } 
         } catch (error) {
           console.error(error);
         }
+          const {project} = await res.json()
+          router.push(`/project/${project.id}`)
       }
 
 
@@ -172,7 +172,7 @@ const NewProjectForm = () => {
             })}
             </div>
             <div className='w-full py-6'>
-            <button type="submit" className={successButtonStyles} disabled={postRequestNotReady}>Create Project</button>
+            <button type="submit" className={successButtonStyles} disabled={postRequestNotReady}>{isPosting ? <><ClipLoader size={20} color={'white'}/></> : 'Create Project'}</button>
             </div>
         </form>
     )

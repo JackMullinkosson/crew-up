@@ -8,7 +8,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).json({ error: 'Method Not Allowed' });
         }
         const {newPerson} = req.body;
-        console.log(req.body)
         
         const person = await prisma.person.create({
             data: {
