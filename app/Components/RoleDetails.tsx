@@ -4,7 +4,8 @@ import { Container } from './Container'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { useGlobalContext } from '../Context/store';
-import { PlusIcon } from '@heroicons/react/24/solid';
+import { PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
+
 
 
 
@@ -12,7 +13,9 @@ import { PlusIcon } from '@heroicons/react/24/solid';
 const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
     const {people, setPeople, setNoEditing} = useGlobalContext()
     const [isViewingRole, setIsViewingRole] = useState(false)
+    const [isHovering, setIsHovering] = useState(false)
     const [isCreatingUser, setIsCreatingUser] = useState(false)
+    const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
     const [noAdding, setNoAdding] = useState<boolean>(false)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -25,6 +28,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
     const tdStyles = 'mx-4 flex justify-center items-center flex-col'
     const successButtonStyles = "mx-4 mt-4 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded my-2 disabled:cursor-not-allowed"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
+    const dangerButtonStyles = "flex-shrink-0 bg-red-500 hover:bg-red-700 border-red-500 hover:border-red-700 text-sm border-4 text-white py-1 px-2 rounded"
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
 
     useEffect(()=>{
@@ -96,15 +100,34 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
             setPeople(resPeople);
         }
     }
+
+    async function handleDeleteRoleClick(e){
+        console.log('just deleted')
+        setIsConfirmingDelete(true)
+        e.stopPropagation()
+    }
     
+    async function deleteRole(){
+        console.log('beep')
+    }
    
 
       
 
     return(
         <div className="flex flex-col py-3 bg-gray-50 hover:bg-white rounded border hover:cursor-pointer">
-        <div onClick={() => handleRoleClick()} className="w-full">
+        <div onClick={() => handleRoleClick()} onMouseEnter={()=>setIsHovering(true)} onMouseLeave={()=>setIsHovering(false) }className="w-full flex flex-row justify-between items-center relative">
         <h1 className='text-2xl px-4 py-2 hover:cursor-pointer'>{roleName}</h1>
+        {isHovering ? <TrashIcon onClick={(e)=>handleDeleteRoleClick(e)} className='h-6 w-6 hover:cursor-pointer text-red-500 mr-6'/> : null}
+        {isConfirmingDelete ? (
+            <div className='absolute top-0 right-0 z-50 p-4 overflow-visible h-modal md:h-full w-1/4 mr-8'>
+                 <div className="bg-white rounded-lg shadow-2xl p-6 text-center dark:bg-gray-700 flex flex-col">
+                    <XMarkIcon className='h-6 w-6 self-start' onClick={()=>setIsConfirmingDelete(false)}/>
+                     <p className='py-4 inline-block self-start'>Are you sure? This will delete all included personnel.</p>
+                     <button className={dangerButtonStyles}>Delete</button>
+                </div>
+            </div>
+        ) : null}
         </div>
             <div className={`${boxStyles} ${isViewingRole ? '' : 'hidden'}`}>
                 <div className={thStyles}>
