@@ -4,7 +4,6 @@ import prisma from '../../prisma/client'
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log('this happens')
     try {
       if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
@@ -45,9 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         }
       });
-      
-  
-      return res.status(200).json({ project });
+      return await res.status(200).json({ project });
     } catch (error) {
       return res.status(500).json({ error });
     }

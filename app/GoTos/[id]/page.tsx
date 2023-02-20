@@ -12,7 +12,7 @@ export default function goTo ({ params }: any) {
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [peopleLoading, setPeopleLoading] = useState(true)
     const thisGoTo = goTos.find((i)=>i.id===id) 
-  
+    
     useEffect(()=>{
         getGoTos()
         getPeople()
@@ -56,7 +56,9 @@ return (
     <div className='flex justify-center px-16 flex-col py-12 lg:py-16'>
       <h1 className='text-2xl py-4'>My Go-To's</h1>
       {goTosLoading ? (
-        <div>Loading..</div>
+        <div className="flex flex-col py-3 bg-gray-50 hover:bg-white rounded border hover:cursor-pointer">
+          <h1 className='text-2xl px-4 py-2 hover:cursor-pointer'>Loading..</h1>
+                </div>
       ) : (
         <div>
           {thisGoTo.roles.map((role) => {

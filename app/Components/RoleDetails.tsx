@@ -22,7 +22,6 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
     const thStyles = "flex flex-row py-2 bg-gray-200 rounded w-full justify-between"
     const newRowStyles = "flex flex-row py-2 bg-gray-50 w-full justify-between border"
     const rowStyles = "flex flex-row py-4 bg-gray-50 w-full justify-between border"
-    const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
     const tdStyles = 'mx-4 flex justify-center items-center flex-col'
     const successButtonStyles = "mx-4 mt-4 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded my-2 disabled:cursor-not-allowed"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
