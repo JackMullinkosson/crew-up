@@ -4,7 +4,7 @@ import prisma from '../../prisma/client'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try{
-        const { name, roles } = req.body;
+        const { name, roles, icon } = req.body;
         console.log(req.body)
         if (!name || name.length === 0) {
             return res.status(400).json({ message: 'List name is required' });
@@ -21,6 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           const goTo = await prisma.goTos.create({
             data: {
                 name: name,
+                icon: icon,
                 roles: {
                     create: roles.map((role: { name: String }) => ({
                         name: role

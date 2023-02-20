@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from './Context/store';
-import { PlusIcon, VideoCameraIcon, LightBulbIcon } from '@heroicons/react/24/solid'
+import { PlusIcon, VideoCameraIcon, LightBulbIcon, ClipboardIcon, PaintBrushIcon, StarIcon } from '@heroicons/react/24/solid'
 import moment from 'moment';
 
 export default function Home() {
@@ -13,13 +13,17 @@ export default function Home() {
   const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
   const projButtonStyles = "block w-1/2 my-4 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-2 px-2 rounded"
   const goToButtonStyles = "block w-1/2 my-4 bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-blue-700 text-sm border-4 text-white py-2 px-2 rounded"
-  const boxStyles = "border-dashed border-black-500 border-4 py-4 pl-4 rounded hover:cursor-pointer hover:bg-gray-100"
+  const boxStyles = "border-4 border-black-500 border-4 py-4 pl-4 rounded hover:cursor-pointer hover:bg-gray-100"
   const boxIconStyles = "flex flex-row items-center mb-4 text-center"
   const rowStyles = "space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0 mb-6 lg:mb-12"
   const newBoxStyles = "flex flex-row justify-center items-center center-text border-dashed border-black-500 border-4 py-8 pl-4 rounded hover:cursor-pointer hover:bg-gray-100"
   const infoButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1/2 px-2 rounded"
   const { projects, setProjects, goTos, setGoTos } = useGlobalContext();
   const router = useRouter()
+
+  const icons = [<StarIcon className='h-6 w-6'/>, <ClipboardIcon className='h-6 w-6'/>, <LightBulbIcon className='h-6 w-6'/>, <PaintBrushIcon className='h-6 w-6'/>]
+
+  console.log(goTos)
 
   async function getProjects(){
     try {
@@ -91,7 +95,7 @@ export default function Home() {
       {goTosLoading ? <div>Loading...</div> : goTos.map((list)=>{
         return <div key={Number(list.id)} onClick={()=>router.push(`/GoTos/${list.id}`)} className={newBoxStyles}>
         <h3 className="text-xl font-bold dark:text-white mr-4">{list.name}</h3>
-        <LightBulbIcon className='h-6 w-6'/>
+        {icons[String(list.icon)]}
   </div>
       })}
         <div className={newBoxStyles} onClick={()=>router.push('/NewGoTo')}>

@@ -48,6 +48,7 @@ model Person {
 model GoTos {
   id    Int    @id @default(autoincrement())
   name  String
+  icon  Int @default(1)
   roles Role[]
 }
 
