@@ -104,6 +104,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
     async function handleDeleteRoleClick(e){
         console.log('just deleted')
         setIsConfirmingDelete(true)
+        deleteRole()
         e.stopPropagation()
     }
     
@@ -122,9 +123,9 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
         {isConfirmingDelete ? (
             <div className='absolute top-0 right-0 z-50 p-4 overflow-visible h-modal md:h-full w-1/4 mr-8'>
                  <div className="bg-white rounded-lg shadow-2xl p-6 text-center dark:bg-gray-700 flex flex-col">
-                    <XMarkIcon className='h-6 w-6 self-start' onClick={()=>setIsConfirmingDelete(false)}/>
+                    <XMarkIcon className='h-6 w-6 self-end' onClick={()=>setIsConfirmingDelete(false)}/>
                      <p className='py-4 inline-block self-start'>Are you sure? This will delete all included personnel.</p>
-                     <button className={dangerButtonStyles}>Delete</button>
+                     <button className={dangerButtonStyles} onClick={()=>handleDeleteRoleClick()}>Delete</button>
                 </div>
             </div>
         ) : null}
