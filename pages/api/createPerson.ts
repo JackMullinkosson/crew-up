@@ -1,3 +1,4 @@
+import goTo from '@/app/GoTos/[id]/page';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '../../prisma/client'
 
@@ -18,6 +19,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 role: {
                     connect:{
                         id: newPerson.roleId
+                    }
+                },
+                goTo: {
+                    connect:{
+                        id: newPerson.goToId
                     }
                 }
             }

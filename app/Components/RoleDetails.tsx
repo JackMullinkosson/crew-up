@@ -111,7 +111,8 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
             order: people.length+1,
             id: newTempId,
             phoneNumber: phoneNumber,
-            roleId: id
+            roleId: id,
+            goToId: goToId
         }
         let updatedPeople = [...people];
         updatedPeople = [  ...people, newPerson];
