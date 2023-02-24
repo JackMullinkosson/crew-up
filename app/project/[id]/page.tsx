@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../../Context/store';
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import { ChevronDownIcon, PlusIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/solid';
 import { ClipLoader } from 'react-spinners';
 import ProjectRoleDetails from '@/app/Components/RoleDetails';
 import moment from 'moment';
@@ -14,25 +14,71 @@ export default function project ({ params }: any) {
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [peopleLoading, setPeopleLoading] = useState(true)
     const [goToChoice, setGoToChoice] = useState("")
+    const [isPosting, setIsPosting] = useState(false)
     const thisProject = projects.find((i)=>i.id===id)
     const thisGoTo = goTos.find((i)=>i.name===goToChoice)
+    const [thesePeople, setThesePeople] = useState([])
+    const [isCreatingRow, setIsCreatingRow] = useState(false)
+    const [name, setName] = useState('')
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-    
-    console.log(thisGoTo)
+    const successButtonStyles = "mr-2 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
+    const infoButtonStyles = "text-xl flex-shrink-0 flex items-center bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 border-4 text-white py-1 px-2 rounded"
+    const newRowStyles = "flex flex-row items-center py-4 mb-4 w-full justify-between"
+    const addRowStyles = "flex flex-row w-1/4 items-center justify-between bg-white border px-4 py-4 mb-4"
+    const inputStyles = "appearance-none w-1/2 bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
+
 
     useEffect(() => {
         getProjects()
         getGoTos()
+        getPeople()
       }, []);
 
     useEffect(()=>{
-        if(goToChoice==="") return
-        getPeople()
+        let newPeople = []
+        for (const person of people){
+            if (person.goToId === thisGoTo.id)
+            newPeople.push(person)
+        }
+        setThesePeople(newPeople)
     },[goToChoice])
+
 
     function handleChoice(e){
         setGoToChoice(e.value)
     }
+
+    async function addRole(){
+        console.log('hi')
+    }
+
+    async function createProjGoTo(){
+        let res;
+          try{
+            setIsPosting(true) 
+             res = await fetch(`/api/createProjGoTo`,{
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                thisGoTo: thisGoTo,
+                roles: thisGoTo.roles,
+                people: thesePeople,
+                projectName: thisProject.name,
+                projectId: id,
+                defaultGoTo: false
+              })
+            })
+            if (res.status !== 200) {
+              console.log('error making new go to list')
+            } 
+          }
+          catch(e){
+            console.error(e)
+          }
+          console.log(await res.json())
+        }
    
 
     async function getProjects(){
@@ -67,9 +113,10 @@ export default function project ({ params }: any) {
 }
 
 async function getPeople(){
+    let res;
     try {
-       setPeopleLoading(true) 
-      const res = await fetch(`/api/getPeople`, {
+      setPeopleLoading(true) 
+       res = await fetch(`/api/getPeople`, {
       method: "GET",
       headers: {
           "Content-Type": "application/json",
@@ -107,14 +154,27 @@ return(
              </div>
              </div>
              <div className='px-16'>
-                <p>Once you choose a go-to list, you will be able to customize it for this specific project. Any changes you make will be saved to this project's page, but won't affect the original list.</p>
+                <p>Once you choose a go-to list, you will be able to customize it for this specific project. Your changes will not affect your original list.</p>
              </div>
         </div>
         {goToChoice==="" ? null : <div className='w-5/6 pt-3 pb-1'>
         {goTosLoading ?  <><ClipLoader size={40} color={'black'}/></> : (<>
+        <div className={newRowStyles}>
+            <button className={`${infoButtonStyles} disabled:cursor-not-allowed`}><CheckIcon className='h-6 w-6'/>Save Changes</button>
+        </div>  
         {thisGoTo.roles.map((role) => {
-            return <ProjectRoleDetails id={role.id} roleName={role.name} goToId={thisGoTo.id} peopleLoading={peopleLoading}/>
-          })}</>) }
+            return <ProjectRoleDetails key={String(role.id)} id={role.id} roleName={role.name} goToId={thisGoTo.id} peopleLoading={peopleLoading}/>
+          })}
+          {isCreatingRow ? 
+          <div className={addRowStyles}>
+            <input className={inputStyles} value={name} placeholder='Role Name' onChange={(e)=>setName(e.target.value)}/>
+            <button className={successButtonStyles} onClick={()=>addRole()}>Add</button>
+            <XMarkIcon className='w-6 h-6 hover:cursor-pointer' onClick={()=>setIsCreatingRow(false)}/>
+          </div> 
+          : <div className={newRowStyles}>
+              <button className={`${successButtonStyles} disabled:cursor-not-allowed`} disabled={isCreatingRow} onClick={()=>setIsCreatingRow(true)}><PlusIcon className='h-6 w-6'/>Add Role</button>
+            </div>} 
+          </>) }
         </div>}
         </>)}
     </main>

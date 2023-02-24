@@ -23,7 +23,7 @@ model Project {
   startDate    DateTime      @default(dbgenerated("'0001-01-01 00:00:00'::timestamp without time zone"))
   dayDetails   Day[]
   owner        User          @relation(fields: [ownerId], references: [id])
-  projectRoles ProjectRole[]
+  goTos         GoTos[]
 }
 
 model Day {
@@ -39,17 +39,23 @@ model Person {
   name        String
   order       Int    @default(autoincrement())
   id          Int    @id @default(autoincrement())
-  email       String @unique
+  email       String 
   phoneNumber String
+  goToId      Int
+  goTo        GoTos @relation(fields: [goToId], references: [id])
   roleId      Int
   role        Role   @relation(fields: [roleId], references: [id])
 }
 
 model GoTos {
-  id    Int    @id @default(autoincrement())
-  name  String
-  icon  Int @default(1)
-  roles Role[]
+  id          Int    @id @default(autoincrement())
+  name        String
+  icon        Int @default(1)
+  roles       Role[]
+  people      Person[]
+  projectId   Int?
+  project     Project? @relation(fields: [projectId], references: [id])
+  defaultGoTo Boolean @default(true)
 }
 
 model Role {
@@ -57,15 +63,8 @@ model Role {
   id           Int           @id @default(autoincrement())
   goToId       Int
   people       Person[]
-  projectRoles ProjectRole[]
   goTos        GoTos         @relation(fields: [goToId], references: [id])
   @@unique(fields: [id, goToId], name: "complexId")
 }
 
-model ProjectRole {
-  id        Int     @id @default(autoincrement())
-  projectId Int
-  roleId    Int
-  project   Project @relation(fields: [projectId], references: [id])
-  role      Role    @relation(fields: [roleId], references: [id])
-}
+
