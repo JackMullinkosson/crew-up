@@ -122,8 +122,10 @@ async function addRole(){
   }
   finally{
     let resRole = await res.json()
+    console.log(resRole)
     let resRoles = [...roles]
     resRoles.push(resRole)
+    console.log(resRoles)
     setRoles(resRoles)
   }
 }
@@ -155,7 +157,7 @@ return (
             </div>} 
           {roles.map((role) => {
             if (role.goToId === id)
-            return <RoleDetails id={role.id} roleName={role.name} goToId={id} peopleLoading={peopleLoading}/>
+            return <RoleDetails key={String(role.id)} id={role.id} roleName={role.name} goToId={id} peopleLoading={peopleLoading}/>
           })}
         </div>
       )}

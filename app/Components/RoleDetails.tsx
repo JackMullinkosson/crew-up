@@ -65,6 +65,22 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
         }
         setTempId(arrOfIds[0])
       }
+
+    useEffect(() => {
+        const handleMouseDown = (event: MouseEvent) => {
+          if (event.target instanceof HTMLElement && !event.target.closest('.h-modal')) {
+            setIsConfirmingDelete(false);
+          }
+        };
+    
+        if (isConfirmingDelete) {
+          document.body.addEventListener('mousedown', handleMouseDown);
+        }
+    
+        return () => {
+          document.body.removeEventListener('mousedown', handleMouseDown);
+        };
+      }, [isConfirmingDelete]);
       
     function handleCreateUserClick(){
         setNoEditing(true)
@@ -81,7 +97,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
 
     
 
-      async function createPerson (){
+    async function createPerson (){
         if(!emailIsValid){
             setErrorsExist(true)
             return
@@ -120,6 +136,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
             const resPerson = await res.json();
             let resPeople = [...people];
             resPeople = [...people, resPerson]
+            console.log(resPeople)
             setPeople(resPeople);
         }
     }
@@ -187,7 +204,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
         {isHovering ? <TrashIcon onClick={(e)=>handleDeleteRoleClick(e)} className='h-6 w-6 hover:cursor-pointer text-red-500 mr-6'/> : null}
         {isConfirmingDelete ? (
             <div className='absolute top-0 right-0 z-50 p-4 overflow-visible h-modal md:h-full w-1/4 mr-8'>
-                 <div className="-mt-16 bg-white rounded-lg shadow-2xl p-6 text-center dark:bg-gray-700 flex flex-col">
+                 <div className="-mt-16 bg-white rounded-lg shadow-2xl shadow-black p-6 text-center dark:bg-gray-700 flex flex-col">
                     <XMarkIcon className='h-6 w-6 self-end hover:cursor-pointer' onClick={(e)=>handleCancelDelete(e)}/>
                      <p className='py-4 inline-block self-start'>Are you sure? This will also delete {peopleLength>2 ? `all ${peopleLength}` : 'the'} included personnel.</p>
                      <button className={dangerButtonStyles} onClick={(e)=>handleDeleteConfirmed(e)}>Delete</button>
