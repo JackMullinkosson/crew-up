@@ -5,9 +5,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { useGlobalContext } from '../Context/store';
 import { PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
-
-
-
+import EmailValidator from 'email-validator';
 
 
 const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
@@ -22,6 +20,8 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
     const [phoneNumber, setPhoneNumber] = useState('')
     const [tempId, setTempId] = useState<number>()
     const [peopleLength, setPeopleLength] = useState<number>()
+    const [emailIsValid, setEmailIsValid] = useState(false)
+    const [errorsExist, setErrorsExist] = useState(false)
     const boxStyles = "flex flex-col justify-center items-center mx-4 w-lg border rounded"
     const thStyles = "flex flex-row py-2 bg-gray-200 rounded w-full justify-between"
     const newRowStyles = "flex flex-row py-2 bg-gray-50 w-full justify-between border"
@@ -32,6 +32,13 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
     const dangerButtonStyles = "flex-shrink-0 bg-red-500 hover:bg-red-700 border-red-500 hover:border-red-700 text-sm border-4 text-white py-1 px-2 rounded"
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
     const lastCreatorTdStyles = 'mx-4 flex justify-center items-center flex-row'
+    const labelStyles = "block uppercase tracking-wide text-red-700 text-xs font-bold mb-2"
+
+
+    useEffect(()=>{
+        if(email.length>0)
+        setEmailIsValid(EmailValidator.validate(email))
+    },[email])
     
     useEffect(()=>{
         getTempId()
@@ -75,6 +82,10 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
     
 
       async function createPerson (){
+        if(!emailIsValid){
+            setErrorsExist(true)
+            return
+        } 
         setNoEditing(false)
         setIsCreatingUser(false)
         const newTempId = tempId+1
@@ -199,6 +210,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
                             <input className={inputStyles} value={name} onChange={(e)=>setName(e.target.value)} placeholder="Name"/>
                         </div>
                         <div className={tdStyles}>
+                            {errorsExist ? <label className={labelStyles}>Invalid Email Address</label> : null}
                             <input className={inputStyles} value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email"/>
                         </div>
                         <div className={tdStyles}>
