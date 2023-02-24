@@ -13,6 +13,7 @@ export interface Person {
     phoneNumber: string
     roleId: number
     index: number
+    goToId: number
   }
   
   export interface ContainerState {
@@ -22,9 +23,10 @@ export interface Person {
   interface Props {
     roleId: number
     setNoAdding: (boolean) => void
+    goToId: number
   }
 
-  export const Container: React.FC<Props> = ({roleId, setNoAdding}) => {
+  export const Container: React.FC<Props> = ({roleId, goToId, setNoAdding}) => {
     const { people, setPeople } = useGlobalContext();
     const [dragged, setDragged] = useState<number>(-1)
 
@@ -70,7 +72,7 @@ export interface Person {
       }, [])
 
       const renderPerson = useCallback(
-        (person: { id: number; name: string, order: number, email: string, phoneNumber: string, roleId: number}, index: number) => {
+        (person: { id: number; name: string, order: number, email: string, phoneNumber: string, roleId: number, goToId: number}, index: number) => {
           if(person.roleId===roleId){
           return (
             <Person
@@ -84,6 +86,7 @@ export interface Person {
               name={person.name}
               movePerson={movePerson}
               setNoAdding={setNoAdding}
+              goToId={goToId}
             />
           )
           }

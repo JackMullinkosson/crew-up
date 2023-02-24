@@ -241,7 +241,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
                 </div>
                 {peopleLoading ? <div>Loading..</div>:
                 <DndProvider backend={HTML5Backend}>
-                    <Container roleId={id} setNoAdding={setNoAdding}/>
+                    <Container goToId={goToId} roleId={id} setNoAdding={setNoAdding}/>
                 </DndProvider>}
                 </div>
           </div>

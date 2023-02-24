@@ -20,6 +20,7 @@ export interface PersonProps {
   email: string
   phoneNumber: string
   roleId: number
+  goToId: number
   index: number
   setNoAdding: (boolean) => void
   movePerson: (dragIndex: number, hoverIndex: number) => void
@@ -31,7 +32,7 @@ interface DragItem {
   type: string
 }
 
-export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, index, movePerson, setNoAdding }) => {
+export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, index, movePerson, setNoAdding, goToId }) => {
   const { people, setPeople, noEditing } = useGlobalContext();
   const [isHovering, setIsHovering] = useState(false)
   const [newName, setNewName] = useState('')
@@ -69,7 +70,8 @@ export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, 
         order: order,
         id: id,
         phoneNumber: newPhoneNumber,
-        roleId: roleId
+        roleId: roleId,
+        goToId: goToId
     }
     const personIndex = people.findIndex(i => i.id === id)
     const updatedPeople = [...people]
