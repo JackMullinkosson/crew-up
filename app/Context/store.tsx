@@ -21,6 +21,7 @@ interface GoTo {
   name: String;
   id: Number;
   icon: Number;
+  defaultGoTo: Boolean;
   roles: Role[]
 }
 

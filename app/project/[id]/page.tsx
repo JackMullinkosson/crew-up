@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../../Context/store';
-import { ChevronDownIcon, PlusIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/solid';
+import { ChevronDownIcon, PlusIcon, XMarkIcon, CheckIcon, ClipboardDocumentIcon } from '@heroicons/react/24/solid';
 import { ClipLoader } from 'react-spinners';
 import ProjectRoleDetails from '@/app/Components/RoleDetails';
 import moment from 'moment';
@@ -20,11 +20,14 @@ export default function project ({ params }: any) {
     const [thesePeople, setThesePeople] = useState([])
     const [isCreatingRow, setIsCreatingRow] = useState(false)
     const [name, setName] = useState('')
+    const [unsavedChanges, setUnsavedChanges] = useState(false)
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-    const successButtonStyles = "mr-2 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
+    const successLabelStyles = "h-6 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 flex flex-row items-center text-teal-500"
+    const dangerLabelStyles = "h-6 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 flex flex-row items-center text-red-500"
+    const successButtonStyles = "flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
     const infoButtonStyles = "text-xl flex-shrink-0 flex items-center bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 border-4 text-white py-1 px-2 rounded"
-    const newRowStyles = "flex flex-row items-center py-4 mb-4 w-full justify-between"
-    const addRowStyles = "flex flex-row w-1/4 items-center justify-between bg-white border px-4 py-4 mb-4"
+    const newRowStyles = "flex flex-row items-center py-4 mt-2 w-full justify-between"
+    const addRowStyles = "flex flex-row w-1/4 items-center mt-2 justify-between bg-white border px-4 py-4 mb-4"
     const inputStyles = "appearance-none w-1/2 bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
 
 
@@ -41,6 +44,7 @@ export default function project ({ params }: any) {
             newPeople.push(person)
         }
         setThesePeople(newPeople)
+        setUnsavedChanges(true)
     },[goToChoice])
 
 
@@ -133,18 +137,18 @@ async function getPeople(){
 return(
     <main className='flex justify-center px-16 flex-col py-12 lg:py-16 lg:px-24'>
         {projectsLoading ? <p>Loading...</p> : 
-        (<><div className='w-full py-6 flex flex-row justify-evenly items-center w-full flex-shrink-0 h-20 h-fit'>
-        <h1 className='text-4xl bold'>{thisProject.name}</h1>
-        <p className='mx-16 text-lg'>{thisProject.logLine}</p>
+        (<><div className="w-3/4 py-6 flex flex-row items-center justify-evenly">
+        <h1 className='text-4xl'>{thisProject.name}</h1>
         <p className="text-gray-500 dark:text-gray-400">{moment(thisProject.startDate).format("MMMM Do YYYY")} - {moment(thisProject.endDate).format("MMMM Do YYYY")}</p>
         </div>
-        <div className="w-3/4 py-6 flex flex-row justify-center items-center">
+        <div className="w-3/4 py-6 flex flex-row justify-evenly items-center">
             <div>
         <label className={labelStyles}>Choose Go-To List</label>
-            <div className="flex"><select className="flex appearance-none bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 pr-12 mb-3 leading-tight focus:outline-none focus:bg-white" onChange={(e)=>handleChoice(e.target)} >
+            <div className="flex"><select className="flex px-4 appearance-none bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 pr-12 mb-3 leading-tight focus:outline-none focus:bg-white hover:cursor-pointer" onChange={(e)=>handleChoice(e.target)} >
                 <option value="" disabled selected>Select option</option>
                 {goTosLoading ? <>Loading...</>:
                 goTos.map((goTo)=>{
+                    if(goTo.defaultGoTo)
                     return(
                         <option value={String(goTo.name)}>{goTo.name}</option>
                     )
@@ -153,14 +157,17 @@ return(
              <ChevronDownIcon className="h-8 w-6 -ml-10 mt-2 postion-absolute"/>
              </div>
              </div>
-             <div className='px-16'>
+             <div className='ml-6 w-1/2'>
                 <p>Once you choose a go-to list, you will be able to customize it for this specific project. Your changes will not affect your original list.</p>
              </div>
         </div>
         {goToChoice==="" ? null : <div className='w-5/6 pt-3 pb-1'>
         {goTosLoading ?  <><ClipLoader size={40} color={'black'}/></> : (<>
         <div className={newRowStyles}>
-            <button className={`${infoButtonStyles} disabled:cursor-not-allowed`}><CheckIcon className='h-6 w-6'/>Save Changes</button>
+            {unsavedChanges ? (<label className={dangerLabelStyles}>You have unsaved changes<button className="ml-2 text-blue-600 dark:text-blue-500 hover:underline disabled:cursor-not-allowed block uppercase tracking-wide text-xs font-bold">Save Now</button></label>)
+            : (<label className={successLabelStyles}>No unsaved changes <CheckIcon className='h-6 w-6'/></label>)}
+            {isPosting ? <label className={dangerLabelStyles}><ClipLoader size={40} color={'white'}/></label> 
+            : <label className={successLabelStyles}>No unsaved changes <CheckIcon className='h-6 w-6 items-center'/></label>}
         </div>  
         {thisGoTo.roles.map((role) => {
             return <ProjectRoleDetails key={String(role.id)} id={role.id} roleName={role.name} goToId={thisGoTo.id} peopleLoading={peopleLoading}/>
