@@ -21,6 +21,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
     const [email, setEmail] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [tempId, setTempId] = useState<number>()
+    const [peopleLength, setPeopleLength] = useState<number>()
     const boxStyles = "flex flex-col justify-center items-center mx-4 w-lg border rounded"
     const thStyles = "flex flex-row py-2 bg-gray-200 rounded w-full justify-between"
     const newRowStyles = "flex flex-row py-2 bg-gray-50 w-full justify-between border"
@@ -34,7 +35,17 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
     
     useEffect(()=>{
         getTempId()
+        getPeopleLength()
        },[people])
+
+    function getPeopleLength(){
+        let length = 0
+        for (const person of people) {
+            if (person.roleId === id)
+            length++
+        }
+        setPeopleLength(length)
+    }
 
     function getTempId(){
         const arrOfIds = []
@@ -103,8 +114,11 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
     }
 
      function handleDeleteRoleClick(e){
-        setIsConfirmingDelete(true)
         e.stopPropagation()
+        if(peopleLength>0){
+            setIsConfirmingDelete(true)
+        }
+        else deleteRole()
     }
 
     function handleCancelDelete(e){
@@ -162,9 +176,9 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
         {isHovering ? <TrashIcon onClick={(e)=>handleDeleteRoleClick(e)} className='h-6 w-6 hover:cursor-pointer text-red-500 mr-6'/> : null}
         {isConfirmingDelete ? (
             <div className='absolute top-0 right-0 z-50 p-4 overflow-visible h-modal md:h-full w-1/4 mr-8'>
-                 <div className="bg-white rounded-lg shadow-2xl p-6 text-center dark:bg-gray-700 flex flex-col">
+                 <div className="-mt-16 bg-white rounded-lg shadow-2xl p-6 text-center dark:bg-gray-700 flex flex-col">
                     <XMarkIcon className='h-6 w-6 self-end hover:cursor-pointer' onClick={(e)=>handleCancelDelete(e)}/>
-                     <p className='py-4 inline-block self-start'>Are you sure? This will delete all included personnel.</p>
+                     <p className='py-4 inline-block self-start'>Are you sure? This will also delete {peopleLength>2 ? `all ${peopleLength}` : 'the'} included personnel.</p>
                      <button className={dangerButtonStyles} onClick={(e)=>handleDeleteConfirmed(e)}>Delete</button>
                 </div>
             </div>
