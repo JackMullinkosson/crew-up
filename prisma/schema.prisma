@@ -59,6 +59,7 @@ model Role {
   people       Person[]
   projectRoles ProjectRole[]
   goTos        GoTos         @relation(fields: [goToId], references: [id])
+  @@unique(fields: [id, goToId], name: "complexId")
 }
 
 model ProjectRole {

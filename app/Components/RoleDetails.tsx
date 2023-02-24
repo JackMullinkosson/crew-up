@@ -11,7 +11,7 @@ import { PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 
 const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
-    const {people, setPeople, setNoEditing} = useGlobalContext()
+    const {roles, setRoles, people, setPeople, setNoEditing} = useGlobalContext()
     const [isViewingRole, setIsViewingRole] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
     const [isCreatingUser, setIsCreatingUser] = useState(false)
@@ -101,16 +101,55 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
         }
     }
 
-    async function handleDeleteRoleClick(e){
-        console.log('just deleted')
+     function handleDeleteRoleClick(e){
         setIsConfirmingDelete(true)
+        e.stopPropagation()
+    }
+
+    function handleCancelDelete(e){
+        setIsConfirmingDelete(false)
+        e.stopPropagation()
+    }
+
+    function handleDeleteConfirmed(e){
+        setIsConfirmingDelete(false)
         deleteRole()
         e.stopPropagation()
     }
     
     async function deleteRole(){
-        console.log('beep')
-    }
+        let updatedPeople = [...people]
+        updatedPeople = updatedPeople.filter(i=>i.roleId !== id)
+        let updatedRoles = [...roles]
+        updatedRoles = updatedRoles.filter(i=> i.id !== id);
+        setPeople(updatedPeople)
+        setRoles(updatedRoles)
+        let res;
+        try{
+             res = await fetch(`/api/deleteRole`,{
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    id: id,
+                    goToId: goToId
+                })
+            })
+        }
+        catch(e){
+            console.error(e)
+        }
+        finally{
+            const resRole = await res.json()
+            let resPeople = [...people]
+            let resRoles = [...roles]
+            resRoles = resRoles.filter(i=> i.id !== resRole.id);
+            resPeople = resPeople.filter(i=> i.roleId !== resRole.id)
+            setPeople(resPeople)
+            setRoles(resRoles)
+        }
+      }
    
 
       
@@ -123,9 +162,9 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
         {isConfirmingDelete ? (
             <div className='absolute top-0 right-0 z-50 p-4 overflow-visible h-modal md:h-full w-1/4 mr-8'>
                  <div className="bg-white rounded-lg shadow-2xl p-6 text-center dark:bg-gray-700 flex flex-col">
-                    <XMarkIcon className='h-6 w-6 self-end' onClick={()=>setIsConfirmingDelete(false)}/>
+                    <XMarkIcon className='h-6 w-6 self-end' onClick={(e)=>handleCancelDelete(e)}/>
                      <p className='py-4 inline-block self-start'>Are you sure? This will delete all included personnel.</p>
-                     <button className={dangerButtonStyles} onClick={()=>handleDeleteRoleClick()}>Delete</button>
+                     <button className={dangerButtonStyles} onClick={(e)=>handleDeleteConfirmed(e)}>Delete</button>
                 </div>
             </div>
         ) : null}
