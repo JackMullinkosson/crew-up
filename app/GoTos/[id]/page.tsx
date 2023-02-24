@@ -13,15 +13,30 @@ export default function goTo ({ params }: any) {
     const [peopleLoading, setPeopleLoading] = useState(true)
     const [rolesLoading, setRolesLoading] = useState(true)
     const [isCreatingRow, setIsCreatingRow] = useState(false)
+    const [tempId, setTempId] = useState<number>()
     const [name, setName] = useState('')
     const thisGoTo = goTos.find(i=> i.id===id)
-    const tempId = roles.length
     const successButtonStyles = "mr-2 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
     const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
     const newRowStyles = "flex flex-row items-center py-4 mb-4 w-full justify-between"
     const addRowStyles = "flex flex-row w-1/4 items-center justify-between bg-white border px-4 py-4 mb-4"
     const inputStyles = "appearance-none bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
 
+    useEffect(()=>{
+      getTempId()
+     },[roles])
+
+    function getTempId(){
+      const arrOfIds = []
+      for (const role of roles) {
+            arrOfIds.push(role.id);
+          }
+        arrOfIds.sort((a, b)=>b-a)
+        if(arrOfIds.length<1){
+        arrOfIds.push(0)
+      }
+      setTempId(arrOfIds[0])
+    }
     
     useEffect(()=>{
         getGoTos()
@@ -87,6 +102,7 @@ async function addRole(){
   let updatedRoles = [...roles]
   updatedRoles.push(newRole)
   setRoles(updatedRoles)
+  setName("")
   setIsCreatingRow(false)
   let res;
   try{
