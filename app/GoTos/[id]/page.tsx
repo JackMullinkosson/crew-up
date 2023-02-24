@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../../Context/store';
-import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid'
+import { PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import { ClipLoader } from 'react-spinners';
 import RoleDetails from '@/app/Components/RoleDetails';
 
@@ -12,10 +12,15 @@ export default function goTo ({ params }: any) {
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [peopleLoading, setPeopleLoading] = useState(true)
     const [rolesLoading, setRolesLoading] = useState(true)
+    const [isCreatingRow, setIsCreatingRow] = useState(false)
+    const [name, setName] = useState('')
     const thisGoTo = goTos.find(i=> i.id===id)
-    const successButtonStyles = "mr-2 mt-4 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded my-2 disabled:cursor-not-allowed"
-    const newRowStyles = "flex flex-row py-2 w-full justify-between"
-
+    const tempId = roles.length
+    const successButtonStyles = "mr-2 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
+    const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
+    const newRowStyles = "flex flex-row items-center py-4 mb-4 w-full justify-between"
+    const addRowStyles = "flex flex-row w-1/4 items-center justify-between bg-white border px-4 py-4 mb-4"
+    const inputStyles = "appearance-none bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
 
     
     useEffect(()=>{
@@ -57,7 +62,7 @@ export default function goTo ({ params }: any) {
 
   async function getPeople(){
     try {
-       setPeopleLoading(true) 
+      setPeopleLoading(true) 
       const res = await fetch(`/api/getPeople`, {
       method: "GET",
       headers: {
@@ -71,8 +76,40 @@ export default function goTo ({ params }: any) {
   }
 }
 
-function handleAddRowClick(){
-  console.log('add')
+async function addRole(){
+  let newTempId = tempId+1
+  const newRole = {
+    name: name,
+    goToId: id,
+    id: newTempId,
+    people: []
+  }
+  let updatedRoles = [...roles]
+  updatedRoles.push(newRole)
+  setRoles(updatedRoles)
+  setIsCreatingRow(false)
+  let res;
+  try{
+     res = await fetch(`/api/createRole`,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",  
+      },
+      body: JSON.stringify({
+        name: name,
+        goToId: id
+    })
+    })
+  }
+  catch (error) {
+    console.error(error);
+  }
+  finally{
+    let resRole = await res.json()
+    let resRoles = [...roles]
+    resRoles.push(resRole)
+    setRoles(resRoles)
+  }
 }
 
 
@@ -91,9 +128,15 @@ return (
         </>
       ) : (
         <div>
-          <div className={newRowStyles}>
-            <button className={`${successButtonStyles} disabled:cursor-not-allowed`} disabled={false}><PlusIcon className='h-6 w-6'/>Add Role</button>
-          </div>  
+          {isCreatingRow ? 
+          <div className={addRowStyles}>
+            <input className={inputStyles} value={name} placeholder='Role Name' onChange={(e)=>setName(e.target.value)}/>
+            <button className={infoButtonStyles} onClick={()=>addRole()}>Add</button>
+            <XMarkIcon className='w-6 h-6 hover:cursor-pointer' onClick={()=>setIsCreatingRow(false)}/>
+          </div> 
+          : <div className={newRowStyles}>
+              <button className={`${successButtonStyles} disabled:cursor-not-allowed`} disabled={isCreatingRow} onClick={()=>setIsCreatingRow(true)}><PlusIcon className='h-6 w-6'/>Add Role</button>
+            </div>} 
           {roles.map((role) => {
             if (role.goToId === id)
             return <RoleDetails id={role.id} roleName={role.name} goToId={id} peopleLoading={peopleLoading}/>
