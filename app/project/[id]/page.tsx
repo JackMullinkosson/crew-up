@@ -16,15 +16,17 @@ export default function project ({ params }: any) {
     const [goToChoice, setGoToChoice] = useState("")
     const [isPosting, setIsPosting] = useState(false)
     const thisProject = projects.find((i)=>i.id===id)
-    const thisGoTo = goTos.find((i)=>i.name===goToChoice)
+    const chosenGoTo = goTos.find((i)=>i.name===goToChoice)
+    const thisGoTo = goTos.find((i)=>i?.projectId===id)
     const [thesePeople, setThesePeople] = useState([])
     const [isCreatingRow, setIsCreatingRow] = useState(false)
     const [name, setName] = useState('')
-    const [unsavedChanges, setUnsavedChanges] = useState(false)
+    const [goToAssigned, setGoToAssigned] = useState(false)
+    const [isAssigning, setIsAssigning] = useState(false)
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
     const successLabelStyles = "h-6 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 flex flex-row items-center text-teal-500"
     const dangerLabelStyles = "h-6 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 flex flex-row items-center text-red-500"
-    const successButtonStyles = "flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
+    const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
     const infoButtonStyles = "text-xl flex-shrink-0 flex items-center bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 border-4 text-white py-1 px-2 rounded"
     const newRowStyles = "flex flex-row items-center py-4 mt-2 w-full justify-between"
     const addRowStyles = "flex flex-row w-1/4 items-center mt-2 justify-between bg-white border px-4 py-4 mb-4"
@@ -40,16 +42,21 @@ export default function project ({ params }: any) {
     useEffect(()=>{
         let newPeople = []
         for (const person of people){
-            if (person.goToId === thisGoTo.id)
+            if (person.goToId === chosenGoTo.id)
             newPeople.push(person)
         }
         setThesePeople(newPeople)
-        setUnsavedChanges(true)
     },[goToChoice])
 
 
     function handleChoice(e){
         setGoToChoice(e.value)
+    }
+
+    function handleAssignGoToList(){
+        setIsAssigning(true)
+        setGoToAssigned(true)
+        createProjGoTo()
     }
 
     async function addRole(){
@@ -59,15 +66,15 @@ export default function project ({ params }: any) {
     async function createProjGoTo(){
         let res;
           try{
-            setIsPosting(true) 
+            setIsAssigning(true) 
              res = await fetch(`/api/createProjGoTo`,{
               method: "POST",
               headers: {
                   "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                thisGoTo: thisGoTo,
-                roles: thisGoTo.roles,
+                thisGoTo: chosenGoTo,
+                roles: chosenGoTo.roles,
                 people: thesePeople,
                 projectName: thisProject.name,
                 projectId: id,
@@ -76,12 +83,18 @@ export default function project ({ params }: any) {
             })
             if (res.status !== 200) {
               console.log('error making new go to list')
-            } 
+            }
           }
           catch(e){
             console.error(e)
           }
-          console.log(await res.json())
+          finally{
+          setIsAssigning(false)
+          let {updatedGoTo} = await res.json()
+          let resGoTos = [...goTos]
+          resGoTos.push(updatedGoTo) 
+          setGoTos(resGoTos)
+          }
         }
    
 
@@ -137,52 +150,49 @@ async function getPeople(){
 return(
     <main className='flex justify-center px-16 flex-col py-12 lg:py-16 lg:px-24'>
         {projectsLoading ? <p>Loading...</p> : 
-        (<><div className="w-3/4 py-6 flex flex-row items-center justify-evenly">
-        <h1 className='text-4xl'>{thisProject.name}</h1>
-        <p className="text-gray-500 dark:text-gray-400">{moment(thisProject.startDate).format("MMMM Do YYYY")} - {moment(thisProject.endDate).format("MMMM Do YYYY")}</p>
+        (<>
+        <div className="w-3/4 py-6 flex flex-row items-center justify-evenly">
+            <h1 className='text-6xl font-bold'>{thisProject.name}</h1>
+            <p className="text-gray-500 dark:text-gray-400 ml-6 w-1/2">{moment(thisProject.startDate).format("MMMM Do YYYY")} - {moment(thisProject.endDate).format("MMMM Do YYYY")}</p>
         </div>
-        <div className="w-3/4 py-6 flex flex-row justify-evenly items-center">
+        {!goToAssigned || isAssigning ? 
+        (<div className="w-3/4 py-6 flex flex-row justify-evenly items-center">
             <div>
-        <label className={labelStyles}>Choose Go-To List</label>
-            <div className="flex"><select className="flex px-4 appearance-none bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 pr-12 mb-3 leading-tight focus:outline-none focus:bg-white hover:cursor-pointer" onChange={(e)=>handleChoice(e.target)} >
-                <option value="" disabled selected>Select option</option>
-                {goTosLoading ? <>Loading...</>:
-                goTos.map((goTo)=>{
-                    if(goTo.defaultGoTo)
-                    return(
-                        <option value={String(goTo.name)}>{goTo.name}</option>
-                    )
-                })}
-             </select>
-             <ChevronDownIcon className="h-8 w-6 -ml-10 mt-2 postion-absolute"/>
-             </div>
+                <label className={labelStyles}>Choose Go-To List</label>
+                <div className="flex flex-col">
+                    <select className="flex px-4 appearance-none bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 pr-12 mb-3 leading-tight focus:outline-none focus:bg-white hover:cursor-pointer" onChange={(e)=>handleChoice(e.target)} >
+                        <option value="" disabled selected>Select option</option>
+                        {goTosLoading ? <>Loading...</> : goTos.map((goTo)=>{
+                        if(goTo.defaultGoTo) return(<option key={String(goTo.id)} value={String(goTo.name)}>{goTo.name}</option>)})}
+                    </select>
+                    <button className={successButtonStyles} onClick={()=>handleAssignGoToList()}>{isAssigning ? <ClipLoader size={27} color={'white'}/> : 'Assign Go-To'}</button>
+                </div>
              </div>
              <div className='ml-6 w-1/2'>
-                <p>Once you choose a go-to list, you will be able to customize it for this specific project. Your changes will not affect your original list.</p>
+                <p>Once you assign a go-to list to this project, you will be able to customize it. Your changes will not affect the original list.</p>
              </div>
-        </div>
-        {goToChoice==="" ? null : <div className='w-5/6 pt-3 pb-1'>
-        {goTosLoading ?  <><ClipLoader size={40} color={'black'}/></> : (<>
-        <div className={newRowStyles}>
-            {unsavedChanges ? (<label className={dangerLabelStyles}>You have unsaved changes<button className="ml-2 text-blue-600 dark:text-blue-500 hover:underline disabled:cursor-not-allowed block uppercase tracking-wide text-xs font-bold">Save Now</button></label>)
-            : (<label className={successLabelStyles}>No unsaved changes <CheckIcon className='h-6 w-6'/></label>)}
-            {isPosting ? <label className={dangerLabelStyles}><ClipLoader size={40} color={'white'}/></label> 
-            : <label className={successLabelStyles}>No unsaved changes <CheckIcon className='h-6 w-6 items-center'/></label>}
-        </div>  
-        {thisGoTo.roles.map((role) => {
-            return <ProjectRoleDetails key={String(role.id)} id={role.id} roleName={role.name} goToId={thisGoTo.id} peopleLoading={peopleLoading}/>
-          })}
-          {isCreatingRow ? 
-          <div className={addRowStyles}>
-            <input className={inputStyles} value={name} placeholder='Role Name' onChange={(e)=>setName(e.target.value)}/>
-            <button className={successButtonStyles} onClick={()=>addRole()}>Add</button>
-            <XMarkIcon className='w-6 h-6 hover:cursor-pointer' onClick={()=>setIsCreatingRow(false)}/>
-          </div> 
-          : <div className={newRowStyles}>
-              <button className={`${successButtonStyles} disabled:cursor-not-allowed`} disabled={isCreatingRow} onClick={()=>setIsCreatingRow(true)}><PlusIcon className='h-6 w-6'/>Add Role</button>
-            </div>} 
-          </>) }
-        </div>}
+        </div>) : 
+        (<div className='w-5/6 pt-3 pb-1'>{goTosLoading ? <><ClipLoader size={40} color={'black'}/></> : (
+            <>
+                <div className={newRowStyles}>
+                    {isPosting ?
+                    (<div className='flex ml-4 items-center'><ClipLoader size={35} color={'red'}/></div>) :
+                    (<label className={successLabelStyles}>No unsaved changes <CheckIcon className='h-6 w-6 items-center'/></label>)}
+                </div> 
+                    {thisGoTo.roles.map((role) => {
+                return <ProjectRoleDetails key={String(role.id)} id={role.id} roleName={role.name} goToId={thisGoTo.id} peopleLoading={peopleLoading}/>
+                    })}
+                    {isCreatingRow ? 
+                <div className={addRowStyles}>
+                    <input className={inputStyles} value={name} placeholder='Role Name' onChange={(e)=>setName(e.target.value)}/>
+                    <button className={successButtonStyles} onClick={()=>addRole()}>Add</button>
+                    <XMarkIcon className='w-6 h-6 hover:cursor-pointer' onClick={()=>setIsCreatingRow(false)}/>
+                </div> 
+              : <div className={newRowStyles}>
+                    <button className={`${successButtonStyles} disabled:cursor-not-allowed`} disabled={isCreatingRow} onClick={()=>setIsCreatingRow(true)}><PlusIcon className='h-6 w-6'/>Add Role</button>
+                </div>} 
+            </>)}
+        </div>)}
         </>)}
     </main>
 )
