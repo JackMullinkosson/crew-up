@@ -23,6 +23,7 @@ interface GoTo {
   icon: Number;
   defaultGoTo: Boolean;
   roles: Role[]
+  projectId: Number;
 }
 
 interface Role {

@@ -111,7 +111,8 @@ const ProjectRoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
             order: people.length+1,
             id: newTempId,
             phoneNumber: phoneNumber,
-            roleId: id
+            roleId: id,
+            goToId: goToId
         }
         let updatedPeople = [...people];
         updatedPeople = [  ...people, newPerson];
@@ -240,7 +241,7 @@ const ProjectRoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
                 </div>
                 {peopleLoading ? <div>Loading..</div>:
                 <DndProvider backend={HTML5Backend}>
-                    <Container roleId={id} setNoAdding={setNoAdding}/>
+                    <Container goToId={goToId} roleId={id} setNoAdding={setNoAdding}/>
                 </DndProvider>}
                 </div>
           </div>
