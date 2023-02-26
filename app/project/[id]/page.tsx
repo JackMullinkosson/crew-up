@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../../Context/store';
 import { ChevronDownIcon, PlusIcon, XMarkIcon, CheckIcon, ClipboardDocumentIcon } from '@heroicons/react/24/solid';
 import { ClipLoader } from 'react-spinners';
-import ProjectRoleDetails from '@/app/Components/RoleDetails';
+import ProjectRoleDetails from '@/app/GoTos/[id]/RoleDetails';
 import moment from 'moment';
 
 export default function project ({ params }: any) { 

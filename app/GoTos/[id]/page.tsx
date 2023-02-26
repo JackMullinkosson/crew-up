@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../../Context/store';
 import { PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import { ClipLoader } from 'react-spinners';
-import RoleDetails from '@/app/Components/RoleDetails';
+import RoleDetails from '@/app/GoTos/[id]/RoleDetails';
 
 export default function goTo ({ params }: any) {
     const [id, setId] = useState(parseInt(params.id))
@@ -132,9 +132,8 @@ async function addRole(){
 
 
 return (
-  <>
     <div className='flex justify-center px-16 flex-col py-12 lg:py-16'>
-      <h1 className='text-2xl py-4'>{goTosLoading ? 'Loading...' : thisGoTo.name}</h1>
+      <h1 className='text-4xl py-4'>{goTosLoading ? 'Loading...' : thisGoTo.name}</h1>
       {rolesLoading || goTosLoading ? (
         <>
           <div className={newRowStyles}>
@@ -162,7 +161,6 @@ return (
         </div>
       )}
     </div>
-  </>
 );
 
 

@@ -1,4 +1,4 @@
-import NewProjectForm from '../Components/NewProjectForm'
+import NewProjectForm from './NewProjectForm'
 
 
 export default function NewProject() {

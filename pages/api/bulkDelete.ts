@@ -4,7 +4,7 @@ import prisma from '../../prisma/client'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try{
-        await prisma.person.deleteMany();
+        await prisma.goTos.deleteMany();
         } catch (error) {
           console.error(`An error occurred while trying to delete person ${error}`);
         }
