@@ -23,6 +23,59 @@ export default function goTo ({ params }: any) {
     const inputStyles = "w-1/2 appearance-none bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
 
     useEffect(()=>{
+      getGoTos()
+      getRoles()
+      getPeople()
+  },[])
+      
+  async function getGoTos(){
+    try {
+      const res = await fetch(`/api/getGoTos`, {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      });
+      setGoTos(await res.json())
+      setGoTosLoading(false);
+  } catch (error) {
+      console.error(error);
+  } 
+}
+
+  async function getRoles(){
+    try {
+      const res = await fetch(`/api/getRoles`, {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      });
+      setRoles(await res.json())
+      setRolesLoading(false);
+  } catch (error) {
+      console.error(error);
+  } 
+}
+
+
+async function getPeople(){
+  try {
+    setPeopleLoading(true) 
+    const res = await fetch(`/api/getPeople`, {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    });
+    setPeople(await res.json())
+    setPeopleLoading(false)
+} catch (error) {
+    console.error(error);
+}
+}
+
+    useEffect(()=>{
       getTempId()
      },[roles])
 
@@ -37,59 +90,6 @@ export default function goTo ({ params }: any) {
       }
       setTempId(arrOfIds[0])
     }
-    
-    useEffect(()=>{
-        getGoTos()
-        getRoles()
-        getPeople()
-    },[])
-
-    async function getGoTos(){
-      try {
-        const res = await fetch(`/api/getGoTos`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        });
-        setGoTos(await res.json())
-        setGoTosLoading(false);
-    } catch (error) {
-        console.error(error);
-    } 
-  }
-
-    async function getRoles(){
-      try {
-        const res = await fetch(`/api/getRoles`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        });
-        setRoles(await res.json())
-        setRolesLoading(false);
-    } catch (error) {
-        console.error(error);
-    } 
-  }
-
-
-  async function getPeople(){
-    try {
-      setPeopleLoading(true) 
-      const res = await fetch(`/api/getPeople`, {
-      method: "GET",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      });
-      setPeople(await res.json())
-      setPeopleLoading(false)
-  } catch (error) {
-      console.error(error);
-  }
-}
 
 async function addRole(){
   let newTempId = tempId+1
