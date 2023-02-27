@@ -1,9 +1,9 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { Container } from '../../Components/Container'
+import { Container } from '../Components/Container'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { useGlobalContext } from '../../Context/store';
+import { useGlobalContext } from '../Context/store';
 import { PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import EmailValidator from 'email-validator';
 
