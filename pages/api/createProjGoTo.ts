@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try{
         const {thisGoTo, defaultGoTo, projectId, projectName, roles, people } = req.body;
       
-        const goTo = await prisma.goTos.create({
+        const createdGoTo = await prisma.goTos.create({
             data: {
             name: `${projectName} Go-To List`,
             icon: thisGoTo.icon,
@@ -19,37 +19,47 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         });
   
-         const updatedGoTo = await prisma.goTos.update({
-            where: { id: goTo.id },
-            data: {
-            roles: {
-                create: roles.map((role: { name: String, people: { name: String, email: String, phoneNumber: String, order: Number }[] }) => ({
-                name: role.name,
-                people: {
-                    create: people.map((person: {name: String, email: String, phoneNumber: String, order: Number}) =>({
-                    name: person.name,
-                    email: person.email,
-                    phoneNumber: person.phoneNumber,
-                    order: person.order,
-                    goTo: {
-                        connect:{
-                        id: goTo.id
-                        }
-                    }
-                    }))
-                }
-                }))
-            }
+        const newRoles = thisGoTo.roles.map((existingRole) => ({
+            ...existingRole,
+            id: undefined,
+            goToId: createdGoTo.id,
+          }))
+        
+        await prisma.role.createMany({
+            data: newRoles,
+          })
+        
+        const createdRoles = await prisma.role.findMany({
+            where: {
+              goToId: createdGoTo.id,
             },
-            include: {
-            roles: {
-                include: {
-                people: true
-                }
-            }
-            }
-        });
-        return await res.status(200).json({ updatedGoTo });
+          });
+
+        const newPeople = thisGoTo.roles.flatMap((existingRole) =>
+          people
+            .filter((existingPerson) =>
+              existingPerson.roleId ===
+              thisGoTo.roles.find((r) => r.name === existingRole.name).id
+            )
+            .map((existingPerson) => ({
+              ...existingPerson,
+              id: undefined,
+              goToId: createdGoTo.id,
+              roleId: createdRoles.find((r) => r.name === existingRole.name).id,
+            }))
+        );
+
+        
+        await prisma.person.createMany({
+            data: newPeople,
+          })
+
+        const completeGoTo = await prisma.project.findFirst({
+            where: { id: createdGoTo.id }
+          });
+
+
+        return await res.status(200).json({ completeGoTo });
     }
     catch(e){
         console.error(e)

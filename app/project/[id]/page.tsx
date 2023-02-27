@@ -17,7 +17,7 @@ interface Project {
 export default function project ({ params }: any) { 
     const id = parseInt(params.id)
     const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
-    const {goTos, setGoTos, people, setPeople } = useGlobalContext();
+    const {goTos, setGoTos, people, setPeople, roles, setRoles } = useGlobalContext();
     const [projectsLoading, setProjectsLoading] = useState(true)
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [peopleLoading, setPeopleLoading] = useState(true)
@@ -39,8 +39,6 @@ export default function project ({ params }: any) {
     const addRowStyles = "flex flex-row w-1/4 items-center mt-2 justify-between bg-white border px-4 py-4 mb-4"
     const inputStyles = "appearance-none w-1/2 bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
 
-
-    console.log(chosenGoTo)
 
     useEffect(() => {
         getProject()
@@ -73,6 +71,8 @@ export default function project ({ params }: any) {
     }
 
     async function createProjGoTo(){
+        setRoles(chosenGoTo.roles)
+        setPeople(thesePeople)
         let res;
           try{
             setIsAssigning(true) 
@@ -188,7 +188,7 @@ return(
                     (<div className='flex ml-4 items-center'><ClipLoader size={35} color={'red'}/></div>) :
                     (<label className={successLabelStyles}>No unsaved changes <CheckIcon className='h-6 w-6 items-center'/></label>)}
                 </div> 
-                    {thisGoTo.roles.map((role) => {
+                    {roles.map((role) => {
                 return <ProjectRoleDetails key={String(role.id)} id={role.id} roleName={role.name} goToId={thisGoTo.id} peopleLoading={peopleLoading}/>
                     })}
                     {isCreatingRow ? 

@@ -8,8 +8,7 @@ export default async function handler(
 ) {
     try{
         const goTos = await prisma.goTos.findMany({
-          include: {roles: true,
-          people: true}
+          include: {roles: true}
         });
         return res.status(200).json(goTos)
     } catch (error) {
