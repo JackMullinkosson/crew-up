@@ -7,15 +7,22 @@ import { ClipLoader } from 'react-spinners';
 import ProjectRoleDetails from '@/app/GoTos/[id]/RoleDetails';
 import moment from 'moment';
 
+interface Project {
+    name: String;
+    id: Number;
+    startDate: Date;
+    endDate: Date;
+  }
+
 export default function project ({ params }: any) { 
-    const [id, setId] = useState(parseInt(params.id))
-    const {projects, setProjects, goTos, setGoTos, people, setPeople } = useGlobalContext();
+    const id = parseInt(params.id)
+    const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
+    const {goTos, setGoTos, people, setPeople } = useGlobalContext();
     const [projectsLoading, setProjectsLoading] = useState(true)
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [peopleLoading, setPeopleLoading] = useState(true)
     const [goToChoice, setGoToChoice] = useState("")
     const [isPosting, setIsPosting] = useState(false)
-    const thisProject = projects.find((i)=>i.id===id)
     const chosenGoTo = goTos.find((i)=>i.name===goToChoice)
     const thisGoTo = goTos.find((i)=>i?.projectId===id)
     const [thesePeople, setThesePeople] = useState([])
@@ -33,8 +40,10 @@ export default function project ({ params }: any) {
     const inputStyles = "appearance-none w-1/2 bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
 
 
+    console.log(chosenGoTo)
+
     useEffect(() => {
-        getProjects()
+        getProject()
         getGoTos()
         getPeople()
       }, []);
@@ -76,7 +85,7 @@ export default function project ({ params }: any) {
                 thisGoTo: chosenGoTo,
                 roles: chosenGoTo.roles,
                 people: thesePeople,
-                projectName: thisProject.name,
+                projectName: project.name,
                 projectId: id,
                 defaultGoTo: false
               })
@@ -98,16 +107,16 @@ export default function project ({ params }: any) {
         }
    
 
-    async function getProjects(){
+    async function getProject(){
       try {
         setProjectsLoading(true)
-          const res = await fetch(`/api/getProjects`, {
+          const res = await fetch(`/api/getOneProject/${id}`, {
           method: "GET",
           headers: {
               "Content-Type": "application/json",
           },
           });
-          setProjects(await res.json())
+          setProject(await res.json())
           setProjectsLoading(false)
       } catch (error) {
           console.error(error);
@@ -152,8 +161,8 @@ return(
         {projectsLoading ? <p>Loading...</p> : 
         (<>
         <div className="w-3/4 py-6 flex flex-row items-center justify-evenly">
-            <h1 className='text-6xl font-bold'>{thisProject.name}</h1>
-            <p className="text-gray-500 dark:text-gray-400 ml-6 w-1/2">{moment(thisProject.startDate).format("MMMM Do YYYY")} - {moment(thisProject.endDate).format("MMMM Do YYYY")}</p>
+            <h1 className='text-6xl font-bold'>{project.name}</h1>
+            <p className="text-gray-500 dark:text-gray-400 ml-6 w-1/2">{moment(project.startDate).format("MMMM Do YYYY")} - {moment(project.endDate).format("MMMM Do YYYY")}</p>
         </div>
         {!goToAssigned || isAssigning ? 
         (<div className="w-3/4 py-6 flex flex-row justify-evenly items-center">
