@@ -31,6 +31,6 @@ const BASE_URL = "http://localhost:3000/"
         <Assigned id={id}/>
     )
     else return (
-      <Unassigned id={id}/>
+        <Unassigned id={id}/>
     );
   }
