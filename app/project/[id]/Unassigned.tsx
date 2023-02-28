@@ -171,7 +171,7 @@ return(
                         {goTosLoading ? <>Loading...</> : goTos.map((goTo)=>{
                         if(goTo.defaultGoTo) return(<option key={String(goTo.id)} value={String(goTo.name)}>{goTo.name}</option>)})}
                     </select>
-                    <button className={successButtonStyles} onClick={()=>handleAssignGoToList()}>{isAssigning ? <ClipLoader size={27} color={'white'}/> : 'Assign Go-To'}</button>
+                    <button className={successButtonStyles} onClick={()=>handleAssignGoToList()}>{isAssigning ? <ClipLoader size={24} color={'white'}/> : 'Assign Go-To'}</button>
                 </div>
              </div>
              <div className='ml-6 w-1/2'>
@@ -180,7 +180,7 @@ return(
         </div>
         </>)}
     </main>)
-    : <Assigned id={id}/>}
+    : <Assigned id={id} readyProject={project} readyPeople={thesePeople} readyRoles={assignedGoTo.roles}/>}
   </>
 )
 

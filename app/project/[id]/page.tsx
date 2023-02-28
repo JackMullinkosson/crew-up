@@ -7,6 +7,9 @@ const BASE_URL = "http://localhost:3000/"
 
    export default async function Page ({ params }: any) {
     const id = parseInt(params.id)
+    const readyProject = null;
+    const readyPeople = null;
+    const readyRoles = null;
 
     async function getGoToById() {
       const res = await fetch(`${BASE_URL}api/getGoToById/${id}`, {
@@ -28,7 +31,7 @@ const BASE_URL = "http://localhost:3000/"
       
 
     if(projGoTo)return (
-        <Assigned id={id}/>
+        <Assigned id={id} readyProject={readyProject} readyPeople={readyPeople} readyRoles={readyRoles}/>
     )
     else return (
         <Unassigned id={id}/>
