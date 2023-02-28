@@ -8,7 +8,7 @@ import { PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import EmailValidator from 'email-validator';
 
 
-const ProjectRoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
+const ProjectRoleDetails = ({id, roleName, goToId}) =>{
     const {roles, setRoles, people, setPeople, setNoEditing} = useGlobalContext()
     const [isViewingRole, setIsViewingRole] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
@@ -239,10 +239,9 @@ const ProjectRoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
                             <XMarkIcon className='h-6 w-6 ml-4 hover:cursor-pointer' onClick={()=>setIsCreatingUser(false)}/>
                         </div>      
                 </div>
-                {peopleLoading ? <div>Loading..</div>:
                 <DndProvider backend={HTML5Backend}>
                     <Container goToId={goToId} roleId={id} setNoAdding={setNoAdding}/>
-                </DndProvider>}
+                </DndProvider>
                 </div>
           </div>
     )
