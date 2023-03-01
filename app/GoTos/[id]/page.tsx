@@ -2,25 +2,27 @@
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../../Context/store';
-import { PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import { PlusIcon, TrashIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/solid'
 import { ClipLoader } from 'react-spinners';
-import RoleDetails from '@/app/GoTos/[id]/RoleDetails';
+import RoleDetails from '@/app/Components/RoleDetails';
+
+const successButtonStyles = "mr-2 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
+const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
+const newRowStyles = "flex flex-row items-center py-4 mb-4 w-full justify-between"
+const addRowStyles = "flex flex-row w-1/4 items-center justify-between bg-white py-1 mb-4"
+const inputStyles = "w-1/2 appearance-none bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
+const successLabelStyles = "h-6 uppercase tracking-wide text-gray-700 text-xs font-bold flex flex-row items-center text-teal-500"
+
 
 export default function goTo ({ params }: any) {
     const [id, setId] = useState(parseInt(params.id))
-    const {goTos, setGoTos, roles, setRoles, people, setPeople } = useGlobalContext();
+    const {goTos, setGoTos, roles, setRoles, people, setPeople, isPosting, setIsPosting } = useGlobalContext();
     const [goTosLoading, setGoTosLoading] = useState(true)
-    const [peopleLoading, setPeopleLoading] = useState(true)
     const [rolesLoading, setRolesLoading] = useState(true)
     const [isCreatingRow, setIsCreatingRow] = useState(false)
     const [tempId, setTempId] = useState<number>()
     const [name, setName] = useState('')
     const thisGoTo = goTos.find(i=> i.id===id)
-    const successButtonStyles = "mr-2 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
-    const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
-    const newRowStyles = "flex flex-row items-center py-4 mb-4 w-full justify-between"
-    const addRowStyles = "flex flex-row w-1/4 items-center justify-between bg-white border px-4 py-4 mb-4"
-    const inputStyles = "w-1/2 appearance-none bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
 
     useEffect(()=>{
       getGoTos()
@@ -61,7 +63,6 @@ export default function goTo ({ params }: any) {
 
 async function getPeople(){
   try {
-    setPeopleLoading(true) 
     const res = await fetch(`/api/getPeople`, {
     method: "GET",
     headers: {
@@ -69,7 +70,6 @@ async function getPeople(){
     },
     });
     setPeople(await res.json())
-    setPeopleLoading(false)
 } catch (error) {
     console.error(error);
 }
@@ -103,6 +103,7 @@ async function addRole(){
   updatedRoles.push(newRole)
   setRoles(updatedRoles)
   setName("")
+  setIsPosting(true)
   setIsCreatingRow(false)
   let res;
   try{
@@ -127,6 +128,7 @@ async function addRole(){
     resRoles.push(resRole)
     console.log(resRoles)
     setRoles(resRoles)
+    setIsPosting(false)
   }
 }
 
@@ -145,19 +147,26 @@ return (
         </>
       ) : (
         <div>
-          {isCreatingRow ? 
-          <div className={addRowStyles}>
-            <input className={inputStyles} value={name} placeholder='Role Name' onChange={(e)=>setName(e.target.value)}/>
-            <button className={infoButtonStyles} onClick={()=>addRole()}>Add</button>
-            <XMarkIcon className='w-6 h-6 hover:cursor-pointer' onClick={()=>setIsCreatingRow(false)}/>
-          </div> 
-          : <div className={newRowStyles}>
-              <button className={`${successButtonStyles} disabled:cursor-not-allowed`} disabled={isCreatingRow} onClick={()=>setIsCreatingRow(true)}><PlusIcon className='h-6 w-6'/>Add Role</button>
-            </div>} 
+        <div className={addRowStyles}>
+        {isPosting ?
+            (<div className='flex items-center'><ClipLoader size={35} color={'red'}/></div>) :
+            (<label className={successLabelStyles}>All changes saved<CheckIcon className='h-6 w-6 items-center'/></label>)
+        }
+        </div> 
           {roles.map((role) => {
             if (role.goToId === id)
-            return <RoleDetails key={String(role.id)} id={role.id} roleName={role.name} goToId={id} peopleLoading={peopleLoading}/>
+            return <RoleDetails key={String(role.id)} id={role.id} roleName={role.name} goToId={id}/>
           })}
+        {isCreatingRow ? 
+                <div className={`${addRowStyles} border py-6 mt-4 px-4`}>
+                    <input className={inputStyles} value={name} placeholder='Role Name' onChange={(e)=>setName(e.target.value)}/>
+                    <button className={successButtonStyles} onClick={()=>addRole()}>Add</button>
+                    <XMarkIcon className='w-6 h-6 hover:cursor-pointer' onClick={()=>setIsCreatingRow(false)}/>
+                </div> 
+                : <div className={newRowStyles}>
+                    <button className={`${successButtonStyles} disabled:cursor-not-allowed flex flex-row items-center`} disabled={isCreatingRow} onClick={()=>setIsCreatingRow(true)}><PlusIcon className='h-6 w-6'/>Add Role</button>
+                </div>
+            } 
         </div>
       )}
     </div>

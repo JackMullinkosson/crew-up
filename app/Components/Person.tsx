@@ -33,7 +33,7 @@ interface DragItem {
 }
 
 export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, index, movePerson, setNoAdding, goToId }) => {
-  const { people, setPeople, noEditing } = useGlobalContext();
+  const { people, setPeople, noEditing, setIsPosting, isPosting } = useGlobalContext();
   const [isHovering, setIsHovering] = useState(false)
   const [newName, setNewName] = useState('')
   const [newEmail, setNewEmail] = useState('')
@@ -76,6 +76,7 @@ export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, 
     const personIndex = people.findIndex(i => i.id === id)
     const updatedPeople = [...people]
     updatedPeople[personIndex] = editedPerson
+    setIsPosting(true)
     setPeople(updatedPeople);
     let res;
     try{
@@ -98,6 +99,7 @@ export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, 
         const resPeople = [...people]
         resPeople[personIndex] = resPerson
         setPeople(resPeople)
+        setIsPosting(false)
         setNewName('')
         setNewEmail('')
         setNewPhoneNumber('')
@@ -109,6 +111,7 @@ async function deletePerson(){
   let updatedPeople = [...people]
   updatedPeople = updatedPeople.filter(i=> i.id !== id);
   setPeople(updatedPeople)
+  setIsPosting(true)
   let res;
   try{
        res = await fetch(`/api/deletePerson`,{
@@ -129,6 +132,7 @@ async function deletePerson(){
     let resPeople = [...people]
     resPeople = resPeople.filter(i=> i.id !== resPerson.id);
     setPeople(resPeople)
+    setIsPosting(false)
   }
 }
   
@@ -185,7 +189,7 @@ async function deletePerson(){
 const opacity = isDragging ? 0 : 1
   drag(drop(ref))
   return (
-    <div ref={ref} style={{ opacity }} className={` ${rowStyles} relative`} data-handler-id={handlerId} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
+    <div ref={ref} style={{ opacity }} className={` ${rowStyles} relative hover:cursor-pointer ${isPosting ? 'hover:cursor-not-allowed' : ''}`} data-handler-id={handlerId} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}>
       <div className={`${tdStyles} ml-12`}>
         <label className={labelStyles}>Name</label>
           <div className='font-bold absolute left-2 bottom-4'>{arrOfPersonnel[id]}</div>
@@ -206,7 +210,7 @@ const opacity = isDragging ? 0 : 1
       {isEditingUser ? (<button className={infoButtonStyles} onClick={()=>editPerson()}>Save</button>) : 
       (<div className={isHovering ? 'flex items-center justfy-content' : 'hidden'}>
       <button onClick={()=>handleEditUser()} className="font-medium text-blue-600 dark:text-blue-500 hover:underline disabled:cursor-not-allowed" disabled={noEditing}>Edit</button>
-      <TrashIcon onClick={()=>deletePerson()} className='h-5 w-5 mx-6 hover:cursor-pointer text-red-500'/>
+      <TrashIcon onClick={()=>deletePerson()} className='h-5 w-5 mx-6 hover:text-red-700 text-red-500'/>
       </div>)}
       </div>
     </div>

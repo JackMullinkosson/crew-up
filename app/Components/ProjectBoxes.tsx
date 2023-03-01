@@ -48,7 +48,7 @@ export const ProjectBoxes = () => {
     return(
       <>
         {loading ? (<div className='py-12 px-24'><ClipLoader size={40} color={'black'}/></div>) :
-        (<>{projects.map((i)=>{
+        (<>{projects && projects.map((i)=>{
         return <div className={boxStyles} key={String(i.id)} onClick={()=>router.push(`/project/${i.id}`)}>
               <div className={boxIconStyles}>
                 <h3 className="text-xl font-bold dark:text-white mr-4">{i.name}</h3>

@@ -3,7 +3,7 @@ import { PlusIcon, XMarkIcon, CheckIcon, ClipboardDocumentIcon } from '@heroicon
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../../Context/store';
 import { ClipLoader } from 'react-spinners';
-import ProjectRoleDetails from '../ProjectRoleDetails';
+import RoleDetails from '@/app/Components/RoleDetails';
 import moment from 'moment';
 
 const newRowStyles = "flex flex-row items-center py-4 mt-2 w-full justify-between"
@@ -20,14 +20,14 @@ interface Project {
   }
 
 const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
-    const [isPosting, setIsPosting] = useState(false)
+    const {people, setPeople, roles, setRoles, setIsPosting, isPosting } = useGlobalContext();
     const [projectLoading, setProjectLoading] = useState(true)
     const [goToLoading, setGoToLoading] = useState(true)
     const [isCreatingRow, setIsCreatingRow] = useState(false)
     const [name, setName] = useState('')
-    const {people, setPeople, roles, setRoles } = useGlobalContext();
     const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
     const [goToId, setGoToId] = useState<Number>()
+    const [tempId, setTempId] = useState<number>()
 
     useEffect(()=>{
         if(readyProject){
@@ -43,6 +43,22 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
         getProjectById()
         getGoToById()
     },[])
+
+    useEffect(()=>{
+        getTempId()
+       },[roles])
+  
+    function getTempId(){
+        const arrOfIds = []
+        for (const role of roles) {
+              arrOfIds.push(role.id);
+            }
+          arrOfIds.sort((a, b)=>b-a)
+          if(arrOfIds.length<1){
+          arrOfIds.push(0)
+        }
+        setTempId(arrOfIds[0])
+      }
 
     async function getProjectById(){
         try {
@@ -63,32 +79,70 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
 
     async function getGoToById() {
         let res;
-        try{
-         res = await fetch(`/api/getGoToById/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        let goTo;
+        while (true) {
+          try {
+            res = await fetch(`/api/getGoToById/${id}`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+            goTo = await res.json();
+            if (goTo && goTo.roles && goTo.people) {
+              break;
             }
-        catch(e){
-            console.error(e)
+          } catch (e) {
+            console.error(e);
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1500));
         }
-        finally{
-            const goTo = await res.json()
-            console.log('this', goTo)
-            setGoToId(goTo.id)
-            setPeople(goTo.people)
-            setRoles(goTo.roles)
-            setGoToLoading(false)
-        }
-       
-      }
-
-    async function addRole(){
-        console.log('hi')
+            console.log(goTo)
+            setGoToId(goTo.id);
+            setPeople(goTo.people);
+            setRoles(goTo.roles);
+            setGoToLoading(false);
     }
 
+    async function addRole(){
+        let newTempId = tempId+1
+        const newRole = {
+          name: name,
+          goToId: goToId,
+          id: newTempId,
+          people: []
+        }
+        let updatedRoles = [...roles]
+        updatedRoles.push(newRole)
+        setRoles(updatedRoles)
+        setName("")
+        setIsCreatingRow(false)
+        setIsPosting(true)
+        let res;
+        try{
+           res = await fetch(`/api/createRole`,{
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",  
+            },
+            body: JSON.stringify({
+              name: name,
+              goToId: goToId
+          })
+          })
+        }
+        catch (error) {
+          console.error(error);
+        }
+        finally{
+          let resRole = await res.json()
+          let resRoles = [...roles]
+          resRoles.push(resRole)
+          setRoles(resRoles)
+          setIsPosting(false)
+        }
+      }
+      
 
 
 return (
@@ -107,7 +161,7 @@ return (
             <div className={newRowStyles}>
                 {isPosting ?
                     (<div className='flex ml-4 items-center'><ClipLoader size={35} color={'red'}/></div>) :
-                    (<label className={successLabelStyles}>No unsaved changes <CheckIcon className='h-6 w-6 items-center'/></label>)
+                    (<label className={successLabelStyles}>All changes saved<CheckIcon className='h-6 w-6 items-center'/></label>)
                 }
             </div> 
             {goToLoading ? 
@@ -121,7 +175,7 @@ return (
                   </>) :
                     (<>
                         {roles.map((role) => {
-                            return <ProjectRoleDetails key={String(role.id)} id={role.id} roleName={role.name} goToId={goToId}/>
+                            return <RoleDetails key={String(role.id)} id={role.id} roleName={role.name} goToId={goToId}/>
                         })}
                     </>)
             }

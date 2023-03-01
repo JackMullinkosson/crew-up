@@ -1,15 +1,15 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { Container } from '../../Components/Container'
+import { Container } from './Container'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { useGlobalContext } from '../../Context/store';
+import { useGlobalContext } from '../Context/store';
 import { PlusIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import EmailValidator from 'email-validator';
 
 
-const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
-    const {roles, setRoles, people, setPeople, setNoEditing} = useGlobalContext()
+const RoleDetails = ({id, roleName, goToId}) =>{
+    const {roles, setRoles, people, setPeople, setNoEditing, setIsPosting} = useGlobalContext()
     const [isViewingRole, setIsViewingRole] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
     const [isCreatingUser, setIsCreatingUser] = useState(false)
@@ -101,7 +101,8 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
         if(!emailIsValid){
             setErrorsExist(true)
             return
-        } 
+        }
+        setIsPosting(true) 
         setNoEditing(false)
         setIsCreatingUser(false)
         const newTempId = tempId+1
@@ -139,6 +140,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
             resPeople = [...people, resPerson]
             console.log(resPeople)
             setPeople(resPeople);
+            setIsPosting(false)
         }
     }
 
@@ -166,6 +168,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
         updatedPeople = updatedPeople.filter(i=>i.roleId !== id)
         let updatedRoles = [...roles]
         updatedRoles = updatedRoles.filter(i=> i.id !== id);
+        setIsPosting(true)
         setPeople(updatedPeople)
         setRoles(updatedRoles)
         let res;
@@ -192,6 +195,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
             resPeople = resPeople.filter(i=> i.roleId !== resRole.id)
             setPeople(resPeople)
             setRoles(resRoles)
+            setIsPosting(false)
         }
       }
    
@@ -202,7 +206,7 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
         <div className="flex flex-col py-3 bg-gray-50 hover:bg-white rounded border">
         <div onClick={() => handleRoleClick()} onMouseEnter={()=>setIsHovering(true)} onMouseLeave={()=>setIsHovering(false) }className="w-full flex flex-row justify-between items-center relative">
         <h1 className='text-2xl px-4 py-2 hover:cursor-pointer w-full h-full'>{roleName}</h1>
-        {isHovering ? <TrashIcon onClick={(e)=>handleDeleteRoleClick(e)} className='h-6 w-6 hover:cursor-pointer text-red-500 mr-6'/> : null}
+        {isHovering ? <TrashIcon onClick={(e)=>handleDeleteRoleClick(e)} className='h-6 w-6 hover:cursor-pointer hover:text-red-700 text-red-500 mr-6'/> : null}
         {isConfirmingDelete ? (
             <div className='absolute top-0 right-0 z-50 p-4 overflow-visible h-modal md:h-full w-1/4 mr-8'>
                  <div className="-mt-16 bg-white rounded-lg shadow-2xl shadow-black p-6 text-center dark:bg-gray-700 flex flex-col">
@@ -239,10 +243,9 @@ const RoleDetails = ({id, roleName, goToId, peopleLoading}) =>{
                             <XMarkIcon className='h-6 w-6 ml-4 hover:cursor-pointer' onClick={()=>setIsCreatingUser(false)}/>
                         </div>      
                 </div>
-                {peopleLoading ? <div>Loading..</div>:
                 <DndProvider backend={HTML5Backend}>
                     <Container goToId={goToId} roleId={id} setNoAdding={setNoAdding}/>
-                </DndProvider>}
+                </DndProvider>
                 </div>
           </div>
     )
