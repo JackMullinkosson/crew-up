@@ -183,11 +183,11 @@ return (
             {isCreatingRow ? 
                 <div className={addRowStyles}>
                     <input className={inputStyles} value={name} placeholder='Role Name' onChange={(e)=>setName(e.target.value)}/>
-                    <button className={successButtonStyles} onClick={()=>addRole()}>Add</button>
+                    <button className={successButtonStyles} onClick={()=>addRole()} disabled={isPosting}>Add</button>
                     <XMarkIcon className='w-6 h-6 hover:cursor-pointer' onClick={()=>setIsCreatingRow(false)}/>
                 </div> 
                 : <div className={newRowStyles}>
-                    <button className={`${successButtonStyles} disabled:cursor-not-allowed flex flex-row items-center`} disabled={isCreatingRow} onClick={()=>setIsCreatingRow(true)}><PlusIcon className='h-6 w-6'/>Add Role</button>
+                    <button className={`${successButtonStyles} flex flex-row items-center`} disabled={isCreatingRow} onClick={()=>setIsCreatingRow(true)}><PlusIcon className='h-6 w-6'/>Add Role</button>
                 </div>
             } 
         </>
