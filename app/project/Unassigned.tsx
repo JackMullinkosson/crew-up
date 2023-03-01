@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { useGlobalContext } from '../../Context/store';
+import { useGlobalContext } from '../Context/store';
 import { ClipLoader } from 'react-spinners';
 import moment from 'moment';
 import Assigned from './Assigned';

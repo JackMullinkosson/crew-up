@@ -111,6 +111,7 @@ const NewProjectForm = () => {
           console.error(error);
         }
           const {project} = await res.json()
+          console.log(project)
           router.push(`/project/${project.id}`)
       }
 

@@ -1,6 +1,6 @@
 
-import Assigned from "./Assigned";
-import Unassigned from "./Unassigned";
+import Assigned from "../Assigned";
+import Unassigned from "../Unassigned";
 const BASE_URL = "http://localhost:3000/"
 
 

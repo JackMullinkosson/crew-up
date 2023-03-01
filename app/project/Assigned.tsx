@@ -1,7 +1,7 @@
 "use client"
 import { PlusIcon, XMarkIcon, CheckIcon, ClipboardDocumentIcon } from '@heroicons/react/24/solid';
 import React, { useState, useEffect } from 'react';
-import { useGlobalContext } from '../../Context/store';
+import { useGlobalContext } from '../Context/store';
 import { ClipLoader } from 'react-spinners';
 import RoleDetails from '@/app/Components/RoleDetails';
 import moment from 'moment';
@@ -97,7 +97,6 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
           }
           await new Promise((resolve) => setTimeout(resolve, 1500));
         }
-            console.log(goTo)
             setGoToId(goTo.id);
             setPeople(goTo.people);
             setRoles(goTo.roles);
@@ -142,6 +141,28 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
           setIsPosting(false)
         }
       }
+  
+  function handleCrewUp(){
+    contactCrew()
+  }
+
+  async function contactCrew(){
+    let res;
+    try{
+      res = await fetch(`/api/contact`,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",  
+        },
+        body: JSON.stringify({
+          project: project.name,
+      })
+      })
+    }
+    catch(e){
+      console.error(e)
+    }
+  }
       
 
 
@@ -191,6 +212,9 @@ return (
                 </div>
             } 
         </>
+        <div className={newRowStyles}>
+          <button className={successButtonStyles} onClick={()=>handleCrewUp()}>Crew Up!</button>
+        </div>
     </div>
 </main>
 
