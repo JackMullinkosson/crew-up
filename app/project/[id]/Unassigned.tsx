@@ -32,7 +32,7 @@ interface Role {
 
 export default function project ({id}) { 
     const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
-    const {goTos, setGoTos, people, setPeople } = useGlobalContext();
+    const {goTos, setGoTos, people, setPeople, setIsPosting } = useGlobalContext();
     const [projectsLoading, setProjectsLoading] = useState(true)
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [thesePeople, setThesePeople] = useState([])
@@ -77,7 +77,11 @@ export default function project ({id}) {
         setPeople(thesePeople)
         let res;
           try{
-            setIsAssigning(true) 
+            setIsPosting(true)
+            setIsAssigning(true)
+            setTimeout(() => {
+              setIsAssigned(true);
+            }, 1500);
              res = await fetch(`/api/createProjGoTo`,{
               method: "POST",
               headers: {
@@ -91,7 +95,7 @@ export default function project ({id}) {
                 projectId: id,
                 defaultGoTo: false
               })
-            })
+            }) 
             if (res.status !== 200) {
               console.log('error making new go to list')
             }
@@ -100,7 +104,7 @@ export default function project ({id}) {
             console.error(e)
           }
           finally{
-          setIsAssigned(true)
+          setIsPosting(false)
           }
         }
    
@@ -156,7 +160,10 @@ return(
   <>
     {!isAssigned ? 
     (<main className='flex justify-center px-16 flex-col py-12 lg:py-16 lg:px-24'>
-        {projectsLoading ? <p>Loading...</p> : 
+        {projectsLoading ? 
+        (<div className="w-3/4 py-6 flex flex-row items-center">
+          <ClipLoader size={35} color={'black'}/>
+        </div>) : 
         (<>
         <div className="w-3/4 py-6 flex flex-row items-center justify-evenly">
             <h1 className='text-6xl font-bold'>{project.name}</h1>

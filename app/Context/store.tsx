@@ -56,6 +56,8 @@ interface ContextProps {
     setPeople: Dispatch<SetStateAction<Person[]>>;
     noEditing: boolean;
     setNoEditing: Dispatch<SetStateAction<boolean>>;
+    isPosting: boolean;
+    setIsPosting: Dispatch<SetStateAction<boolean>>;
   }
   
 const GlobalContext = createContext<ContextProps>({
@@ -69,6 +71,8 @@ const GlobalContext = createContext<ContextProps>({
     setPeople: () => {},
     noEditing: false,
     setNoEditing: () => {},
+    isPosting: false,
+    setIsPosting: () => {},
 });
   
 export const GlobalContextProvider = ({ children }) => {
@@ -77,9 +81,10 @@ export const GlobalContextProvider = ({ children }) => {
     const [roles, setRoles] = useState<Role[]>([])
     const [people, setPeople] = useState<Person[]>([])
     const [noEditing, setNoEditing] = useState(false);
+    const [isPosting, setIsPosting] = useState(false)
       
     return (
-        <GlobalContext.Provider value={{ projects, setProjects, goTos, setGoTos, roles, setRoles, people, setPeople, noEditing, setNoEditing }}>
+        <GlobalContext.Provider value={{ projects, setProjects, goTos, setGoTos, roles, setRoles, people, setPeople, noEditing, setNoEditing, isPosting, setIsPosting }}>
             {children}
         </GlobalContext.Provider>
     );

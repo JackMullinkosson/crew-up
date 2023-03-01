@@ -27,7 +27,7 @@ export interface Person {
   }
 
   export const Container: React.FC<Props> = ({roleId, goToId, setNoAdding}) => {
-    const { people, setPeople } = useGlobalContext();
+    const { people, setPeople, setIsPosting } = useGlobalContext();
     const [dragged, setDragged] = useState<number>(-1)
 
     useEffect(()=>{
@@ -36,7 +36,7 @@ export interface Person {
 
     useEffect(()=>{
     async function updateOrder(){
-      console.log(dragged)
+      setIsPosting(true)
       let res;
       try{
            res = await fetch(`/api/reorderPeople`,{
@@ -52,6 +52,9 @@ export interface Person {
       }
       catch(e){
           console.error(e)
+      }
+      finally{
+        setIsPosting(false)
       }
   }
   if(dragged===-1) return

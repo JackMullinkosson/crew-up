@@ -45,7 +45,7 @@ export const GoToBoxes = () => {
     return(
         <>
         {loading ? (<div className='py-12 px-24'><ClipLoader size={40} color={'black'}/></div>) :
-        (<>{goTos.map((i)=>{
+        (<>{goTos && goTos.map((i)=>{
         return<div className={newBoxStyles} onClick={()=>router.push(`/GoTos/${i.id}`)}>
         <h3 className="text-xl font-bold dark:text-white mr-4">{i.name}</h3>
         {icons[String(i.icon)]}
