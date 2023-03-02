@@ -30,7 +30,7 @@ interface Role {
 
   
 
-export default function project ({id}) { 
+export default function Unassigned ({id}) { 
     const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
     const {goTos, setGoTos, people, setPeople, setIsPosting } = useGlobalContext();
     const [projectsLoading, setProjectsLoading] = useState(true)
@@ -39,6 +39,7 @@ export default function project ({id}) {
     const [assignedGoTo, setAssignedGoTo] = useState<GoTo>()
     const [isAssigning, setIsAssigning] = useState(false)
     const [isAssigned, setIsAssigned] = useState(false)
+    const ownerId = 1;
     const thisGoTo = goTos.find((i)=>i?.projectId===id)
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
     const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
@@ -89,6 +90,7 @@ export default function project ({id}) {
               },
               body: JSON.stringify({
                 thisGoTo: assignedGoTo,
+                ownerId: ownerId,
                 roles: assignedGoTo.roles,
                 people: thesePeople,
                 projectName: project.name,

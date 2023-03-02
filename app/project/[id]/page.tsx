@@ -24,9 +24,9 @@ const BASE_URL = "http://localhost:3000/"
         return null; 
       }
     }
-    
-    const projGoTo = await getGoToById()
 
+    const projGoTo = await getGoToById()
+    
     
       
 

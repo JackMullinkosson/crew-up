@@ -27,7 +27,9 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
     const [name, setName] = useState('')
     const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
     const [goToId, setGoToId] = useState<Number>()
+    const [ownerId, setOwnerId] = useState<Number>()
     const [tempId, setTempId] = useState<number>()
+   
 
     useEffect(()=>{
         if(readyProject){
@@ -89,15 +91,16 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
               },
             });
             goTo = await res.json();
-            if (goTo && goTo.roles && goTo.people) {
+            if (goTo && goTo.roles && goTo.people && goTo.ownerId) {
               break;
             }
           } catch (e) {
             console.error(e);
           }
-          await new Promise((resolve) => setTimeout(resolve, 1500));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
             setGoToId(goTo.id);
+            setOwnerId(goTo.ownerId)
             setPeople(goTo.people);
             setRoles(goTo.roles);
             setGoToLoading(false);
@@ -156,6 +159,7 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
         },
         body: JSON.stringify({
           project: project.name,
+          ownerId: ownerId
       })
       })
     }

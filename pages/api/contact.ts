@@ -10,9 +10,15 @@ export default async function handler(
         if (req.method !== 'POST') {
             return res.status(405).json({ error: 'Method Not Allowed' });
           }
+        const {ownerId} = req.body
+
+        const user = await prisma.user.findFirst({
+          where: { id: ownerId }
+        });
+
         const contact = await transporter.sendMail({
             ...mailOptions,
-            subject: 'You have a job offer!',
+            subject: `${user.name} sent you a job offer!`,
             text: 'Hello',
             html: "<h1>Test title</h1><p>body test</p>"
         })

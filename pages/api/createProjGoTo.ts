@@ -4,11 +4,16 @@ import prisma from '../../prisma/client'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try{
-        const {thisGoTo, defaultGoTo, projectId, projectName, roles, people } = req.body;
+        const {thisGoTo, defaultGoTo, projectId, projectName, roles, people, ownerId } = req.body;
       
         const createdGoTo = await prisma.goTos.create({
             data: {
             name: `${projectName} Go-To List`,
+            owner: {
+              connect: {
+                id: ownerId
+              }
+            },
             icon: thisGoTo.icon,
             defaultGoTo: defaultGoTo,
             project: {

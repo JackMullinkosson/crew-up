@@ -12,6 +12,7 @@ model User {
   email    String    @unique
   id       Int       @id @default(autoincrement())
   projects Project[]
+  goTos    GoTos[]
 }
 
 model Project {
@@ -52,6 +53,8 @@ model GoTos {
   name        String
   icon        Int      @default(1)
   defaultGoTo Boolean  @default(true)
+  ownerId     Int
+  owner       User     @relation(fields: [ownerId], references: [id])
   projectId   Int?
   project     Project? @relation(fields: [projectId], references: [id])
   people      Person[]

@@ -19,6 +19,7 @@ const NewGoToForm = () => {
     const [icon, setIcon] = useState<number>()
     const [postRequestNotReady, setPostRequestNotReady] = useState(true)
     const [isPosting, setIsPosting] = useState(false)
+    const ownerId = 1;
     
 
     async function submitList(e: React.FormEvent){
@@ -33,6 +34,7 @@ const NewGoToForm = () => {
             },
             body: JSON.stringify({
               name: listName,
+              ownerId: ownerId,
               roles: defaultRoles,
               icon: icon
           })
