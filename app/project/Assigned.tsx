@@ -159,7 +159,8 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
         },
         body: JSON.stringify({
           project: project.name,
-          ownerId: ownerId
+          ownerId: ownerId,
+          people: people 
       })
       })
     }

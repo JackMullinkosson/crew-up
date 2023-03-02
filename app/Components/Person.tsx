@@ -48,7 +48,7 @@ export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, 
       currentIndex++
       arrOfPersonnel[person.id] = currentIndex
       }
-  })
+    })
 
   function handleEditUser(){
     setIsEditingUser(true)
