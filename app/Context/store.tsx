@@ -39,6 +39,8 @@ interface Person {
   id: number;
   email: string;
   phoneNumber: string;
+  status: string;
+  statusIcon: number;
   roleId: number;
   goToId: number;
 }

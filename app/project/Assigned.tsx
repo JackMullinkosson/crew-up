@@ -11,6 +11,8 @@ const addRowStyles = "flex flex-row w-1/4 items-center mt-2 justify-between bg-w
 const inputStyles = "appearance-none w-1/2 bg-gray-200 text-gray-500 border border-black-500 rounded py-2 px-1 mb-1 leading-tight focus:outline-none focus:bg-white"
 const successLabelStyles = "h-6 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 flex flex-row items-center text-teal-500"
 const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
+const infoButtonStyles = "py-1 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-m border-4 text-white px-2 rounded"
+
 
 interface Project {
     name: String;
@@ -24,6 +26,7 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
     const [projectLoading, setProjectLoading] = useState(true)
     const [goToLoading, setGoToLoading] = useState(true)
     const [isCreatingRow, setIsCreatingRow] = useState(false)
+    const [isCrewingUp, setIsCrewingUp] = useState(false)
     const [name, setName] = useState('')
     const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
     const [goToId, setGoToId] = useState<Number>()
@@ -146,7 +149,10 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
       }
   
   function handleCrewUp(){
+    setIsPosting(true)
+    setIsCrewingUp(true)
     contactCrew()
+    addStatusToPeople()
   }
 
   async function contactCrew(){
@@ -158,14 +164,38 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
           "Content-Type": "application/json",  
         },
         body: JSON.stringify({
-          project: project.name,
+          project: project,
           ownerId: ownerId,
-          people: people 
+          people: people
       })
       })
     }
     catch(e){
       console.error(e)
+    }
+  }
+
+  async function addStatusToPeople(){
+    let res;
+    try{
+      res = await fetch(`/api/addStatusToPeople`,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",  
+        },
+        body: JSON.stringify({
+          goToId: goToId,
+      })
+      })
+    }
+    catch(e){
+      console.error(e)
+    }
+    finally{
+      const resPeople = await res.json()
+      setPeople(resPeople)
+      setIsPosting(false)
+      setIsCrewingUp(false)
     }
   }
       
@@ -217,8 +247,11 @@ return (
                 </div>
             } 
         </>
-        <div className={newRowStyles}>
-          <button className={successButtonStyles} onClick={()=>handleCrewUp()}>Crew Up!</button>
+        <div className="w-5/6 py-6 flex flex-row justify-between items-center">
+          <button className={`${infoButtonStyles} w-1/2`} onClick={()=>handleCrewUp()}>{isCrewingUp ? <ClipLoader size={21} color={'white'}/> : 'Crew Up!'}</button>
+          <div className='ml-24'>
+                <p>When you click 'Crew Up!' offers will be sent to each of your top candidates, and this page will update to inform the status of their response. If anybody declines the offer, a new offer will automatically be sent to the next person on the list.</p>
+             </div>
         </div>
     </div>
 </main>
@@ -227,4 +260,4 @@ return (
 )
 }
 
-export default Assigned
+export default Assigned;

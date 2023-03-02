@@ -12,7 +12,8 @@ export interface Person {
     email: string
     phoneNumber: string
     roleId: number
-    index: number
+    status: string
+    statusIcon: number
     goToId: number
   }
   
@@ -75,7 +76,7 @@ export interface Person {
       }, [])
 
       const renderPerson = useCallback(
-        (person: { id: number; name: string, order: number, email: string, phoneNumber: string, roleId: number, goToId: number}, index: number) => {
+        (person: { id: number; name: string, order: number, email: string, phoneNumber: string, status: string, statusIcon: number, roleId: number, goToId: number}, index: number) => {
           if(person.roleId===roleId){
           return (
             <Person
@@ -89,6 +90,8 @@ export interface Person {
               name={person.name}
               movePerson={movePerson}
               setNoAdding={setNoAdding}
+              status={person.status}
+              statusIcon={person.statusIcon}
               goToId={goToId}
             />
           )
