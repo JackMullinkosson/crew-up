@@ -115,7 +115,9 @@ const RoleDetails = ({id, roleName, goToId}) =>{
             id: newTempId,
             phoneNumber: phoneNumber,
             roleId: id,
-            goToId: goToId
+            goToId: goToId,
+            status: null,
+            statusIcon: null
         }
         let updatedPeople = [...people];
         updatedPeople = [  ...people, newPerson];

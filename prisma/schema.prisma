@@ -42,6 +42,8 @@ model Person {
   id          String @id @default(uuid())
   email       String
   phoneNumber String
+  status      String?
+  statusIcon  Int?
   roleId      Int
   goToId      Int
   goTo        GoTos  @relation(fields: [goToId], references: [id])

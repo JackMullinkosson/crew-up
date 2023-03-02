@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { ItemTypes } from '../ItemTypes'
 import { useGlobalContext } from '../Context/store';
-import { TrashIcon } from '@heroicons/react/24/solid'
+import { TrashIcon, EllipsisHorizontalCircleIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid'
 
 const rowStyles = "flex flex-row py-4 bg-gray-50 w-full justify-between border shrink-0"
 const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -22,6 +22,8 @@ export interface PersonProps {
   roleId: number
   goToId: number
   index: number
+  status: string
+  statusIcon: number
   setNoAdding: (boolean) => void
   movePerson: (dragIndex: number, hoverIndex: number) => void
 }
@@ -32,7 +34,7 @@ interface DragItem {
   type: string
 }
 
-export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, index, movePerson, setNoAdding, goToId }) => {
+export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, index, movePerson, setNoAdding, goToId, status, statusIcon }) => {
   const { people, setPeople, noEditing, setIsPosting, isPosting } = useGlobalContext();
   const [isHovering, setIsHovering] = useState(false)
   const [newName, setNewName] = useState('')
@@ -40,6 +42,10 @@ export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, 
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [order, setOrder] = useState<number>()
   const [isEditingUser, setIsEditingUser] = useState(false)
+  const statusIcons = [
+  <EllipsisHorizontalCircleIcon className='pl-1 h-18 w-18 text-orange-500'/>, 
+  <XCircleIcon className='pl-1 h-18 w-18 text-red-500'/>, 
+  <CheckCircleIcon className='pl-1 h-18 w-18 text-green-500'/> ]
   
   let arrOfPersonnel = {}
   let currentIndex = 0
@@ -70,6 +76,8 @@ export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, 
         order: order,
         id: id,
         phoneNumber: newPhoneNumber,
+        status: status,
+        statusIcon: statusIcon,
         roleId: roleId,
         goToId: goToId
     }
@@ -208,10 +216,14 @@ const opacity = isDragging ? 0 : 1
       </div>
       <div className={tdStyles}>
       {isEditingUser ? (<button className={infoButtonStyles} onClick={()=>editPerson()}>Save</button>) : 
-      (<div className={isHovering ? 'flex items-center justfy-content' : 'hidden'}>
+      (<div className={isHovering ? 'flex items-center justfy-content mr-24' : 'hidden'}>
       <button onClick={()=>handleEditUser()} className="font-medium text-blue-600 dark:text-blue-500 hover:underline disabled:cursor-not-allowed" disabled={noEditing}>Edit</button>
       <TrashIcon onClick={()=>deletePerson()} className='h-5 w-5 mx-6 hover:text-red-700 text-red-500'/>
       </div>)}
+      {status ? <div style={{maxWidth: '6rem'}}className='absolute right-2 flex flex-row items-center justify-center'>
+          <div className='uppercase tracking-wide text-gray-700 text-xs'>{status}</div>
+          {statusIcons[statusIcon]}
+          </div> : null}
       </div>
     </div>
   )

@@ -11,7 +11,7 @@ export default async function handler(
         if (req.method !== 'POST') {
             return res.status(405).json({ error: 'Method Not Allowed' });
           }
-        const {ownerId, people} = req.body
+        const {project, ownerId, people} = req.body
 
         const user = await prisma.user.findFirst({
           where: { id: ownerId }
@@ -28,7 +28,7 @@ export default async function handler(
             ...mailOptions,
             subject: `${user.name} sent you a job offer!`,
             text: `Hello ${person.name}`,
-            html: `<h1>Hello ${person.name}</h1><p>body test</p>`
+            html: `<h4>Hello ${person.name}</h4><p>${user.name} sent you a job offer. <span><a href="http://localhost:3000/project/${project.id}/${person.id}">Click here</a></span> for more details and to confirm or decline the offer.</p>`
           })
           }
         })
