@@ -42,11 +42,10 @@ export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, 
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [order, setOrder] = useState<number>()
   const [isEditingUser, setIsEditingUser] = useState(false)
-  const statusIcons = [
-  <EllipsisHorizontalCircleIcon className='pl-1 h-18 w-18 text-orange-500'/>, 
-  <XCircleIcon className='pl-1 h-18 w-18 text-red-500'/>, 
-  <CheckCircleIcon className='pl-1 h-18 w-18 text-green-500'/> ]
+  const statusIcons = [<EllipsisHorizontalCircleIcon className='pl-1 h-18 w-18 text-orange-500'/>, <XCircleIcon className='pl-1 h-18 w-18 text-red-500'/>, <CheckCircleIcon className='pl-1 h-18 w-18 text-green-500'/>]
   
+  console.log(statusIcon)
+
   let arrOfPersonnel = {}
   let currentIndex = 0
   people.forEach((person)=>{

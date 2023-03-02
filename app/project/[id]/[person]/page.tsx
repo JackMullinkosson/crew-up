@@ -6,6 +6,7 @@ export default async function Page ({ params }: any) {
     const personId = parseInt(params.person)
     const projectId = parseInt(params.id)
 
+
     async function getProjectById() {
         const res = await fetch(`${BASE_URL}api/getProjectById/${projectId}`, {
           method: "GET",
@@ -28,7 +29,7 @@ export default async function Page ({ params }: any) {
                 <h1 className='text-6xl font-bold'>{project.name}</h1>
                 <p className="text-gray-500 dark:text-gray-400 ml-6 w-1/2">{moment(project.startDate).format("MMMM Do YYYY")} - {moment(project.endDate).format("MMMM Do YYYY")}</p>
             </div>
-            <ResponseButtons />
+            <ResponseButtons personId={params.person} />
         </main>
 
     )
