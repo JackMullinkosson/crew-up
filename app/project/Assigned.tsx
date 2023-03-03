@@ -13,7 +13,7 @@ const inputStyles = "appearance-none w-1/2 bg-gray-200 text-gray-500 border bord
 const successLabelStyles = "h-6 uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 flex flex-row items-center text-teal-500"
 const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
 const infoButtonStyles = "py-1 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-m border-4 text-white px-2 rounded"
-
+const toastStyles = "flex items-center w-full max-w-xs p-4 bg-white rounded-lg shadow-lg shadow-blue-400"
 
 interface Project {
     name: String;
@@ -22,7 +22,7 @@ interface Project {
     endDate: Date;
   }
 
-const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
+const Assigned = ({id}) => {
     const {people, setPeople, roles, setRoles, setIsPosting, isPosting } = useGlobalContext();
     const [projectLoading, setProjectLoading] = useState(true)
     const [goToLoading, setGoToLoading] = useState(true)
@@ -33,6 +33,8 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
     const [goToId, setGoToId] = useState<Number>()
     const [ownerId, setOwnerId] = useState<Number>()
     const [tempId, setTempId] = useState<number>()
+    const [crewedUp, setCrewedUp] = useState<boolean>()
+    const [showToast, setShowToast] = useState(false)
    
 
     useEffect(()=>{
@@ -41,6 +43,7 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
         getProjectById()
         getGoToById()
     },[])
+
 
     useEffect(()=>{
       if(roles){
@@ -60,6 +63,13 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
         setTempId(arrOfIds[0])
       }
 
+    useEffect(()=>{
+      if(!showToast) return
+      setTimeout(() => {
+        setShowToast(false)
+      }, 3500);
+    },[showToast])
+
     async function getProjectById(){
         try {
             const res = await fetch(`/api/getProjectById/${id}`, {
@@ -68,7 +78,9 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
                 "Content-Type": "application/json",
             },
             });
-            setProject(await res.json())
+            const project = await res.json()
+            setProject(project)
+            setCrewedUp(project.crewedUp)
         } catch (error) {
             console.error(error);
         }
@@ -189,8 +201,11 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
     finally{
       const resPeople = await res.json()
       setPeople(resPeople)
+      setShowToast(true)
+      setCrewedUp(true)
       setIsPosting(false)
       setIsCrewingUp(false)
+      window.scrollTo(0, 0)
     }
   }
       
@@ -199,6 +214,13 @@ const Assigned = ({id, readyProject, readyPeople, readyRoles}) => {
 return (
 
     <main className='flex justify-center px-16 flex-col py-12 lg:py-16 lg:px-24'>
+      {showToast ? <div className='fixed top-20 left-1/3'>
+                      <div className={toastStyles}>
+                      <CheckIcon className='h-8 w-8 text-green-500'/>
+                      <p>Success! Offers have been sent.</p>
+                      <XMarkIcon onClick={()=>setShowToast(false)} className='h-6 w-6 -mr-2 ml-auto text-gray-400 hover:cursor-pointer'/>
+                      </div>
+                   </div> : null}
     {projectLoading ? 
         (<div className="w-3/4 py-6 flex flex-row items-center">
         <ClipLoader size={35} color={'black'}/>
@@ -239,12 +261,13 @@ return (
                 </div>
             } 
         </>
+        {crewedUp ? null :
         <div className="w-5/6 py-6 flex flex-row justify-between items-center">
           <button className={`${infoButtonStyles} w-1/2`} onClick={()=>handleCrewUp()}>{isCrewingUp ? <ClipLoader size={21} color={'white'}/> : 'Crew Up!'}</button>
           <div className='ml-24'>
                 <p>When you click 'Crew Up!' offers will be sent to each of your top candidates, and this page will update to inform the status of their response. If anybody declines the offer, we will automatically send a new offer to the next person on the list.</p>
              </div>
-        </div>
+        </div>}
     </div>
 </main>
 

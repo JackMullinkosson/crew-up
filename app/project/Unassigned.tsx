@@ -43,7 +43,7 @@ export default function Unassigned ({id}) {
     const thisGoTo = goTos.find((i)=>i?.projectId===id)
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
     const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
-    
+  
 
     useEffect(() => {
         getProject()
@@ -189,7 +189,7 @@ return(
         </div>
         </>)}
     </main>)
-    : <Assigned id={id} readyProject={project} readyPeople={thesePeople} readyRoles={assignedGoTo.roles}/>}
+    : <Assigned id={id}/>}
   </>
 )
 

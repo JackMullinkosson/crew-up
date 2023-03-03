@@ -25,6 +25,7 @@ model Project {
   dayDetails Day[]
   goTos      GoTos[]
   owner      User     @relation(fields: [ownerId], references: [id])
+  crewedUp   Boolean  @default(false)
 }
 
 model Day {

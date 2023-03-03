@@ -33,6 +33,15 @@ export default async function handler(
           }
         })
 
+        await prisma.project.update({
+          where: {
+            id: project.id
+          },
+          data: {
+            crewedUp: true
+          }
+        })
+
         return res.status(200).json({success: true})
     }
     catch(error){
