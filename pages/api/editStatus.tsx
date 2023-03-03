@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
             data: {
                 status: status,
-                statusIcon: statusIcon,
+                statusIcon: parseInt(statusIcon),
             }
         })
         return res.status(200).json( person );
