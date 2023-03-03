@@ -18,8 +18,6 @@ export const GoToBoxes = () => {
     const [loading, setLoading] = useState(true)
     const router = useRouter()
 
-    console.log(goTos)
-
     useEffect(()=>{
         getGoTos()
     },[])

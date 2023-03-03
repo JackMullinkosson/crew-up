@@ -123,10 +123,8 @@ async function addRole(){
   }
   finally{
     let resRole = await res.json()
-    console.log(resRole)
     let resRoles = [...roles]
     resRoles.push(resRole)
-    console.log(resRoles)
     setRoles(resRoles)
     setIsPosting(false)
   }

@@ -7,7 +7,6 @@ const email = process.env.EMAIL
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try{
         const { status, statusIcon, id, people, roleId, ownerId, project} = req.body
-        console.log(req.body)
         const user = await prisma.user.findFirst({
             where: { id: ownerId }
           });

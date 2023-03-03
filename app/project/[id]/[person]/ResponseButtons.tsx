@@ -34,7 +34,6 @@ const ResponseButtons = ({personId, project, ownerId}) =>{
 
 
     function handleClick(e){
-        console.log(e.target.innerHTML)
         if(e.target.innerHTML==="Confirm"){
             setIsConfirming(true)
             setStatus("Confirmed")
@@ -70,7 +69,6 @@ const ResponseButtons = ({personId, project, ownerId}) =>{
         }
         finally{
             const resPerson = await res.json()
-            console.log(resPerson)
             setIsConfirming(false)
             setIsDeclining(false)
         }
