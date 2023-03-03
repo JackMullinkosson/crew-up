@@ -242,7 +242,7 @@ return (
         <div className="w-5/6 py-6 flex flex-row justify-between items-center">
           <button className={`${infoButtonStyles} w-1/2`} onClick={()=>handleCrewUp()}>{isCrewingUp ? <ClipLoader size={21} color={'white'}/> : 'Crew Up!'}</button>
           <div className='ml-24'>
-                <p>When you click 'Crew Up!' offers will be sent to each of your top candidates, and this page will update to inform the status of their response. If anybody declines the offer, a new offer will automatically be sent to the next person on the list.</p>
+                <p>When you click 'Crew Up!' offers will be sent to each of your top candidates, and this page will update to inform the status of their response. If anybody declines the offer, we will automatically send a new offer to the next person on the list.</p>
              </div>
         </div>
     </div>
