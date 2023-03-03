@@ -1,5 +1,5 @@
 "use client"
-import { PlusIcon, XMarkIcon, CheckIcon, ClipboardDocumentIcon } from '@heroicons/react/24/solid';
+import { PlusIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/solid';
 import React, { useState, useEffect } from 'react';
 import { useGlobalContext } from '../Context/store';
 import { ClipLoader } from 'react-spinners';
@@ -67,7 +67,7 @@ const Assigned = ({id}) => {
       if(!showToast) return
       setTimeout(() => {
         setShowToast(false)
-      }, 3500);
+      }, 4500);
     },[showToast])
 
     async function getProjectById(){

@@ -7,24 +7,18 @@ const successButtonStyles = "w-1/4 bg-teal-500 hover:bg-teal-700 border-teal-500
 
 
 
-const ResponseButtons = ({personId, project, ownerId}) =>{
+const ResponseButtons = ({personId, project, ownerId, roleId}) =>{
     const {people, setPeople} = useGlobalContext()
     const [isConfirming, setIsConfirming] = useState(false)
     const [isDeclining, setIsDeclining] = useState(false)
     const [status, setStatus] = useState("")
     const [statusIcon, setStatusIcon] = useState<number>()
-    const [roleId, setRoleId] = useState<number>()
+
+
 
     useEffect(()=>{
         getPeople()
     }, [])
-
-    useEffect(()=>{
-        if(people.length<1) return
-        const personIndex = people.findIndex((i)=>i.id===personId)
-        const roleId = people[personIndex].roleId
-        setRoleId(roleId)
-    },[people])
 
     useEffect(() => {
         if (status && statusIcon && roleId && people) {
@@ -71,6 +65,7 @@ const ResponseButtons = ({personId, project, ownerId}) =>{
             const resPerson = await res.json()
             setIsConfirming(false)
             setIsDeclining(false)
+            window.location.reload()
         }
     }
 
