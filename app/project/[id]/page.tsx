@@ -28,10 +28,9 @@ const BASE_URL = "http://localhost:3000/"
     const projGoTo = await getGoToById()
     
     
-      
 
     if(projGoTo)return (
-        <Assigned id={id} readyProject={readyProject} readyPeople={readyPeople} readyRoles={readyRoles}/>
+        <Assigned id={id}/>
     )
     else return (
         <Unassigned id={id}/>
