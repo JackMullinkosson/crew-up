@@ -6,25 +6,42 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-    try{
-        const { goToId } = req.body;
-        const status = "Awaiting response.."
-        await prisma.person.updateMany({
-            where: {
-                goToId: goToId
-            },
-            data:{
-                status: status,
-                statusIcon: 0
-            }
+  try {
+    const { people } = req.body;
+    for (const person of people) {
+      const hasLowerOrder = people.some(
+        otherPerson =>
+          otherPerson.roleId === person.roleId && otherPerson.order < person.order
+      );
+      if (!hasLowerOrder) {
+        await prisma.person.update({
+          where: {
+            id: person.id
+          },
+          data: {
+            status: "Awaiting response",
+            statusIcon: 1
+          }
         });
-        const people = await prisma.person.findMany({
-            orderBy: {
-              order: 'asc'
-            }
+      } else {
+        await prisma.person.update({
+          where: {
+            id: person.id
+          },
+          data: {
+            status: "Not yet contacted",
+            statusIcon: 0
+          }
         });
-        return res.status(200).json(people)
-    } catch (error) {
-      return res.status(500).json(error)
+      }
     }
+    const resPeople = await prisma.person.findMany({
+      orderBy: {
+        order: "asc"
+      }
+    });
+    return res.status(200).json(resPeople);
+  } catch (error) {
+    return res.status(500).json(error);
   }
+}

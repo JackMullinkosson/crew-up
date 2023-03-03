@@ -21,7 +21,7 @@ const labelStyles = "block uppercase tracking-wide text-red-700 text-xs font-bol
 
 
 const RoleDetails = ({id, roleName, goToId}) =>{
-    const {roles, setRoles, people, setPeople, setNoEditing, setIsPosting} = useGlobalContext()
+    const {roles, setRoles, people, setPeople, setNoEditing, setIsPosting, isPosting} = useGlobalContext()
     const [isViewingRole, setIsViewingRole] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
     const [isCreatingUser, setIsCreatingUser] = useState(false)
@@ -142,7 +142,6 @@ const RoleDetails = ({id, roleName, goToId}) =>{
             const resPerson = await res.json();
             let resPeople = [...people];
             resPeople = [...people, resPerson]
-            console.log(resPeople)
             setPeople(resPeople);
             setIsPosting(false)
         }
@@ -210,7 +209,7 @@ const RoleDetails = ({id, roleName, goToId}) =>{
         <div className="flex flex-col py-3 bg-gray-50 hover:bg-white rounded border">
         <div onClick={() => handleRoleClick()} onMouseEnter={()=>setIsHovering(true)} onMouseLeave={()=>setIsHovering(false) }className="w-full flex flex-row justify-between items-center relative">
         <h1 className='text-2xl px-4 py-2 hover:cursor-pointer w-full h-full'>{roleName}</h1>
-        {isHovering ? <TrashIcon onClick={(e)=>handleDeleteRoleClick(e)} className='h-6 w-6 hover:cursor-pointer hover:text-red-700 text-red-500 mr-6'/> : null}
+        {isHovering ? <TrashIcon onClick={(e)=>handleDeleteRoleClick(e)} className={`h-6 w-6 hover:cursor-pointer hover:text-red-700 text-red-500 mr-6 ${isPosting ? 'hover:cursor-not-allowed' : ''}`} /> : null}
         {isConfirmingDelete ? (
             <div className='absolute top-0 right-0 z-50 p-4 overflow-visible h-modal md:h-full w-1/4 mr-8'>
                  <div className="-mt-16 bg-white rounded-lg shadow-2xl shadow-black p-6 text-center dark:bg-gray-700 flex flex-col">

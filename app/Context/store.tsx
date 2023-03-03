@@ -30,7 +30,6 @@ interface Role {
   name: String;
   id: Number;
   goToId: Number;
-  people: Person[]
 }
 
 interface Person {
