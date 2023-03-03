@@ -32,7 +32,7 @@ interface Role {
 
 export default function Unassigned ({id}) { 
     const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
-    const {goTos, setGoTos, people, setPeople, setIsPosting } = useGlobalContext();
+    const {goTos, setGoTos, setRoles, roles, people, setPeople, setIsPosting } = useGlobalContext();
     const [projectsLoading, setProjectsLoading] = useState(true)
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [thesePeople, setThesePeople] = useState([])
@@ -68,14 +68,14 @@ export default function Unassigned ({id}) {
     }
 
     function handleAssignGoToList(){
-        console.log('this is what the goto is rn', thisGoTo)
         createProjGoTo()
     }
 
    
 
     async function createProjGoTo(){
-        setPeople(thesePeople)
+        setPeople(null)
+        setRoles(null)
         let res;
           try{
             setIsPosting(true)

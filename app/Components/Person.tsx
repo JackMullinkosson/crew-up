@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { ItemTypes } from '../ItemTypes'
 import { useGlobalContext } from '../Context/store';
-import { TrashIcon, EllipsisHorizontalCircleIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid'
+import { TrashIcon, NoSymbolIcon, EllipsisHorizontalCircleIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/react/24/solid'
 
 const rowStyles = "flex flex-row py-4 bg-gray-50 w-full justify-between border shrink-0"
 const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -42,10 +42,11 @@ export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, 
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [order, setOrder] = useState<number>()
   const [isEditingUser, setIsEditingUser] = useState(false)
-  const statusIcons = [<EllipsisHorizontalCircleIcon className='pl-1 h-18 w-18 text-orange-500'/>, <XCircleIcon className='pl-1 h-18 w-18 text-red-500'/>, <CheckCircleIcon className='pl-1 h-18 w-18 text-green-500'/>]
+  const statusIcons = [<NoSymbolIcon className='pl-1 h-18 w-18 text-gray-500'/>, <EllipsisHorizontalCircleIcon className='pl-1 h-18 w-18 text-orange-500'/>, <XCircleIcon className='pl-1 h-18 w-18 text-red-500'/>, <CheckCircleIcon className='pl-1 h-18 w-18 text-green-500'/>]
   
-  console.log(statusIcon)
-
+  useEffect(()=>{
+    console.log(status)
+  },[])
   let arrOfPersonnel = {}
   let currentIndex = 0
   people.forEach((person)=>{

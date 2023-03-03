@@ -26,9 +26,9 @@ export default async function handler(
             }
             transporter.sendMail({
             ...mailOptions,
-            subject: `${user.name} sent you a job offer!`,
-            text: `Hello ${person.name}`,
-            html: `<h4>Hello ${person.name}</h4><p>${user.name} sent you a job offer. <span><a href="http://localhost:3000/project/${project.id}/${person.id}">Click here</a></span> for more details and to confirm or decline the offer.</p>`
+            subject: `${user.name} sent you a job offer on Crew Up!`,
+            text: `Dear ${person.name}, ${user.name} has sent you a job offer for the project ${project.name}. Open up this link: http://localhost:3000/project/${project.id}/${person.id} for more details and to confirm or decline the offer.`,
+            html: `<h4>Dear ${person.name},</h4><p>${user.name} has sent you a job offer for the project ${project.name}. <span><a href="http://localhost:3000/project/${project.id}/${person.id}">Click here</a></span> for more details and to confirm or decline the offer.</p>`
           })
           }
         })

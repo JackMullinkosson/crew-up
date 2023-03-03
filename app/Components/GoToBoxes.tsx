@@ -9,6 +9,7 @@ interface goTo {
     name: String;
     id: Number;
     icon: Number;
+    defaultGoTo: boolean;
   }
 
 export const GoToBoxes = () => {
@@ -46,6 +47,7 @@ export const GoToBoxes = () => {
         <>
         {loading ? (<div className='py-12 px-24'><ClipLoader size={40} color={'black'}/></div>) :
         (<>{goTos && goTos.map((i)=>{
+            if(i.defaultGoTo === true)
         return<div className={newBoxStyles} onClick={()=>router.push(`/GoTos/${i.id}`)}>
         <h3 className="text-xl font-bold dark:text-white mr-4">{i.name}</h3>
         {icons[String(i.icon)]}

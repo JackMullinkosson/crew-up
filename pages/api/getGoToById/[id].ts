@@ -6,8 +6,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { id } = req.query;
     const goTo = await prisma.goTos.findFirst({
       where: { projectId: Number(id) },
-      include: { roles: true,
-      people: true },
+      include: {
+        roles: true,
+        people: { orderBy: { order: 'asc' } }
+      },
     });
     return res.status(200).json(goTo);
   } catch (error) {
