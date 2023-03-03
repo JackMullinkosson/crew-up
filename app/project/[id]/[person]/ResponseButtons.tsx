@@ -14,6 +14,7 @@ const ResponseButtons = ({personId}) =>{
 
     useEffect(() => {
         if (status && statusIcon) {
+          console.log('mario', statusIcon)
           addStatus();
         }
       }, [status, statusIcon]);
@@ -24,13 +25,13 @@ const ResponseButtons = ({personId}) =>{
         if(e.target.innerHTML==="Confirm"){
             setIsConfirming(true)
             setStatus("Confirmed")
-            setStatusIcon(2)
+            setStatusIcon(4)
 
         }
         if(e.target.innerHTML==="Decline"){
             setIsDeclining(true)
             setStatus("Declined")
-            setStatusIcon(1)
+            setStatusIcon(3)
         }
     }
 

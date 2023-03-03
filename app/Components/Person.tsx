@@ -42,10 +42,10 @@ export const Person: FC<PersonProps> = ({ id, name, email, phoneNumber, roleId, 
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [order, setOrder] = useState<number>()
   const [isEditingUser, setIsEditingUser] = useState(false)
-  const statusIcons = [<NoSymbolIcon className='pl-1 h-18 w-18 text-gray-500'/>, <EllipsisHorizontalCircleIcon className='pl-1 h-18 w-18 text-orange-500'/>, <XCircleIcon className='pl-1 h-18 w-18 text-red-500'/>, <CheckCircleIcon className='pl-1 h-18 w-18 text-green-500'/>]
+  const statusIcons = ["", <NoSymbolIcon key="no-symbol" className='pl-1 h-6 w-6 text-gray-500 grow-0 shrink-0 mr-0 ml-auto'/>, <EllipsisHorizontalCircleIcon key="elipsis-horizontal" className='pl-1 h-6 w-6 text-orange-500 grow-0 shrink-0 self-end mr-0 ml-auto'/>, <XCircleIcon key="x-circle" className='pl-1 h-6 w-6 text-red-500 grow-0 shrink-0 mr-0 ml-auto'/>, <CheckCircleIcon key="check-circle" className='pl-1 h-6 w-6 text-green-500 shrink-0 grow-0 mr-0 ml-auto'/>]
   
   useEffect(()=>{
-    console.log(status)
+    console.log(statusIcon)
   },[])
   let arrOfPersonnel = {}
   let currentIndex = 0
@@ -220,8 +220,8 @@ const opacity = isDragging ? 0 : 1
       <button onClick={()=>handleEditUser()} className="font-medium text-blue-600 dark:text-blue-500 hover:underline disabled:cursor-not-allowed" disabled={noEditing}>Edit</button>
       <TrashIcon onClick={()=>deletePerson()} className='h-5 w-5 mx-6 hover:text-red-700 text-red-500'/>
       </div>)}
-      {status ? <div style={{maxWidth: '6rem'}}className='absolute right-2 flex flex-row items-center justify-center'>
-          <div className='uppercase tracking-wide text-gray-700 text-xs'>{status}</div>
+      {status && statusIcon ? <div style={{width: '8rem'}} className='absolute right-2 flex flex-row items-center justify-around'>
+          <div className='uppercase tracking-wide text-gray-700 text-xs w-12 grow-0'>{status}</div>
           {statusIcons[statusIcon]}
           </div> : null}
       </div>

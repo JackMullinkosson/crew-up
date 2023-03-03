@@ -20,7 +20,7 @@ export default async function handler(
           },
           data: {
             status: "Awaiting response",
-            statusIcon: 1
+            statusIcon: 2
           }
         });
       } else {
@@ -29,8 +29,8 @@ export default async function handler(
             id: person.id
           },
           data: {
-            status: "Not yet contacted",
-            statusIcon: 0
+            status: "Not contacted",
+            statusIcon: 1
           }
         });
       }
