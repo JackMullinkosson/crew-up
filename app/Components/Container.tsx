@@ -4,6 +4,7 @@ import type { FC } from 'react'
 import update from 'immutability-helper'
 import { Person } from './Person'
 import { useGlobalContext } from '../Context/store';
+import goTo from '../GoTos/[id]/page';
 
 export interface Person {
     name: string
@@ -40,21 +41,26 @@ export interface Person {
       setIsPosting(true)
       let res;
       try{
+           console.log(people) 
            res = await fetch(`/api/reorderPeople`,{
               method: "PUT",
               headers: {
                   "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                 people: people
+                 people: people,
+                 roleId: roleId
               })
-  
           })
       }
       catch(e){
           console.error(e)
       }
       finally{
+        const resPeople = await res.json()
+        console.log('new people', resPeople)
+        setDragged(-1)
+        setPeople(resPeople)
         setIsPosting(false)
       }
   }

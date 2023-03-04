@@ -33,7 +33,7 @@ const Assigned = ({id}) => {
     const [goToId, setGoToId] = useState<Number>()
     const [ownerId, setOwnerId] = useState<Number>()
     const [tempId, setTempId] = useState<number>()
-    const [crewedUp, setCrewedUp] = useState<boolean>()
+    const [crewedUp, setCrewedUp] = useState<boolean>(true)
     const [showToast, setShowToast] = useState(false)
    
 

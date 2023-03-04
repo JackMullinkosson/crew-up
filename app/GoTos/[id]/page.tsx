@@ -15,7 +15,7 @@ const successLabelStyles = "h-6 uppercase tracking-wide text-gray-700 text-xs fo
 
 
 export default function goTo ({ params }: any) {
-    const [id, setId] = useState(parseInt(params.id))
+    const id = Number(params.id)
     const {goTos, setGoTos, roles, setRoles, people, setPeople, isPosting, setIsPosting } = useGlobalContext();
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [rolesLoading, setRolesLoading] = useState(true)
@@ -23,6 +23,7 @@ export default function goTo ({ params }: any) {
     const [tempId, setTempId] = useState<number>()
     const [name, setName] = useState('')
     const thisGoTo = goTos.find(i=> i.id===id)
+
 
     useEffect(()=>{
       getGoTos()
@@ -62,16 +63,21 @@ export default function goTo ({ params }: any) {
 
 
 async function getPeople(){
+  let res;
   try {
-    const res = await fetch(`/api/getPeople`, {
+   res = await fetch(`/api/getPeopleByGoTo/${id}`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
     },
     });
-    setPeople(await res.json())
 } catch (error) {
     console.error(error);
+}
+finally{
+  const resPeople = await res.json()
+  console.log(resPeople)
+  setPeople(resPeople)
 }
 }
 
