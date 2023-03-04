@@ -220,7 +220,7 @@ const opacity = isDragging ? 0 : 1
       <button onClick={()=>handleEditUser()} className="font-medium text-blue-600 dark:text-blue-500 hover:underline disabled:cursor-not-allowed" disabled={noEditing}>Edit</button>
       <TrashIcon onClick={()=>deletePerson()} className='h-5 w-5 mx-6 hover:text-red-700 text-red-500'/>
       </div>)}
-      {status && statusIcon ? <div style={{width: '8rem'}} className='absolute right-2 flex flex-row items-center justify-around'>
+      {status && statusIcon ? <div style={{width: '7rem'}} className='absolute right-2 flex flex-row items-center justify-around'>
           <div className='uppercase tracking-wide text-gray-700 text-xs w-12 grow-0'>{status}</div>
           {statusIcons[statusIcon]}
           </div> : null}
