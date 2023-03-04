@@ -32,7 +32,7 @@ interface Role {
 
 export default function Unassigned ({id}) { 
     const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
-    const {goTos, setGoTos, setRoles, roles, people, setPeople, setIsPosting } = useGlobalContext();
+    const {goTos, setGoTos, setRoles, roles, people, setPeople, setIsPosting, isPosting } = useGlobalContext();
     const [projectsLoading, setProjectsLoading] = useState(true)
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [thesePeople, setThesePeople] = useState([])
@@ -48,17 +48,11 @@ export default function Unassigned ({id}) {
     useEffect(() => {
         getProject()
         getGoTos()
-        getPeople()
       }, []);
 
     useEffect(()=>{
         if (!assignedGoTo || !assignedGoTo.id) return
-        let newPeople = []
-        for (const person of people){
-            if (person.goToId === assignedGoTo.id)
-            newPeople.push(person)
-        }
-        setThesePeople(newPeople)
+       getPeople()
     },[assignedGoTo])
 
 
@@ -145,15 +139,20 @@ export default function Unassigned ({id}) {
 async function getPeople(){
     let res;
     try {
-       res = await fetch(`/api/getPeople`, {
+      setIsPosting(true)
+      res = await fetch(`/api/getPeopleByGoTo/${assignedGoTo.id}`, {
       method: "GET",
       headers: {
           "Content-Type": "application/json",
       },
       });
-      setPeople(await res.json())
+      const resPeople = await res.json()
+      setThesePeople(resPeople)
   } catch (error) {
       console.error(error);
+  }
+  finally{
+    setIsPosting(false)
   }
 }
 
@@ -180,7 +179,7 @@ return(
                         {goTosLoading ? <>Loading...</> : goTos.map((goTo)=>{
                         if(goTo.defaultGoTo) return(<option key={String(goTo.id)} value={String(goTo.name)}>{goTo.name}</option>)})}
                     </select>
-                    <button className={successButtonStyles} onClick={()=>handleAssignGoToList()}>{isAssigning ? <ClipLoader size={24} color={'white'}/> : 'Assign Go-To'}</button>
+                    <button className={successButtonStyles} onClick={()=>handleAssignGoToList()} disabled={isPosting}>{isAssigning ? <ClipLoader size={24} color={'white'}/> : 'Assign Go-To'}</button>
                 </div>
              </div>
              <div className='ml-6 w-1/2'>

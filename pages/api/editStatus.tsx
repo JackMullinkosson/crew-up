@@ -21,10 +21,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
         if(status==="Declined"){
             for (const person of people) {
-                if(person.roleId === roleId && person.id !== id && person.status === "Not contacted" ){
+                if(person.roleId === roleId && person.id !== id && person.status === 'Not contacted'){
+                    console.log('what is the guy i wants status:', person)
                     const hasLowerOrder = people.some(
                         otherPerson =>
-                          otherPerson.roleId === person.roleId && otherPerson.id !== id && otherPerson.order < person.order
+                          otherPerson.roleId === person.roleId && otherPerson.id !== id && otherPerson.order < person.order && otherPerson.status === 'Not contacted'
                       );
                     if(!hasLowerOrder){
                         await prisma.person.update({
