@@ -5,13 +5,8 @@ import { useGlobalContext } from '../Context/store';
 import { ClipLoader } from 'react-spinners';
 import moment from 'moment';
 import Assigned from './Assigned';
+import ProjectDetails from './ProjectDetails';
 
-interface Project {
-    name: String;
-    id: Number;
-    startDate: Date;
-    endDate: Date;
-  }
 
 interface GoTo {
     name: String;
@@ -31,8 +26,7 @@ interface Role {
   
 
 export default function Unassigned ({id}) { 
-    const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
-    const {goTos, setGoTos, setRoles, roles, people, setPeople, setIsPosting, isPosting } = useGlobalContext();
+    const {goTos, setGoTos, setRoles, roles, people, setPeople, setIsPosting, isPosting, project, setProject } = useGlobalContext();
     const [projectsLoading, setProjectsLoading] = useState(true)
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [thesePeople, setThesePeople] = useState([])
@@ -165,11 +159,7 @@ return(
         (<div className="w-3/4 py-6 flex flex-row items-center">
           <ClipLoader size={35} color={'black'}/>
         </div>) : 
-        (<>
-        <div className="w-3/4 py-6 flex flex-row items-center justify-evenly">
-            <h1 className='text-6xl font-bold'>{project.name}</h1>
-            <p className="text-gray-500 dark:text-gray-400 ml-6 w-1/2">{moment(project.startDate).format("MMMM Do YYYY")} - {moment(project.endDate).format("MMMM Do YYYY")}</p>
-        </div>
+        <ProjectDetails/>}
         <div className="w-3/4 py-6 flex flex-row justify-evenly items-center">
             <div>
                 <label className={labelStyles}>Choose Go-To List</label>
@@ -186,7 +176,6 @@ return(
                 <p>Once you assign a go-to list to this project, you will be able to customize it. Your changes will not affect the original list.</p>
              </div>
         </div>
-        </>)}
     </main>)
     : <Assigned id={id}/>}
   </>

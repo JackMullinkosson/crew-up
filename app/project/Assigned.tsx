@@ -6,6 +6,7 @@ import { ClipLoader } from 'react-spinners';
 import RoleDetails from '@/app/Components/RoleDetails';
 import moment from 'moment';
 import goTo from '../GoTos/[id]/page';
+import ProjectDetails from './ProjectDetails';
 
 const newRowStyles = "flex flex-row items-center py-4 mt-2 w-full justify-between"
 const addRowStyles = "flex flex-row w-1/4 items-center mt-2 justify-between bg-white border px-4 py-4 mb-4"
@@ -15,21 +16,14 @@ const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-
 const infoButtonStyles = "py-1 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-m border-4 text-white px-2 rounded"
 const toastStyles = "flex items-center w-full max-w-xs p-4 bg-white rounded-lg shadow-lg shadow-blue-400"
 
-interface Project {
-    name: String;
-    id: Number;
-    startDate: Date;
-    endDate: Date;
-  }
 
 const Assigned = ({id}) => {
-    const {people, setPeople, roles, setRoles, setIsPosting, isPosting } = useGlobalContext();
-    const [projectLoading, setProjectLoading] = useState(true)
+    const {people, setPeople, roles, setRoles, setIsPosting, isPosting, project, setProject } = useGlobalContext();
     const [goToLoading, setGoToLoading] = useState(true)
     const [isCreatingRow, setIsCreatingRow] = useState(false)
     const [isCrewingUp, setIsCrewingUp] = useState(false)
     const [name, setName] = useState('')
-    const [project, setProject] = useState<Project>({ name: "", id: 0, startDate: new Date(), endDate: new Date() });
+    const [projectLoading, setProjectLoading] = useState(true)
     const [goToId, setGoToId] = useState<Number>()
     const [ownerId, setOwnerId] = useState<Number>()
     const [tempId, setTempId] = useState<number>()
@@ -221,14 +215,11 @@ return (
                       <XMarkIcon onClick={()=>setShowToast(false)} className='h-6 w-6 -mr-2 ml-auto text-gray-400 hover:cursor-pointer'/>
                       </div>
                    </div> : null}
-    {projectLoading ? 
+      {projectLoading ? 
         (<div className="w-3/4 py-6 flex flex-row items-center">
-        <ClipLoader size={35} color={'black'}/>
-        </div>) :    
-        (<div className="w-3/4 py-6 flex flex-row items-center justify-evenly">
-            <h1 className='text-6xl font-bold'>{project.name}</h1>
-            <p className="text-gray-500 dark:text-gray-400 ml-6 w-1/2">{moment(project.startDate).format("MMMM Do YYYY")} - {moment(project.endDate).format("MMMM Do YYYY")}</p>
-        </div>)}
+          <ClipLoader size={35} color={'black'}/>
+        </div>) : 
+        <ProjectDetails/>}
     <div className='w-5/6 pt-3 pb-1'>
         <>
             <div className={newRowStyles}>
