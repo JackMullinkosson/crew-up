@@ -7,14 +7,12 @@ const successButtonStyles = "w-1/4 bg-teal-500 hover:bg-teal-700 border-teal-500
 
 
 
-const ResponseButtons = ({personId, project, ownerId, roleId}) =>{
+const ResponseButtons = ({personId, project, ownerId, roleId, goToId}) =>{
     const {people, setPeople} = useGlobalContext()
     const [isConfirming, setIsConfirming] = useState(false)
     const [isDeclining, setIsDeclining] = useState(false)
     const [status, setStatus] = useState("")
     const [statusIcon, setStatusIcon] = useState<number>()
-
-
 
     useEffect(()=>{
         getPeople()
@@ -72,7 +70,7 @@ const ResponseButtons = ({personId, project, ownerId, roleId}) =>{
     async function getPeople(){
         let res;
         try {
-           res = await fetch(`/api/getPeople`, {
+           res = await fetch(`/api/getPeopleByGoTo/${goToId}`, {
           method: "GET",
           headers: {
               "Content-Type": "application/json",

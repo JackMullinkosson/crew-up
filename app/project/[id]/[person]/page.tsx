@@ -38,6 +38,7 @@ export default async function Page ({ params }: any) {
     const project = await getProjectById()
     const ownerId = project.ownerId
     const person = await getPersonById()
+    const goToId = person.goToId
     const roleId = person.roleId
     const status = person && person.status ? person.status : null;
     
@@ -50,7 +51,7 @@ export default async function Page ({ params }: any) {
                 <h1 className='text-6xl font-bold'>{project.name}</h1>
                 <p className="text-gray-500 dark:text-gray-400 ml-6 w-1/2">{moment(project.startDate).format("MMMM Do YYYY")} - {moment(project.endDate).format("MMMM Do YYYY")}</p>
             </div>
-            {status !== "Confirmed" && status !== "Declined" ? <ResponseButtons personId={params.person} project={project} ownerId={ownerId} roleId={roleId} /> : null}
+            {status !== "Confirmed" && status !== "Declined" ? <ResponseButtons personId={params.person} project={project} ownerId={ownerId} roleId={roleId} goToId={goToId} /> : null}
             {status === "Confirmed" ? <Confirmed project={project} ownerId={ownerId} roleId={roleId} personId={params.person} /> : null}
             {status === "Declined" ?  <Declined /> : null}
         </main>
