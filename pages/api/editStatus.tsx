@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         })
         if(status==="Declined"){
             for (const person of people) {
-                if(person.roleId===roleId && person.id !== id){
+                if(person.roleId === roleId && person.id !== id && person.status === "Not contacted" ){
                     const hasLowerOrder = people.some(
                         otherPerson =>
                           otherPerson.roleId === person.roleId && otherPerson.id !== id && otherPerson.order < person.order
@@ -49,8 +49,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                 }
             }
-        return res.status(200).json( person );
         }
+        return res.status(200).json( person );
     }
     catch(e){
         console.error(e)
