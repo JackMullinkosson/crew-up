@@ -47,8 +47,8 @@ interface Person {
 
 
 interface ContextProps {
-    projects: Project[];
-    setProjects: Dispatch<SetStateAction<Project[]>>;
+    project: Project;
+    setProject: Dispatch<SetStateAction<Project>>;
     goTos: GoTo[];
     setGoTos: Dispatch<SetStateAction<GoTo[]>>;
     roles: Role[];
@@ -62,8 +62,22 @@ interface ContextProps {
   }
   
 const GlobalContext = createContext<ContextProps>({
-    projects: [],
-    setProjects: () => {},
+    project: {
+      name: "",
+      id: 0,
+      owner: {
+        id: 0
+      },
+      startDate: new Date(),
+      endDate: new Date(),
+      logLine: "",
+      dayDetails: [{
+        startTime: new Date(),
+        endTime: new Date(),
+        location: ""
+      }]
+    },
+    setProject: () => {},
     goTos: [],
     setGoTos: () => {},
     roles: [],
@@ -77,7 +91,21 @@ const GlobalContext = createContext<ContextProps>({
 });
   
 export const GlobalContextProvider = ({ children }) => {
-    const [projects, setProjects] = useState<Project[]>([]);
+  const [project, setProject] = useState<Project>({
+    name: "",
+    id: 0,
+    owner: {
+      id: 0
+    },
+    startDate: new Date(),
+    endDate: new Date(),
+    logLine: "",
+    dayDetails: [{
+      startTime: new Date(),
+      endTime: new Date(),
+      location: ""
+    }]
+  });
     const [goTos, setGoTos] = useState<GoTo[]>([])
     const [roles, setRoles] = useState<Role[]>([])
     const [people, setPeople] = useState<Person[]>([])
@@ -85,7 +113,7 @@ export const GlobalContextProvider = ({ children }) => {
     const [isPosting, setIsPosting] = useState(false)
       
     return (
-        <GlobalContext.Provider value={{ projects, setProjects, goTos, setGoTos, roles, setRoles, people, setPeople, noEditing, setNoEditing, isPosting, setIsPosting }}>
+        <GlobalContext.Provider value={{ project, setProject, goTos, setGoTos, roles, setRoles, people, setPeople, noEditing, setNoEditing, isPosting, setIsPosting }}>
             {children}
         </GlobalContext.Provider>
     );
