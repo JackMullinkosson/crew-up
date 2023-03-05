@@ -39,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             create: dayDetails.map((day: { startTime: Date, endTime: Date, location: String }) => ({
               startTime: day.startTime,
               endTime: day.endTime,
-              Location: day.location
+              location: day.location
             }))
           }
         }

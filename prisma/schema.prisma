@@ -33,7 +33,7 @@ model Day {
   projectId Int
   startTime DateTime @default(dbgenerated("'0001-01-01 00:00:00'::timestamp without time zone"))
   endTime   DateTime @default(dbgenerated("'0001-01-01 00:00:00'::timestamp without time zone"))
-  Location  String
+  location  String
   project   Project  @relation(fields: [projectId], references: [id])
 }
 

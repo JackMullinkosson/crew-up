@@ -91,11 +91,11 @@ const ResponseButtons = ({personId, project, ownerId, roleId, goToId}) =>{
     }
 
     return(
-        <div className="w-3/4 py-6 flex flex-row items-center justify-evenly">
+        <div className="w-3/4 py-6 flex flex-row items-center justify-evenly relative">
                 <button className={successButtonStyles} onClick={(e)=>handleClick(e)}>{isConfirming ? <ClipLoader size={21} color={'white'}/> : 'Confirm'}</button>
                 <button className={`${dangerButtonStyles}`} onClick={()=>setIsConfirmingDecline(true)}>Decline</button>
                 {isConfirmingDecline ? (
-                    <div className='absolute top-1/4 items-center right-1/2 z-50 p-4 overflow-visible h-modal md:h-full w-1/4 mr-8'>
+                    <div className='absolute top-0 items-center right-1/4 z-50 p-4 overflow-visible h-modal md:h-full w-1/2 mr-8'>
                         <div className="-mt-16 bg-white rounded-lg shadow-2xl shadow-black p-6 text-center dark:bg-gray-700 flex flex-col justify-center items-center">
                             <XMarkIcon className='h-6 w-6 self-end hover:cursor-pointer' onClick={(e)=>handleCancelDecline()}/>
                             <p className='py-4 inline-block self-start'>Are you sure? The offer will be sent to somebody else.</p>
