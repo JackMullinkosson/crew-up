@@ -1,5 +1,6 @@
 "use client"
 
+import { useUser } from '@auth0/nextjs-auth0/client';
 import { ClipLoader } from 'react-spinners';
 import {VideoCameraIcon} from '@heroicons/react/24/solid'
 import moment from 'moment';
@@ -21,6 +22,9 @@ export const ProjectBoxes = () => {
   const [projects, setProjects] = useState<project[]>([]);
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+
+  
+ 
 
   useEffect(()=>{
    getProjects()

@@ -17,7 +17,6 @@ const ProjectDetails = () => {
         else setIsViewingDetails(true)
     }
 
-    console.log(project)
     return (
         <>  
             <div className="w-3/4 py-6 flex flex-row items-center justify-evenly">
