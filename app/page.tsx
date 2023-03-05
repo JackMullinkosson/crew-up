@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { ClipLoader } from 'react-spinners';
 import { PlusIcon, WrenchScrewdriverIcon } from '@heroicons/react/24/solid'
 import { ProjectBoxes } from './Components/ProjectBoxes';
@@ -7,14 +7,53 @@ import { GoToBoxes } from './Components/GoToBoxes';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/navigation';
 
+const successButtonStyles = "bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 border-4 text-white py-1 px-1 rounded disabled:cursor-not-allowed items-center w-1/3 text-center"
+const infoButtonStyles = "bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 border-4 text-white py-1 px-1 rounded disabled:cursor-not-allowed items-center w-1/3 text-center"
+const rowStyles = "space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0 mb-6 lg:mb-12"
+const newBoxStyles = "flex flex-row justify-center items-center center-text border-dashed border-black-500 border-4 py-8 pl-4 rounded hover:cursor-pointer hover:bg-gray-100"
+
+interface User {
+  email: String;
+  name: String;
+}
 
 export default function Home() {
-  const successButtonStyles = "bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 border-4 text-white py-1 px-1 rounded disabled:cursor-not-allowed items-center w-1/3"
-  const infoButtonStyles = "bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 border-4 text-white py-1 px-1 rounded disabled:cursor-not-allowed items-center w-1/3"
-  const rowStyles = "space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0 mb-6 lg:mb-12"
-  const newBoxStyles = "flex flex-row justify-center items-center center-text border-dashed border-black-500 border-4 py-8 pl-4 rounded hover:cursor-pointer hover:bg-gray-100"
   const router = useRouter()
   const {user, isLoading, error} = useUser()
+  const [dbUser, setDbUser] = useState<User>()
+  const [name, setName] = useState('')
+
+  useEffect(()=>{
+    getUserByEmail()
+  },[user])
+
+  async function getUserByEmail(){
+    const res = await fetch(`api/userByEmail/${user.email}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        });
+        if (res.ok) {
+          const resUser = await res.json()
+          setDbUser(resUser); 
+        } else {
+          setDbUser(null)
+        }
+  }
+
+  async function createUser(){
+    const res = await fetch(`/api/createPerson`,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: name,
+        email: user.email
+      }),
+    });
+  }
 
   if(isLoading) return (<ClipLoader className='h-6 w-6' />)
   else if(error) return (
@@ -24,7 +63,11 @@ export default function Home() {
       </div>
     </main> 
   )
-  else if(user)
+  else if(user && !dbUser){
+    //input to have user put in there name
+
+  }
+  else if(user && dbUser)
   return (
           <>
             <section className="bg-white dark:bg-gray-900 mt-10 lg:mt-14">
@@ -60,7 +103,7 @@ else return (
           <WrenchScrewdriverIcon className='h-12 w-12'/>
           <h1 className='text-2xl font-bold py-4'> Welcome to Crew Up!</h1>
           <div className='flex flex-row justify-evenly w-full mt-4'>
-              <button onClick={()=>router.push('/api/auth/login')} className={successButtonStyles}>Log in</button>
+              <a href='/api/auth/login' className={successButtonStyles}>Log in</a>
               <button onClick={()=>router.push('/api/auth/login')} className={infoButtonStyles}>Continue as guest</button>
           </div>
       </div>
