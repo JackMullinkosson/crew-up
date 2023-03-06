@@ -5,15 +5,28 @@ import { PlusIcon, WrenchScrewdriverIcon } from '@heroicons/react/24/solid'
 import { ProjectBoxes } from './Components/ProjectBoxes';
 import { GoToBoxes } from './Components/GoToBoxes';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { useRouter } from 'next/navigation';
 import { useGlobalContext } from './Context/store';
+import { useRouter } from 'next/navigation';
+
 
 const successButtonStyles = "bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 border-4 text-white py-1 px-1 rounded disabled:cursor-not-allowed items-center w-1/3 text-center"
 const rowStyles = "space-y-8 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-12 md:space-y-0 mb-6 lg:mb-12"
 const newBoxStyles = "flex flex-row justify-center items-center center-text border-dashed border-black-500 border-4 py-8 pl-4 rounded hover:bg-gray-100"
 const inputStyles = "appearance-none w-3/4 bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
 
+interface project {
+  name: String;
+  id: Number;
+  startDate: Date;
+  endDate: Date;
+}
 
+interface goTo {
+  name: String;
+  id: Number;
+  icon: Number;
+  defaultGoTo: boolean;
+}
 
 export default function Home() {
   const router = useRouter()
@@ -21,6 +34,14 @@ export default function Home() {
   const {dbUser, setDbUser} = useGlobalContext()
   const [name, setName] = useState('')
   const [isPosting, setIsPosting] = useState(false)
+  const [projects, setProjects] = useState<project[]>([]);
+  const [goTos, setGoTos] = useState<goTo[]>([]);
+  const [projectsLoading, setProjectsLoading] = useState(true)
+  const [goTosLoading, setGoTosLoading] = useState(true)
+  const [hasProjects, setHasProjects] = useState(false)
+  const [hasGoTos, setHasGoTos] = useState(false)
+  
+
 
   useEffect(() => {
     if(!user && !error && !isLoading){
@@ -34,8 +55,15 @@ export default function Home() {
     getUserByEmail()
   },[user])
 
+  useEffect(()=>{
+    if(!dbUser) return
+    if(dbUser.id===0) return
+     getProjects()
+     getGoTos()
+    },[dbUser])
+
   async function getUserByEmail(){
-    const res = await fetch(`api/getUserByEmail/${user.email}`, {
+    const res = await fetch(`/api/getUserByEmail/${user.email}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -74,6 +102,56 @@ export default function Home() {
     }
   }
 
+  async function getProjects(){
+    let res;
+    try {
+        res = await fetch(`/api/getProjectsByUser/${dbUser.id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        }
+        });
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+    } catch (error) {
+        console.error(error);
+    }
+    finally{
+      const resProjects = await res.json()
+      setProjects(resProjects)
+      if(resProjects.length>0){
+        setHasProjects(true)
+      }
+      setProjectsLoading(false)
+    } 
+  }
+
+  async function getGoTos(){
+    let res;
+    try {
+     res = await fetch(`/api/getGoTosByUser/${dbUser.id}`, {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+      },
+      });
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+  } catch (error) {
+      console.error(error);
+  } 
+  finally{
+    const resGoTos = await res.json()
+    setGoTos(resGoTos)
+    if(resGoTos.length>0){
+      setHasGoTos(true)
+    }
+    setGoTosLoading(false)
+  }
+  }
+
 
   if(isLoading) return (<ClipLoader className='h-6 w-6' />)
   if(error) return (
@@ -102,22 +180,22 @@ export default function Home() {
                       <h2 className="text-2xl tracking-tight font-bold text-gray-900 dark:text-white">Active Projects</h2>
                   </div>
                   <div className={rowStyles}>
-                  {dbUser ? <ProjectBoxes/> : null}
-                  <div className={`${newBoxStyles} ${dbUser===null ? 'pointer-events-none' : 'hover:cursor-pointer'}`} onClick={()=>router.push('/NewProject')}>
-                      <h3 className="text-xl font-bold dark:text-white mr-4">New Project</h3>
-                      <PlusIcon className='h-6 w-6'/>
+                    <div className={`${newBoxStyles} ${dbUser===null ? 'pointer-events-none' : 'hover:cursor-pointer'}`} onClick={()=>router.push('/NewProject')}>
+                        <h3 className="text-xl font-bold dark:text-white mr-4">New Project</h3>
+                        <PlusIcon className='h-6 w-6'/>
+                    </div>
+                    {dbUser && hasProjects ? <ProjectBoxes projects={projects} projectsLoading={projectsLoading}/> : null}
                   </div>
-              </div>
               <div className="max-w-screen-md mb-4 lg:mb-8">
                       <h2 className="text-2xl tracking-tight font-bold text-gray-900 dark:text-white">Go-To Lists</h2>
               </div>
                   <div className={rowStyles}>
-                    {dbUser ? <GoToBoxes/> : null}
                     <div className={`${newBoxStyles} ${dbUser===null ? 'pointer-events-none' : 'hover:cursor-pointer'}`} onClick={()=>router.push('/NewGoTo')}>
                       <h3 className="text-xl font-bold dark:text-white mr-4">New Go-To List</h3>
                       <PlusIcon className='h-6 w-6'/>
                     </div>
-                  </div>
+                    {dbUser && hasGoTos ? <GoToBoxes goTos={goTos} goTosLoading={goTosLoading}/> : null}
+                  </div>  
               </div>
             </section>
           </>

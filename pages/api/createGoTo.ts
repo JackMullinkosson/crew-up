@@ -11,10 +11,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
           const existingList = await prisma.goTos.findFirst({
             where: {
-              name: name
+              AND: [
+                { name: name },
+                { ownerId: ownerId }
+              ]
             }
           });
-    
           if (existingList) {
             return res.status(409).json({ message: 'List already exists' });
           }

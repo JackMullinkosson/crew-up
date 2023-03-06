@@ -5,9 +5,13 @@ import TimePicker from 'rc-time-picker';
 import 'rc-time-picker/assets/index.css';
 import moment from "moment";
 import { ClipLoader } from 'react-spinners';
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { useGlobalContext } from "../Context/store"
 
 
 const NewProjectForm = () => {
+    const {user} = useUser()
+    const {dbUser, setDbUser} = useGlobalContext()
     const [projectName, setProjectName] = useState("")
     const [logLine, setLogLine] = useState("")
     const [startDate, setStartDate] = useState("")
@@ -20,7 +24,6 @@ const NewProjectForm = () => {
     const [locations, setLocations] = useState<string[]>([]);
     const [postRequestNotReady, setPostRequestNotReady] = useState(true)
     const [isPosting, setIsPosting] = useState(false)
-    const ownerId = 1;
     const router = useRouter()
     const inputStyles = "appearance-none w-full bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
     const borderStyles = "bg-gray-200 text-gray-700 border border-500 rounded focus:outline-none focus:bg-white"
@@ -31,6 +34,11 @@ const NewProjectForm = () => {
       if(projectName==="") return
       setPostRequestNotReady(false)
     },[projectName])
+
+    useEffect(()=>{
+      if(!user) return
+      getUserByEmail()
+    },[user])
 
     useEffect(()=>{
         const days = calculateDays(startDate, endDate)
@@ -97,7 +105,7 @@ const NewProjectForm = () => {
             },
             body: JSON.stringify({
                 projectName: projectName,
-                ownerId: ownerId,
+                ownerId: dbUser.id,
                 logLine: logLine || '',
                 startDate: startDate ? new Date(startDate) : undefined,
                 endDate:  endDate ? new Date(endDate) : undefined,
@@ -112,6 +120,21 @@ const NewProjectForm = () => {
         }
           const {project} = await res.json()
           router.push(`/project/${project.id}`)
+      }
+
+      async function getUserByEmail(){
+        const res = await fetch(`/api/getUserByEmail/${user.email}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            });
+            if (res.ok) {
+              const resUser = await res.json()
+              setDbUser(resUser); 
+            } else {
+              setDbUser(null)
+            }
       }
 
 
