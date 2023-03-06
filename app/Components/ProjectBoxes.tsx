@@ -24,11 +24,6 @@ export const ProjectBoxes = () => {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  console.log(dbUser)
-
-  
- 
-
   useEffect(()=>{
   if(dbUser.id===0) return
    getProjects()
@@ -51,6 +46,7 @@ export const ProjectBoxes = () => {
     }
     finally{
       const resProjects = await res.json()
+      console.log(resProjects)
       setProjects(resProjects)
       setLoading(false)
     } 

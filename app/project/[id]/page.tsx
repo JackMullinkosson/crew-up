@@ -11,8 +11,8 @@ const BASE_URL = "http://localhost:3000/"
     const readyPeople = null;
     const readyRoles = null;
 
-    async function getGoToById() {
-      const res = await fetch(`${BASE_URL}api/getGoToById/${id}`, {
+    async function getGoToByProjectId() {
+      const res = await fetch(`${BASE_URL}api/getGoToByProjectId/${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -25,7 +25,7 @@ const BASE_URL = "http://localhost:3000/"
       }
     }
 
-    const projGoTo = await getGoToById()
+    const projGoTo = await getGoToByProjectId()
     
     
 
