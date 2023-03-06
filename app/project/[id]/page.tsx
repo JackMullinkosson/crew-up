@@ -7,9 +7,7 @@ const BASE_URL = "http://localhost:3000/"
 
    export default async function Page ({ params }: any) {
     const id = parseInt(params.id)
-    const readyProject = null;
-    const readyPeople = null;
-    const readyRoles = null;
+ 
 
     async function getGoToByProjectId() {
       const res = await fetch(`${BASE_URL}api/getGoToByProjectId/${id}`, {

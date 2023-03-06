@@ -3,14 +3,17 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ChevronDownIcon } from "@heroicons/react/24/solid"
 import { ClipLoader } from "react-spinners"
+import { useUser } from '@auth0/nextjs-auth0/client';
+import { useGlobalContext } from "../Context/store"
+
+const inputStyles = "appearance-none w-full bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed items-center w-40"
 
 const NewGoToForm = () => {
     const router = useRouter()
-    const inputStyles = "appearance-none w-full bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-    const borderStyles = "bg-gray-200 text-gray-700 border border-500 rounded focus:outline-none focus:bg-white"
-    const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-    const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed items-center w-40"
-    const infoButtonStyles = "flex-shrink-0 bg-purple-500 hover:bg-purple-700 border-purple-500 hover:border-purple-700 text-sm border-4 text-white py-1 px-2 rounded"
+    const {user} = useUser()
+    const {dbUser, setDbUser} = useGlobalContext()
     const defaultProdRoles = ['Producer', 'Co-Producer', 'Associate Producer', 'Production Coordinator', 'UPM', 'Key PA', 'PA']
     const defaultCineRoles = ['Gaffer', 'BBE', 'Electric', 'Key Grip', 'BBG', 'Grip', 'Camera Operator', 'First AC', 'Second AC', 'Camera Utility' ]
     const defaultArtRoles = ['Art Director', 'Production Designer', 'Set Decorator', 'Prop Master', 'Art PA']
@@ -19,7 +22,6 @@ const NewGoToForm = () => {
     const [icon, setIcon] = useState<number>()
     const [postRequestNotReady, setPostRequestNotReady] = useState(true)
     const [isPosting, setIsPosting] = useState(false)
-    const ownerId = 1;
     
 
     async function submitList(e: React.FormEvent){
@@ -34,9 +36,9 @@ const NewGoToForm = () => {
             },
             body: JSON.stringify({
               name: listName,
-              ownerId: ownerId,
               roles: defaultRoles,
-              icon: icon
+              icon: icon,
+              ownerId: dbUser.id
           })
           })
           if (res.status !== 200) {
@@ -54,6 +56,11 @@ const NewGoToForm = () => {
         if(listName==="" || defaultRoles.length===0) return
         setPostRequestNotReady(false)
       },[defaultRoles, listName])
+
+      useEffect(()=>{
+        if(!user) return
+         getUserByEmail()
+        },[user])
 
       function handleChoice(e){
         setPostRequestNotReady(true)
@@ -74,6 +81,21 @@ const NewGoToForm = () => {
               break;
             default: return 
           }
+      }
+
+      async function getUserByEmail(){
+        const res = await fetch(`/api/getUserByEmail/${user.email}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            });
+            if (res.ok) {
+              const resUser = await res.json()
+              setDbUser(resUser); 
+            } else {
+              setDbUser(null)
+            }
       }
     
 

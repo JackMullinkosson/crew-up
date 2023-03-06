@@ -16,7 +16,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       
       const existingProject = await prisma.project.findFirst({
         where: {
-          name: projectName
+          AND: [
+            { name: projectName },
+            { ownerId: ownerId }
+          ]
         }
       });
 
