@@ -1,6 +1,12 @@
 "use client"
 import { createContext, useContext, Dispatch, SetStateAction, useState } from "react";
 
+interface DbUser {
+  email: string;
+  name: string;
+  id: number;
+}
+
 interface Project {
   name: string;
   id: number;
@@ -47,6 +53,8 @@ interface Person {
 
 
 interface ContextProps {
+    dbUser: DbUser;
+    setDbUser: Dispatch<SetStateAction<DbUser>>;
     project: Project;
     setProject: Dispatch<SetStateAction<Project>>;
     goTos: GoTo[];
@@ -62,6 +70,8 @@ interface ContextProps {
   }
   
 const GlobalContext = createContext<ContextProps>({
+    dbUser: {name: "", email: "", id: 0},
+    setDbUser: () => {},
     project: {
       name: "",
       id: 0,
@@ -91,6 +101,7 @@ const GlobalContext = createContext<ContextProps>({
 });
   
 export const GlobalContextProvider = ({ children }) => {
+  const [dbUser, setDbUser] = useState<DbUser>({name: "", email: "", id: 0})
   const [project, setProject] = useState<Project>({
     name: "",
     id: 0,
@@ -113,7 +124,7 @@ export const GlobalContextProvider = ({ children }) => {
     const [isPosting, setIsPosting] = useState(false)
       
     return (
-        <GlobalContext.Provider value={{ project, setProject, goTos, setGoTos, roles, setRoles, people, setPeople, noEditing, setNoEditing, isPosting, setIsPosting }}>
+        <GlobalContext.Provider value={{ dbUser, setDbUser, project, setProject, goTos, setGoTos, roles, setRoles, people, setPeople, noEditing, setNoEditing, isPosting, setIsPosting }}>
             {children}
         </GlobalContext.Provider>
     );

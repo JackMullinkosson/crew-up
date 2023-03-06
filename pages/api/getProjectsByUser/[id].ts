@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import prisma from '../../prisma/client'
+import prisma from "../../../prisma/client";
 
 
 export default async function handler(
@@ -7,7 +7,11 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+    const {id} = req.query;
     const data = await prisma.project.findMany({
+      where: {
+        ownerId: Number(id)
+      },
       include:{dayDetails: true} 
     });
     return res.status(200).json(data)
