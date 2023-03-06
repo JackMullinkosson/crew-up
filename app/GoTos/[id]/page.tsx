@@ -16,71 +16,40 @@ const successLabelStyles = "h-6 uppercase tracking-wide text-gray-700 text-xs fo
 
 export default function goTo ({ params }: any) {
     const id = Number(params.id)
-    const {goTos, setGoTos, roles, setRoles, people, setPeople, isPosting, setIsPosting } = useGlobalContext();
-    const [goTosLoading, setGoTosLoading] = useState(true)
-    const [rolesLoading, setRolesLoading] = useState(true)
+    const {roles, setRoles, people, setPeople, isPosting, setIsPosting } = useGlobalContext();
+    const [goToLoading, setGoToLoading] = useState(true)
     const [isCreatingRow, setIsCreatingRow] = useState(false)
     const [tempId, setTempId] = useState<number>()
     const [name, setName] = useState('')
-    const thisGoTo = goTos.find(i=> i.id===id)
+    const [goTo, setGoTo] = useState('')
+   
 
 
     useEffect(()=>{
       getGoTos()
-      getRoles()
-      getPeople()
   },[])
       
   async function getGoTos(){
+    let res;
+    setGoToLoading(true)
     try {
-      const res = await fetch(`/api/getGoTos`, {
+      res = await fetch(`/api/getGoToById/${id}`, {
       method: "GET",
       headers: {
           "Content-Type": "application/json",
       },
       });
-      setGoTos(await res.json())
-      setGoTosLoading(false);
   } catch (error) {
       console.error(error);
   } 
+  finally{
+    const goTo= await res.json()
+    setGoTo(goTo.name)
+    setPeople(goTo.people);
+    setRoles(goTo.roles);
+    setGoToLoading(false)
+  }
 }
-
-  async function getRoles(){
-    try {
-      const res = await fetch(`/api/getRoles`, {
-      method: "GET",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      });
-      setRoles(await res.json())
-      setRolesLoading(false);
-  } catch (error) {
-      console.error(error);
-  } 
-}
-
-
-async function getPeople(){
-  let res;
-  try {
-   res = await fetch(`/api/getPeopleByGoTo/${id}`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-    });
-} catch (error) {
-    console.error(error);
-}
-finally{
-  const resPeople = await res.json()
-  console.log(resPeople)
-  setPeople(resPeople)
-}
-}
-
     useEffect(()=>{
       getTempId()
      },[roles])
@@ -139,8 +108,8 @@ async function addRole(){
 
 return (
     <div className='flex justify-center px-16 flex-col py-12 lg:py-16'>
-      <h1 className='text-4xl py-4'>{goTosLoading ? 'Loading...' : thisGoTo.name}</h1>
-      {rolesLoading || goTosLoading ? (
+      <h1 className='text-4xl py-4'>{goToLoading ? 'Loading...' : goTo}</h1>
+      {goToLoading ? (
         <>
           <div className={newRowStyles}>
             <button className={`${successButtonStyles} disabled:cursor-not-allowed`} disabled={true}><PlusIcon className='h-6 w-6'/>Add Role</button>

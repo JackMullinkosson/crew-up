@@ -21,13 +21,11 @@ export default function Home() {
   const {dbUser, setDbUser} = useGlobalContext()
   const [name, setName] = useState('')
   const [isPosting, setIsPosting] = useState(false)
-  const [isNaming, setIsNaming] = useState(true)
 
   useEffect(() => {
     if(!user && !error && !isLoading){
       console.log('attempt')
       window.location.assign('http://localhost:3000/api/auth/login');
-      setIsNaming(true)
     }
   }, [user, error, isLoading]);
 
@@ -46,9 +44,6 @@ export default function Home() {
         if (res.ok) {
           const resUser = await res.json()
           setDbUser(resUser); 
-          if(resUser){
-            setIsNaming(false)
-          }
         } else {
           setDbUser(null)
         }
@@ -75,10 +70,8 @@ export default function Home() {
     finally{
       const resUser = await res.json()
       setDbUser(resUser)
-      setIsNaming(false)
       setIsPosting(false)
     }
-      
   }
 
 
@@ -110,7 +103,7 @@ export default function Home() {
                   </div>
                   <div className={rowStyles}>
                   {dbUser ? <ProjectBoxes/> : null}
-                  <div className={`${newBoxStyles} ${isNaming ? 'pointer-events-none' : 'hover:cursor-pointer'}`} onClick={()=>router.push('/NewProject')}>
+                  <div className={`${newBoxStyles} ${dbUser===null ? 'pointer-events-none' : 'hover:cursor-pointer'}`} onClick={()=>router.push('/NewProject')}>
                       <h3 className="text-xl font-bold dark:text-white mr-4">New Project</h3>
                       <PlusIcon className='h-6 w-6'/>
                   </div>
@@ -120,7 +113,7 @@ export default function Home() {
               </div>
                   <div className={rowStyles}>
                     {dbUser ? <GoToBoxes/> : null}
-                    <div className={`${newBoxStyles} ${isNaming ? 'pointer-events-none' : 'hover:cursor-pointer'}`} onClick={()=>router.push('/NewGoTo')}>
+                    <div className={`${newBoxStyles} ${dbUser===null ? 'pointer-events-none' : 'hover:cursor-pointer'}`} onClick={()=>router.push('/NewGoTo')}>
                       <h3 className="text-xl font-bold dark:text-white mr-4">New Go-To List</h3>
                       <PlusIcon className='h-6 w-6'/>
                     </div>

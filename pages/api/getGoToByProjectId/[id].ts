@@ -5,7 +5,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { id } = req.query;
     const goTo = await prisma.goTos.findFirst({
-      where: { id: Number(id) },
+      where: { projectId: Number(id) },
       include: {
         roles: true,
         people: { orderBy: { order: 'asc' } }

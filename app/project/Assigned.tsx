@@ -35,7 +35,7 @@ const Assigned = ({id}) => {
         setPeople(null)
         setRoles(null)
         getProjectById()
-        getGoToById()
+        getGoToByProjectId()
     },[])
 
 
@@ -83,12 +83,12 @@ const Assigned = ({id}) => {
         }
     }
 
-    async function getGoToById() {
+    async function getGoToByProjectId() {
         let res;
         let goTo;
         while (true) {
           try {
-            res = await fetch(`/api/getGoToById/${id}`, {
+            res = await fetch(`/api/getGoToByProjectId/${id}`, {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",

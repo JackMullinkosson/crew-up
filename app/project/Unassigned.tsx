@@ -26,14 +26,13 @@ interface Role {
   
 
 export default function Unassigned ({id}) { 
-    const {goTos, setGoTos, setRoles, roles, people, setPeople, setIsPosting, isPosting, project, setProject } = useGlobalContext();
+    const {goTos, setGoTos, setRoles, roles, people, setPeople, setIsPosting, isPosting, project, setProject, dbUser, setDbUser } = useGlobalContext();
     const [projectsLoading, setProjectsLoading] = useState(true)
     const [goTosLoading, setGoTosLoading] = useState(true)
     const [thesePeople, setThesePeople] = useState([])
     const [assignedGoTo, setAssignedGoTo] = useState<GoTo>()
     const [isAssigning, setIsAssigning] = useState(false)
     const [isAssigned, setIsAssigned] = useState(false)
-    const ownerId = 1;
     const thisGoTo = goTos.find((i)=>i?.projectId===id)
     const labelStyles = "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
     const successButtonStyles = "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed"
@@ -78,7 +77,7 @@ export default function Unassigned ({id}) {
               },
               body: JSON.stringify({
                 thisGoTo: assignedGoTo,
-                ownerId: ownerId,
+                ownerId: dbUser.id,
                 roles: assignedGoTo.roles,
                 people: thesePeople,
                 projectName: project.name,
@@ -117,7 +116,7 @@ export default function Unassigned ({id}) {
 
   async function getGoTos(){
     try {
-      const res = await fetch(`/api/getGoTos`, {
+      const res = await fetch(`/api/getGoTosByUser/${dbUser.id}`, {
       method: "GET",
       headers: {
           "Content-Type": "application/json",
