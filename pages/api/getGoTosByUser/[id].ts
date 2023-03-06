@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import prisma from '../../prisma/client'
+import prisma from "../../../prisma/client";
 
 
 export default async function handler(
@@ -7,9 +7,14 @@ export default async function handler(
   res: NextApiResponse
 ) {
     try{
+        const {id} = req.query;
         const goTos = await prisma.goTos.findMany({
+          where: {
+            ownerId: Number(id)
+          },
           include: {roles: true}
         });
+        console.log(req.query)
         return res.status(200).json(goTos)
     } catch (error) {
       return res.status(500).json(error)
