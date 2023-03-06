@@ -17,16 +17,34 @@ const inputStyles = "appearance-none w-3/4 bg-gray-200 text-gray-700 border bord
 
 
 export default function Home() {
+  const AUTH0_API = process.env.AUTH0_API
   const router = useRouter()
   const {user, isLoading, error} = useUser()
   const {dbUser, setDbUser} = useGlobalContext()
   const [name, setName] = useState('')
   const [isPosting, setIsPosting] = useState(false)
 
+  console.log('hi', AUTH0_API)
+
   useEffect(()=>{
     if(!user) return
     getUserByEmail()
   },[user])
+
+  function generatePassword() {
+    let password = '';
+    while (!/[A-Z]/.test(password) || !/\d/.test(password) || password.length < 10) {
+      password = require('crypto').randomBytes(10).toString('base64').slice(0, 10);
+    }
+    return password;
+  }
+
+  function generateEmail(){
+    let string = require('crypto').randomBytes(10).toString('base64').slice(0, 10);
+    let email = string.concat('@crewup.com')
+    return email
+  }
+
 
   async function getUserByEmail(){
     const res = await fetch(`api/getUserByEmail/${user.email}`, {
@@ -69,6 +87,30 @@ export default function Home() {
     }
       
   }
+
+  async function createAuthUser (){
+    const email = generateEmail()
+    const password = generatePassword()
+    try{
+      const res = await fetch(`https://dev-av8ytze0vaozzhqo.us.auth0.com/api/v2/`,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${AUTH0_API}`,
+          "scope": "create:users"
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          connection: "Username-Password-Authentication"
+        }),
+      });
+    }
+    catch(e){
+      console.error(e)
+    }
+  }
+
 
 
   if(isLoading) return (<ClipLoader className='h-6 w-6' />)
@@ -128,7 +170,7 @@ if(!user) return (
           <h1 className='text-2xl font-bold py-4'> Welcome to Crew Up!</h1>
           <div className='flex flex-row justify-evenly w-full mt-4'>
               <a href='/api/auth/login' className={successButtonStyles}>Log in</a>
-              <button onClick={()=>router.push('/api/auth/login')} className={infoButtonStyles}>Continue as guest</button>
+              <button onClick={()=>createAuthUser()} className={infoButtonStyles}>Continue as guest</button>
           </div>
       </div>
     </div> 
