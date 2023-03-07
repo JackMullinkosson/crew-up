@@ -6,6 +6,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { ClipLoader } from "react-spinners";
 import Assigned from "./Assigned";
 import ProjectDetails from "./ProjectDetails";
+import { useRouter } from "next/navigation";
 
 interface GoTo {
   name: String;
@@ -42,15 +43,20 @@ export default function Unassigned({ id }) {
   const [assignedGoTo, setAssignedGoTo] = useState<GoTo>();
   const [isAssigning, setIsAssigning] = useState(false);
   const [isAssigned, setIsAssigned] = useState(false);
+  const router = useRouter();
   const labelStyles =
     "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2";
+  const dangerLabelStyles =
+    "block uppercase text-red-700 text-xs font-bold mb-2";
   const successButtonStyles =
     "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed";
 
   useEffect(() => {
+    if (!dbUser) return;
+    if (dbUser.id === 0) return;
     getProject();
     getGoTos();
-  }, []);
+  }, [dbUser]);
 
   useEffect(() => {
     if (!assignedGoTo || !assignedGoTo.id) return;
@@ -171,6 +177,8 @@ export default function Unassigned({ id }) {
     }
   }
 
+  console.log(goTos);
+
   return (
     <>
       {!isAssigned ? (
@@ -185,6 +193,21 @@ export default function Unassigned({ id }) {
           <div className="w-3/4 py-6 flex flex-row justify-evenly items-center">
             <div>
               <label className={labelStyles}>Choose Go-To List</label>
+              {goTosLoading ? null : (
+                <label
+                  style={{ display: goTos.length > 0 ? "none" : "block" }}
+                  className={dangerLabelStyles}
+                >
+                  You must first{" "}
+                  <a
+                    onClick={() => router.push("/NewGoTo")}
+                    className="text-underline text-blue-500 hover:cursor-pointer hover:underline"
+                  >
+                    make a Go-To list
+                  </a>{" "}
+                  before you can assign one to this project.
+                </label>
+              )}
               <div className="flex flex-col">
                 <select
                   className="flex px-4 appearance-none bg-gray-200 text-gray-700 border border-black-500 rounded py-3 px-4 pr-12 mb-3 leading-tight focus:outline-none focus:bg-white hover:cursor-pointer"
