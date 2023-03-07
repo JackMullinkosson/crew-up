@@ -3,6 +3,7 @@
 import { WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import Link from "next/link";
 
 export default function Navbar() {
   const router = useRouter();
@@ -17,16 +18,28 @@ export default function Navbar() {
               <div className="flex items-center justify-start">
                 <div
                   onClick={() => router.push("/")}
-                  className="flex items-center ml-2 md:mr-24 text-center hover:cursor-pointer"
+                  className="flex items-center ml-2 text-center hover:cursor-pointer hover:text-blue-500"
                 >
                   <WrenchScrewdriverIcon className="h-6 w-6" />
                   <h1 className="ml-4 self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
                     CrewUp
                   </h1>
                 </div>
+                <Link
+                  className="ml-8 text-center self-center text-xl whitespace-nowrap sm:text-2xl text-gray-700 hover:text-blue-500"
+                  href="/About"
+                >
+                  About
+                </Link>
               </div>
+
               <div>
-                <a href="/api/auth/logout">Logout</a>
+                <a
+                  className="text-gray-600 font-semibold hover:text-blue-500"
+                  href="/api/auth/logout"
+                >
+                  Logout
+                </a>
               </div>
             </div>
           </div>
