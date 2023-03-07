@@ -1,4 +1,3 @@
 export const ItemTypes = {
-    PERSON: 'person',
-  }
-  
+  PERSON: "person",
+};
