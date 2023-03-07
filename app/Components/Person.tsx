@@ -86,9 +86,6 @@ export const Person: FC<PersonProps> = ({
     />,
   ];
 
-  useEffect(() => {
-    console.log(statusIcon);
-  }, []);
   let arrOfPersonnel = {};
   let currentIndex = 0;
   people.forEach((person) => {

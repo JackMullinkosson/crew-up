@@ -45,7 +45,6 @@ export default function Home() {
 
   useEffect(() => {
     if (!user && !error && !isLoading) {
-      console.log("attempt");
       window.location.assign("http://localhost:3000/api/auth/login");
     }
   }, [user, error, isLoading]);

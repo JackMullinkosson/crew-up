@@ -29,7 +29,6 @@ export default async function handler(
           person.id !== id &&
           person.status === "Not contacted"
         ) {
-          console.log("what is the guy i wants status:", person);
           const hasLowerOrder = people.some(
             (otherPerson) =>
               otherPerson.roleId === person.roleId &&

@@ -13,7 +13,6 @@ export default async function handler(
       },
       include: { roles: true },
     });
-    console.log(req.query);
     return res.status(200).json(goTos);
   } catch (error) {
     return res.status(500).json(error);

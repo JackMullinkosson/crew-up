@@ -11,8 +11,6 @@ export default async function handler(
     }
     const { name, email } = req.body;
 
-    console.log(req.body);
-
     const role = await prisma.user.create({
       data: {
         name: name,
