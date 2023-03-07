@@ -5,6 +5,7 @@ import { useGlobalContext } from "../../Context/store";
 import { PlusIcon, XMarkIcon, CheckIcon } from "@heroicons/react/24/solid";
 import { ClipLoader } from "react-spinners";
 import RoleDetails from "@/app/Components/RoleDetails";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 
 const successButtonStyles =
   "mr-2 flex items-center flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed";
@@ -17,7 +18,7 @@ const inputStyles =
 const successLabelStyles =
   "h-6 uppercase tracking-wide text-gray-700 text-xs font-bold flex flex-row items-center text-teal-500";
 
-export default function GoTo({ params }: any) {
+export default withPageAuthRequired(function GoTo({ params }: any) {
   const id = Number(params.id);
   const { roles, setRoles, setPeople, isPosting, setIsPosting } =
     useGlobalContext();
@@ -181,4 +182,4 @@ export default function GoTo({ params }: any) {
       )}
     </div>
   );
-}
+});

@@ -10,7 +10,7 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import { useGlobalContext } from "../Context/store";
 
 const NewProjectForm = () => {
-  const { user } = useUser();
+  const { user, isLoading, error } = useUser();
   const { dbUser, setDbUser } = useGlobalContext();
   const [projectName, setProjectName] = useState("");
   const [logLine, setLogLine] = useState("");
@@ -39,6 +39,12 @@ const NewProjectForm = () => {
     "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2";
   const successButtonStyles =
     "flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded disabled:cursor-not-allowed items-center w-40";
+
+  useEffect(() => {
+    if (!user && !error && !isLoading) {
+      window.location.assign("http://localhost:3000/api/auth/login");
+    }
+  }, [user, error, isLoading]);
 
   useEffect(() => {
     if (projectName === "") return;

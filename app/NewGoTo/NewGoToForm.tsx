@@ -16,7 +16,7 @@ const successButtonStyles =
 
 const NewGoToForm = () => {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, isLoading, error } = useUser();
   const { dbUser, setDbUser } = useGlobalContext();
   const defaultProdRoles = [
     "Producer",
@@ -51,6 +51,12 @@ const NewGoToForm = () => {
   const [icon, setIcon] = useState<number>();
   const [postRequestNotReady, setPostRequestNotReady] = useState(true);
   const [isPosting, setIsPosting] = useState(false);
+
+  useEffect(() => {
+    if (!user && !error && !isLoading) {
+      window.location.assign("http://localhost:3000/api/auth/login");
+    }
+  }, [user, error, isLoading]);
 
   async function submitList(e: React.FormEvent) {
     e.preventDefault();
