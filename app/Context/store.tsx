@@ -1,5 +1,11 @@
-"use client"
-import { createContext, useContext, Dispatch, SetStateAction, useState } from "react";
+"use client";
+import {
+  createContext,
+  useContext,
+  Dispatch,
+  SetStateAction,
+  useState,
+} from "react";
 
 interface DbUser {
   email: string;
@@ -28,7 +34,7 @@ interface GoTo {
   id: Number;
   icon: Number;
   defaultGoTo: Boolean;
-  roles: Role[]
+  roles: Role[];
   projectId: Number;
 }
 
@@ -50,84 +56,103 @@ interface Person {
   goToId: number;
 }
 
-
-
 interface ContextProps {
-    dbUser: DbUser;
-    setDbUser: Dispatch<SetStateAction<DbUser>>;
-    project: Project;
-    setProject: Dispatch<SetStateAction<Project>>;
-    goTos: GoTo[];
-    setGoTos: Dispatch<SetStateAction<GoTo[]>>;
-    roles: Role[];
-    setRoles: Dispatch<SetStateAction<Role[]>>;
-    people: Person[];
-    setPeople: Dispatch<SetStateAction<Person[]>>;
-    noEditing: boolean;
-    setNoEditing: Dispatch<SetStateAction<boolean>>;
-    isPosting: boolean;
-    setIsPosting: Dispatch<SetStateAction<boolean>>;
-  }
-  
+  dbUser: DbUser;
+  setDbUser: Dispatch<SetStateAction<DbUser>>;
+  project: Project;
+  setProject: Dispatch<SetStateAction<Project>>;
+  goTos: GoTo[];
+  setGoTos: Dispatch<SetStateAction<GoTo[]>>;
+  roles: Role[];
+  setRoles: Dispatch<SetStateAction<Role[]>>;
+  people: Person[];
+  setPeople: Dispatch<SetStateAction<Person[]>>;
+  noEditing: boolean;
+  setNoEditing: Dispatch<SetStateAction<boolean>>;
+  isPosting: boolean;
+  setIsPosting: Dispatch<SetStateAction<boolean>>;
+}
+
 const GlobalContext = createContext<ContextProps>({
-    dbUser: {name: "", email: "", id: 0},
-    setDbUser: () => {},
-    project: {
-      name: "",
-      id: 0,
-      owner: {
-        id: 0
-      },
-      startDate: new Date(),
-      endDate: new Date(),
-      logLine: "",
-      dayDetails: [{
-        startTime: new Date(),
-        endTime: new Date(),
-        location: ""
-      }]
-    },
-    setProject: () => {},
-    goTos: [],
-    setGoTos: () => {},
-    roles: [],
-    setRoles: () => {},
-    people: [],
-    setPeople: () => {},
-    noEditing: false,
-    setNoEditing: () => {},
-    isPosting: false,
-    setIsPosting: () => {},
-});
-  
-export const GlobalContextProvider = ({ children }) => {
-  const [dbUser, setDbUser] = useState<DbUser>({name: "", email: "", id: 0})
-  const [project, setProject] = useState<Project>({
+  dbUser: { name: "", email: "", id: 0 },
+  setDbUser: () => {},
+  project: {
     name: "",
     id: 0,
     owner: {
-      id: 0
+      id: 0,
     },
     startDate: new Date(),
     endDate: new Date(),
     logLine: "",
-    dayDetails: [{
-      startTime: new Date(),
-      endTime: new Date(),
-      location: ""
-    }]
+    dayDetails: [
+      {
+        startTime: new Date(),
+        endTime: new Date(),
+        location: "",
+      },
+    ],
+  },
+  setProject: () => {},
+  goTos: [],
+  setGoTos: () => {},
+  roles: [],
+  setRoles: () => {},
+  people: [],
+  setPeople: () => {},
+  noEditing: false,
+  setNoEditing: () => {},
+  isPosting: false,
+  setIsPosting: () => {},
+});
+
+export const GlobalContextProvider = ({ children }) => {
+  const [dbUser, setDbUser] = useState<DbUser>({ name: "", email: "", id: 0 });
+  const [project, setProject] = useState<Project>({
+    name: "",
+    id: 0,
+    owner: {
+      id: 0,
+    },
+    startDate: new Date(),
+    endDate: new Date(),
+    logLine: "",
+    dayDetails: [
+      {
+        startTime: new Date(),
+        endTime: new Date(),
+        location: "",
+      },
+    ],
   });
-    const [goTos, setGoTos] = useState<GoTo[]>([])
-    const [roles, setRoles] = useState<Role[]>([])
-    const [people, setPeople] = useState<Person[]>([])
-    const [noEditing, setNoEditing] = useState(false);
-    const [isPosting, setIsPosting] = useState(false)
-      
-    return (
-        <GlobalContext.Provider value={{ dbUser, setDbUser, project, setProject, goTos, setGoTos, roles, setRoles, people, setPeople, noEditing, setNoEditing, isPosting, setIsPosting }}>
-            {children}
-        </GlobalContext.Provider>
-    );
+  const [goTos, setGoTos] = useState<GoTo[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [people, setPeople] = useState<Person[]>([]);
+  const [noEditing, setNoEditing] = useState(false);
+  const [isPosting, setIsPosting] = useState(false);
+
+  return (
+    <GlobalContext.Provider
+      value={{
+        dbUser,
+        setDbUser,
+        project,
+        setProject,
+        goTos,
+        setGoTos,
+        roles,
+        setRoles,
+        people,
+        setPeople,
+        noEditing,
+        setNoEditing,
+        isPosting,
+        setIsPosting,
+      }}
+    >
+      {children}
+    </GlobalContext.Provider>
+  );
 };
 
 export const useGlobalContext = () => useContext(GlobalContext);
