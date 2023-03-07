@@ -11,8 +11,7 @@ export default async function handler(
     const data = await prisma.project.findMany({
       where: {
         ownerId: Number(id)
-      },
-      include:{dayDetails: true} 
+      }
     });
     return res.status(200).json(data)
   } catch (error) {

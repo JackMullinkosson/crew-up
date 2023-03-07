@@ -175,15 +175,17 @@ const NewProjectForm = () => {
                 <h4 className='text-xl tracking-tight font-bold text-center text-gray-700 dark:text-white'>Day {i+1}</h4>
                <div><label className={labelStyles}>Call Time:</label>
                <TimePicker allowEmpty={false} showSecond={false} minuteStep={15} use12Hours value={callTimes[i]} defaultOpenValue={moment('07:00:00', 'HH:mm:ss')} 
-               onChange={(time)=>{
+                onChange={(time)=>{
                 let newCallTimes = [...callTimes]
-                newCallTimes[i] = moment(time)
+                const callTimeWithDate = moment(startDate).startOf('day').add(moment(time).diff(moment(time).startOf('day')))
+                newCallTimes[i] = callTimeWithDate.add(i, 'days')
                 setCallTimes(newCallTimes)}}/></div>
                <div><label className={labelStyles}>Wrap Time:</label>
                <TimePicker allowEmpty={false} showSecond={false} minuteStep={15} use12Hours value={wrapTimes[i]} defaultOpenValue={moment('19:00:00', 'HH:mm:ss')} 
                 onChange={(time)=>{
+                const wrapTimeWithDate = moment(startDate).startOf('day').add(moment(time).diff(moment(time).startOf('day')))
                 let newWrapTimes = [...wrapTimes]
-                newWrapTimes[i] = moment(time)
+                newWrapTimes[i] = wrapTimeWithDate.add(i, 'days')
                 setWrapTimes(newWrapTimes)}}/></div>  
                 <div><label className={labelStyles}>Location:</label><input value={locations[i]} type="text" className="rc-time-picker-input focus:outline-none" 
                     onChange={(loc)=> {
