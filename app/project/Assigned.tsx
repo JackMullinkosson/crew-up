@@ -321,8 +321,8 @@ const Assigned = ({ id }) => {
             </button>
             <div className="ml-24">
               <p>
-                When you click &aposCrew Up!&apos offers will be sent to each of
-                your top candidates, and this page will update to inform the
+                When you click &apos;Crew Up!&apos; offers will be sent to each
+                of your top candidates, and this page will update to inform the
                 status of their response. If anybody declines the offer, we will
                 automatically send a new offer to the next person on the list.
               </p>
