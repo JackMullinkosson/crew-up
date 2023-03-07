@@ -3,18 +3,22 @@ import ResponseButtons from "./ResponseButtons";
 import Confirmed from "./Confirmed";
 import Declined from "./Declined";
 import Toast from "./Toast";
-const BASE_URL = "http://localhost:3000/";
 
 export default async function Page({ params }: any) {
   const projectId = parseInt(params.id);
 
+  console.log(process.env.LOCAL_DOMAIN);
+
   async function getProjectById() {
-    const res = await fetch(`${BASE_URL}api/getProjectById/${projectId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await fetch(
+      `http://localhost:3000/api/getProjectById/${projectId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     if (res.ok) {
       return await res.json();
     } else {
@@ -23,13 +27,16 @@ export default async function Page({ params }: any) {
   }
 
   async function getPersonById() {
-    const res = await fetch(`${BASE_URL}api/getPersonById/${params.person}`, {
-      method: "GET",
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await fetch(
+      `http://localhost:3000/api/getPersonById/${params.person}`,
+      {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return await res.json();
   }
 
