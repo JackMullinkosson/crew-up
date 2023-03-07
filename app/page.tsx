@@ -38,10 +38,7 @@ export default function Home() {
   const [goTos, setGoTos] = useState<goTo[]>([]);
   const [projectsLoading, setProjectsLoading] = useState(true)
   const [goTosLoading, setGoTosLoading] = useState(true)
-  const [hasProjects, setHasProjects] = useState(false)
-  const [hasGoTos, setHasGoTos] = useState(false)
-  
-
+ 
 
   useEffect(() => {
     if(!user && !error && !isLoading){
@@ -120,9 +117,6 @@ export default function Home() {
     finally{
       const resProjects = await res.json()
       setProjects(resProjects)
-      if(resProjects.length>0){
-        setHasProjects(true)
-      }
       setProjectsLoading(false)
     } 
   }
@@ -145,9 +139,6 @@ export default function Home() {
   finally{
     const resGoTos = await res.json()
     setGoTos(resGoTos)
-    if(resGoTos.length>0){
-      setHasGoTos(true)
-    }
     setGoTosLoading(false)
   }
   }
@@ -184,7 +175,7 @@ export default function Home() {
                         <h3 className="text-xl font-bold dark:text-white mr-4">New Project</h3>
                         <PlusIcon className='h-6 w-6'/>
                     </div>
-                    {dbUser && hasProjects ? <ProjectBoxes projects={projects} projectsLoading={projectsLoading}/> : null}
+                    {dbUser ? <ProjectBoxes projects={projects} projectsLoading={projectsLoading}/> : null}
                   </div>
               <div className="max-w-screen-md mb-4 lg:mb-8">
                       <h2 className="text-2xl tracking-tight font-bold text-gray-900 dark:text-white">Go-To Lists</h2>
@@ -194,7 +185,7 @@ export default function Home() {
                       <h3 className="text-xl font-bold dark:text-white mr-4">New Go-To List</h3>
                       <PlusIcon className='h-6 w-6'/>
                     </div>
-                    {dbUser && hasGoTos ? <GoToBoxes goTos={goTos} goTosLoading={goTosLoading}/> : null}
+                    {dbUser ? <GoToBoxes goTos={goTos} goTosLoading={goTosLoading}/> : null}
                   </div>  
               </div>
             </section>
