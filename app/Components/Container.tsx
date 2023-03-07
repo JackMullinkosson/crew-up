@@ -41,7 +41,6 @@ export const Container: React.FC<Props> = ({ roleId, goToId, setNoAdding }) => {
       setIsPosting(true);
       let res;
       try {
-        console.log(people);
         res = await fetch(`/api/reorderPeople`, {
           method: "PUT",
           headers: {
@@ -56,7 +55,6 @@ export const Container: React.FC<Props> = ({ roleId, goToId, setNoAdding }) => {
         console.error(e);
       } finally {
         const resPeople = await res.json();
-        console.log("new people", resPeople);
         setDragged(-1);
         setPeople(resPeople);
         setIsPosting(false);

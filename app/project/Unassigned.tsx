@@ -177,8 +177,6 @@ export default function Unassigned({ id }) {
     }
   }
 
-  console.log(goTos);
-
   return (
     <>
       {!isAssigned ? (
